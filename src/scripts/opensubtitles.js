@@ -1,4 +1,4 @@
-define(["loading", "fnchecked", "emby-linkbutton", "emby-input", "emby-checkbox", "emby-button"], function (loading) {
+define(["loading", "fnchecked", "emby-button", "emby-input", "emby-checkbox", "emby-button"], function (loading) {
     "use strict";
 
     function loadPage(page, config) {
