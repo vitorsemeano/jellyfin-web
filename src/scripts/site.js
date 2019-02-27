@@ -970,7 +970,7 @@ var AppInfo = {};
         define("imageUploader", [embyWebComponentsBowerPath + "/imageuploader/imageuploader"], returnFirstDependency);
         define("navdrawer", ["components/navdrawer/navdrawer"], returnFirstDependency);
         define("htmlMediaHelper", [embyWebComponentsBowerPath + "/htmlvideoplayer/htmlmediahelper"], returnFirstDependency);
-        define("viewcontainer", ["components/viewcontainer-lite"], returnFirstDependency);
+        define("viewcontainer", ["components/viewContainer"], returnFirstDependency);
         define("queryString", [bowerPath + "/query-string/index"], function () {
             return queryString;
         });
