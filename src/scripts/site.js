@@ -326,24 +326,6 @@ var AppInfo = {};
         return obj;
     }
 
-    function getSettingsBuilder(UserSettings, layoutManager, browser) {
-        UserSettings.prototype.enableThemeVideos = function (val) {
-            if (val != null) {
-                return this.set('enableThemeVideos', val.toString(), false);
-            }
-
-            val = this.get('enableThemeVideos', false);
-
-            if (val !== 'false') {
-                return !layoutManager.mobile;
-            } else {
-                return !browser.slow;
-            }
-        };
-
-        return UserSettings;
-    }
-
     function getBowerPath() {
         return "bower_components";
     }
@@ -961,8 +943,8 @@ var AppInfo = {};
         define("scrollHelper", [embyWebComponentsBowerPath + "/scrollhelper"], returnFirstDependency);
         define("touchHelper", [embyWebComponentsBowerPath + "/touchhelper"], returnFirstDependency);
         define("appSettings", [embyWebComponentsBowerPath + "/appsettings"], returnFirstDependency);
-        define("userSettings", [embyWebComponentsBowerPath + "/usersettings/usersettings"], returnFirstDependency);
-        define("userSettingsBuilder", [embyWebComponentsBowerPath + "/usersettings/usersettingsbuilder", "layoutManager", "browser"], getSettingsBuilder);
+        define("userSettings", [embyWebComponentsBowerPath + "/usersettings/userSettings"], returnFirstDependency);
+        define("userSettingsBuilder", [embyWebComponentsBowerPath + "/usersettings/userSettingsBuilder"], returnFirstDependency);
         define("material-icons", ["css!" + embyWebComponentsBowerPath + "/fonts/material-icons/style"], returnFirstDependency);
         define("systemFontsCss", ["css!" + embyWebComponentsBowerPath + "/fonts/fonts"], returnFirstDependency);
         define("systemFontsSizedCss", ["css!" + embyWebComponentsBowerPath + "/fonts/fonts.sized"], returnFirstDependency);
