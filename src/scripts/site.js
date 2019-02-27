@@ -898,7 +898,7 @@ var AppInfo = {};
         define("guide-settings-dialog", [embyWebComponentsBowerPath + "/guide/guide-settings"], returnFirstDependency);
         define("loadingDialog", [embyWebComponentsBowerPath + "/loadingdialog/loadingdialog"], returnFirstDependency);
         define("syncDialog", [embyWebComponentsBowerPath + "/sync/sync"], returnFirstDependency);
-        define("viewManager", [embyWebComponentsBowerPath + "/viewmanager/viewmanager"], function (viewManager) {
+        define("viewManager", [embyWebComponentsBowerPath + "/viewManager/viewManager"], function (viewManager) {
             window.ViewManager = viewManager;
             viewManager.dispatchPageEvents(true);
             return viewManager;
