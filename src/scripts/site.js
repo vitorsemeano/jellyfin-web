@@ -814,7 +814,7 @@ var AppInfo = {};
             itemHelper: embyWebComponentsBowerPath + "/itemhelper",
             itemShortcuts: embyWebComponentsBowerPath + "/shortcuts",
             playQueueManager: embyWebComponentsBowerPath + "/playback/playqueuemanager",
-            autoPlayDetect: embyWebComponentsBowerPath + "/playback/autoplaydetect",
+            autoPlayDetect: embyWebComponentsBowerPath + "/playback/autoPlayDetect",
             nowPlayingHelper: embyWebComponentsBowerPath + "/playback/nowplayinghelper",
             pluginManager: embyWebComponentsBowerPath + "/pluginmanager",
             packageManager: embyWebComponentsBowerPath + "/packagemanager"
