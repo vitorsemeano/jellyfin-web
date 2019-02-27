@@ -553,22 +553,6 @@ var AppInfo = {};
             promises.push(require(["fetch"]));
         }
 
-        if ("function" != typeof Object.assign) {
-            promises.push(require(["objectassign"]));
-        }
-
-        if (!Array.prototype.filter) {
-            promises.push(require(["arraypolyfills"]));
-        }
-
-        if (!Function.prototype.bind) {
-            promises.push(require(["functionbind"]));
-        }
-
-        if (!window.requestAnimationFrame) {
-            promises.push(require(["raf"]));
-        }
-
         Promise.all(promises).then(function () {
             createConnectionManager().then(function () {
                 console.log("initAfterDependencies promises resolved");
@@ -955,10 +939,6 @@ var AppInfo = {};
         define("dashboardcss", ["css!css/dashboard"], returnFirstDependency);
         define("slideshow", [embyWebComponentsBowerPath + "/slideshow/slideshow"], returnFirstDependency);
         define("fetch", [bowerPath + "/fetch/fetch"], returnFirstDependency);
-        define("raf", [embyWebComponentsBowerPath + "/polyfills/raf"], returnFirstDependency);
-        define("functionbind", [embyWebComponentsBowerPath + "/polyfills/bind"], returnFirstDependency);
-        define("arraypolyfills", [embyWebComponentsBowerPath + "/polyfills/array"], returnFirstDependency);
-        define("objectassign", [embyWebComponentsBowerPath + "/polyfills/objectassign"], returnFirstDependency);
         define("clearButtonStyle", ["css!" + embyWebComponentsBowerPath + "/clearbutton"], returnFirstDependency);
         define("userdataButtons", [embyWebComponentsBowerPath + "/userdatabuttons/userdatabuttons"], returnFirstDependency);
         define("emby-playstatebutton", [embyWebComponentsBowerPath + "/userdatabuttons/emby-playstatebutton"], returnFirstDependency);
