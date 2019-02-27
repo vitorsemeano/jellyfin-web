@@ -986,7 +986,6 @@ var AppInfo = {};
         define("dialogHelper", [embyWebComponentsBowerPath + "/dialogHelper/dialogHelper"], returnFirstDependency);
         define("inputmanager", ["inputManager"], returnFirstDependency);
         define("serverNotifications", [embyWebComponentsBowerPath + "/apiInput/apiInput"], returnFirstDependency);
-        define("headroom-window", ["headroom"], createWindowHeadroom);
         define("appFooter-shared", ["appFooter"], createSharedAppFooter);
         define("skinManager", [embyWebComponentsBowerPath + "/skinManager"], returnFirstDependency);
         define("connectionManager", [], function () {
