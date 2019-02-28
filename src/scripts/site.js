@@ -450,7 +450,7 @@ var AppInfo = {};
         if ("cordova" === self.appMode && browser.iOSVersion && browser.iOSVersion < 11) {
             define("imageFetcher", ["cordova/imagestore"], returnFirstDependency);
         } else {
-            define("imageFetcher", [embyWebComponentsBowerPath + "/images/basicimagefetcher"], returnFirstDependency);
+            define("imageFetcher", [embyWebComponentsBowerPath + "/images/imageFetcher"], returnFirstDependency);
         }
 
         var preferNativeAlerts = browser.tv;
@@ -797,7 +797,7 @@ var AppInfo = {};
         define("libjass", [bowerPath + "/libjass/libjass.min", "css!" + bowerPath + "/libjass/libjass"], returnFirstDependency);
         define("tunerPicker", ["components/tunerpicker"], returnFirstDependency);
         define("mainTabsManager", [embyWebComponentsBowerPath + "/maintabsmanager"], returnFirstDependency);
-        define("imageLoader", [embyWebComponentsBowerPath + "/images/imagehelper"], returnFirstDependency);
+        define("imageLoader", [embyWebComponentsBowerPath + "/images/imageLoader"], returnFirstDependency);
         define("appFooter", [embyWebComponentsBowerPath + "/appfooter/appfooter"], returnFirstDependency);
         define("directorybrowser", ["components/directorybrowser/directorybrowser"], returnFirstDependency);
         define("metadataEditor", [embyWebComponentsBowerPath + "/metadataeditor/metadataeditor"], returnFirstDependency);
