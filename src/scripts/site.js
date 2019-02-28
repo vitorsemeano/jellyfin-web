@@ -833,7 +833,7 @@ var AppInfo = {};
         define("emby-radio", [embyWebComponentsBowerPath + "/emby-radio/emby-radio"], returnFirstDependency);
         define("emby-textarea", [embyWebComponentsBowerPath + "/emby-textarea/emby-textarea"], returnFirstDependency);
         define("collectionEditor", [embyWebComponentsBowerPath + "/collectioneditor/collectioneditor"], returnFirstDependency);
-        define("serverRestartDialog", [embyWebComponentsBowerPath + "/serverrestartdialog/serverrestartdialog"], returnFirstDependency);
+        define("serverRestartDialog", [embyWebComponentsBowerPath + "/serverRestartDialog"], returnFirstDependency);
         define("playlistEditor", [embyWebComponentsBowerPath + "/playlisteditor/playlisteditor"], returnFirstDependency);
         define("recordingCreator", [embyWebComponentsBowerPath + "/recordingcreator/recordingcreator"], returnFirstDependency);
         define("recordingEditor", [embyWebComponentsBowerPath + "/recordingcreator/recordingeditor"], returnFirstDependency);
