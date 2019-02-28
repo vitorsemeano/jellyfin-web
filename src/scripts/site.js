@@ -472,11 +472,7 @@ var AppInfo = {};
             define("prompt", [embyWebComponentsBowerPath + "/prompt/prompt"], returnFirstDependency);
         }
 
-        if (browser.tizen || browser.operaTv || browser.chromecast || browser.orsay || browser.web0s || browser.ps4) {
-            define("loading", [embyWebComponentsBowerPath + "/loading/loading-legacy"], returnFirstDependency);
-        } else {
-            define("loading", [embyWebComponentsBowerPath + "/loading/loading-lite"], returnFirstDependency);
-        }
+        define("loading", [embyWebComponentsBowerPath + "/loading/loading"], returnFirstDependency);
 
         define("multi-download", [embyWebComponentsBowerPath + "/multidownload"], returnFirstDependency);
 
@@ -780,7 +776,7 @@ var AppInfo = {};
             inputManager: embyWebComponentsBowerPath + "/inputmanager",
             qualityoptions: embyWebComponentsBowerPath + "/qualityoptions",
             hammer: bowerPath + "/hammerjs/hammer.min",
-            pageJs: embyWebComponentsBowerPath + "/pagejs/page",
+            page: embyWebComponentsBowerPath + "/page",
             focusManager: embyWebComponentsBowerPath + "/focusmanager",
             datetime: embyWebComponentsBowerPath + "/datetime",
             globalize: embyWebComponentsBowerPath + "/globalize",
@@ -806,7 +802,7 @@ var AppInfo = {};
         define("directorybrowser", ["components/directorybrowser/directorybrowser"], returnFirstDependency);
         define("metadataEditor", [embyWebComponentsBowerPath + "/metadataeditor/metadataeditor"], returnFirstDependency);
         define("personEditor", [embyWebComponentsBowerPath + "/metadataeditor/personeditor"], returnFirstDependency);
-        define("playerSelectionMenu", [embyWebComponentsBowerPath + "/playback/playerselection"], returnFirstDependency);
+        define("playerSelectionMenu", [embyWebComponentsBowerPath + "/playback/playerSelectionMenu"], returnFirstDependency);
         define("playerSettingsMenu", [embyWebComponentsBowerPath + "/playback/playersettingsmenu"], returnFirstDependency);
         define("playMethodHelper", [embyWebComponentsBowerPath + "/playback/playmethodhelper"], returnFirstDependency);
         define("brightnessOsd", [embyWebComponentsBowerPath + "/playback/brightnessosd"], returnFirstDependency);
