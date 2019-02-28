@@ -54,9 +54,6 @@ function pageIdOn(eventName, id, fn) {
 }
 
 var Dashboard = {
-    allowPluginPages: function (pluginId) {
-        return true;
-    },
     getCurrentUser: function () {
         return window.ApiClient.getCurrentUser(false);
     },
@@ -231,17 +228,7 @@ var AppInfo = {};
 !function () {
     "use strict";
 
-    function initializeApiClient(apiClient) {
-        if (!("cordova" !== self.appMode && "android" !== self.appMode)) {
-            apiClient.getAvailablePlugins = function () {
-                return Promise.resolve([]);
-            };
-        }
-    }
-
-    function onApiClientCreated(e__e, newApiClient) {
-        initializeApiClient(newApiClient);
-
+    function onApiClientCreated(e, newApiClient) {
         if (window.$) {
             $.ajax = newApiClient.ajax;
         }
