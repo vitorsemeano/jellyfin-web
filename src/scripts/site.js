@@ -417,11 +417,7 @@ var AppInfo = {};
             define("filesystem", [embyWebComponentsBowerPath + "/filesystem"], returnFirstDependency);
         }
 
-        if (window.IntersectionObserver && !browser.edge) {
-            define("lazyLoader", [embyWebComponentsBowerPath + "/lazyloader/lazyloader-intersectionobserver"], returnFirstDependency);
-        } else {
-            define("lazyLoader", [embyWebComponentsBowerPath + "/lazyloader/lazyloader-scroll"], returnFirstDependency);
-        }
+        define("lazyLoader", [embyWebComponentsBowerPath + "/lazyLoader/lazyLoader"], returnFirstDependency);
 
         if ("android" === self.appMode) {
             define("shell", ["cordova/shell"], returnFirstDependency);

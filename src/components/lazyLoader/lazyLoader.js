@@ -1,5 +1,9 @@
-define(['visibleinviewport', 'dom', 'browser'], function (visibleinviewport, dom, browser) {
+define(['visibleinviewport', 'dom', 'browser', 'components/lazyloader/lazyloader-intersectionobserver'], function (visibleinviewport, dom, browser, alternativeLazyLoader) {
     'use strict';
+
+    if (window.IntersectionObserver && !browser.edge) {
+        return alternativeLazyLoader;
+    }
 
     var thresholdX;
     var thresholdY;
