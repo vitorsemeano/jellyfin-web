@@ -966,7 +966,7 @@ var AppInfo = {};
         define("fnchecked", ["legacy/fnchecked"], returnFirstDependency);
         define("dialogHelper", [embyWebComponentsBowerPath + "/dialogHelper/dialogHelper"], returnFirstDependency);
         define("inputmanager", ["inputManager"], returnFirstDependency);
-        define("serverNotifications", [embyWebComponentsBowerPath + "/apiInput/apiInput"], returnFirstDependency);
+        define("serverNotifications", [embyWebComponentsBowerPath + "/serverNotifications/serverNotifications"], returnFirstDependency);
         define("appFooter-shared", ["appFooter"], createSharedAppFooter);
         define("skinManager", [embyWebComponentsBowerPath + "/skinManager"], returnFirstDependency);
         define("connectionManager", [], function () {
