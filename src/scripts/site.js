@@ -921,7 +921,7 @@ var AppInfo = {};
         define("viewSettings", [embyWebComponentsBowerPath + "/viewsettings/viewsettings"], returnFirstDependency);
         define("filterMenu", [embyWebComponentsBowerPath + "/filtermenu/filtermenu"], returnFirstDependency);
         define("sortMenu", [embyWebComponentsBowerPath + "/sortmenu/sortmenu"], returnFirstDependency);
-        define("registrationServices", [embyWebComponentsBowerPath + "/registrationservices/registrationservices"], returnFirstDependency);
+        define("registrationServices", [embyWebComponentsBowerPath + "/registrationServices"], returnFirstDependency);
 
         if ("cordova" === self.appMode || "android" === self.appMode) {
             define("fileupload", ["cordova/fileupload"], returnFirstDependency);
