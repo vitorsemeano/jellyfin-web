@@ -683,15 +683,7 @@ var AppInfo = {};
     function registerServiceWorker() {
         if (navigator.serviceWorker && "cordova" !== self.appMode && "android" !== self.appMode) {
             try {
-                navigator.serviceWorker.register("serviceworker.js").then(function () {
-                    return navigator.serviceWorker.ready;
-                }).then(function (reg) {
-                    if (reg && reg.sync) {
-                        return reg.sync.register("emby-sync").then(function () {// TODO cvium: the sync serviceworker is a noop?
-                            //window.SyncRegistered = Dashboard.isConnectMode()
-                        });
-                    }
-                });
+                navigator.serviceWorker.register("serviceworker.js");
             } catch (err) {
                 console.log("Error registering serviceWorker: " + err);
             }
@@ -1186,39 +1178,9 @@ var AppInfo = {};
                     }
                 }
 
-                if ("Playlist" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
+                var itemTypes = ["Playlist", "TvChannel", "Program", "BoxSet", "MusicAlbum", "MusicGenre", "Person", "Recording", "MusicArtist"];
 
-                if ("TvChannel" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("Program" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("BoxSet" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("MusicAlbum" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("MusicGenre" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("Person" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("Recording" == itemType) {
-                    return "itemdetails.html?id=" + id + "&serverId=" + serverId;
-                }
-
-                if ("MusicArtist" == itemType) {
+                if (itemTypes.indexOf(itemType) >= 0) {
                     return "itemdetails.html?id=" + id + "&serverId=" + serverId;
                 }
 
