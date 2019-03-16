@@ -29,11 +29,6 @@ define([
             controller: "addpluginpage"
         });
         defineRoute({
-            path: "/appservices.html",
-            autoFocus: false,
-            roles: "admin"
-        });
-        defineRoute({
             path: "/autoorganizelog.html",
             roles: "admin"
         });
@@ -106,11 +101,6 @@ define([
         });
         defineRoute({
             path: "/encodingsettings.html",
-            autoFocus: false,
-            roles: "admin"
-        });
-        defineRoute({
-            path: "/opensubtitles.html",
             autoFocus: false,
             roles: "admin"
         });
