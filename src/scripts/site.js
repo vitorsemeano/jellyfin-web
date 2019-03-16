@@ -642,7 +642,7 @@ var AppInfo = {};
         console.log("Begin onAppReady");
 
         // ensure that appHost is loaded in this point
-        require(['apphost'], function (appHost) {
+        require(['apphost', 'appRouter'], function (appHost, appRouter) {
             var isInBackground = -1 !== self.location.href.toString().toLowerCase().indexOf("start=backgroundsync");
 
             window.Emby = {};
@@ -657,9 +657,9 @@ var AppInfo = {};
                     require(['css!devices/ios/ios.css']);
                 }
 
-                require(['appRouter', 'scripts/themeloader', 'libraryMenu', 'scripts/routes'], function (pageObjects) {
-                    window.Emby.Page = pageObjects;
+                window.Emby.Page = appRouter;
 
+                require(['scripts/themeloader', 'libraryMenu', 'scripts/routes'], function () {
                     Emby.Page.start({
                         click: false,
                         hashbang: true
