@@ -293,7 +293,7 @@ var AppInfo = {};
                         console.log("creating ApiClient singleton");
 
                         var apiClient = new apiClientFactory(Dashboard.serverAddress(), apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), window.devicePixelRatio);
-                        
+
                         apiClient.enableAutomaticNetworking = false;
                         apiClient.manualAddressOnly = true;
 
@@ -664,9 +664,9 @@ var AppInfo = {};
                         click: false,
                         hashbang: true
                     });
-    
+
                     require(["components/thememediaplayer", "scripts/autobackdrops"]);
-    
+
                     if ("cordova" === self.appMode || "android" === self.appMode) {
                         if (browser.android) {
                             require(["cordova/mediasession", "cordova/chromecast", "cordova/appshortcuts"]);
@@ -677,7 +677,7 @@ var AppInfo = {};
                     if (!browser.tv && !browser.xboxOne && !browser.ps4) {
                         require(["components/nowplayingbar/nowplayingbar"]);
                     }
-    
+
                     if (appHost.supports("remotecontrol")) {
                         require(["playerSelectionMenu", "components/playback/remotecontrolautoplay"]);
                     }
@@ -691,26 +691,26 @@ var AppInfo = {};
                     }
 
                     require(["serverNotifications"]);
-    
+
                     if (!browser.tv && !browser.xboxOne) {
                         require(["components/playback/playbackorientation"]);
                         registerServiceWorker();
-    
+
                         if (window.Notification) {
                             require(["components/notifications/notifications"]);
                         }
                     }
-    
+
                     require(["playerSelectionMenu"]);
-    
+
                     if (appHost.supports("fullscreenchange") && (browser.edgeUwp || -1 !== navigator.userAgent.toLowerCase().indexOf("electron"))) {
                         require(["fullscreen-doubleclick"]);
                     }
-    
+
                     if (appHost.supports("sync")) {
                         initLocalSyncEvents();
                     }
-    
+
                     if (!AppInfo.isNativeApp && window.ApiClient) {
                         require(["css!" + ApiClient.getUrl("Branding/Css")]);
                     }
