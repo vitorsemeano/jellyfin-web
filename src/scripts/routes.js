@@ -20,7 +20,7 @@ define([
     }
 
     console.log("Defining core routes");
-    
+
     defineRoute({
         path: "/addplugin.html",
         autoFocus: false,
@@ -80,11 +80,6 @@ define([
     });
     defineRoute({
         path: "/dlnaprofiles.html",
-        autoFocus: false,
-        roles: "admin"
-    });
-    defineRoute({
-        path: "/dlnaserversettings.html",
         autoFocus: false,
         roles: "admin"
     });
