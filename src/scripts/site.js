@@ -669,7 +669,7 @@ var AppInfo = {};
             humanedate: "components/humanedate",
             libraryBrowser: "scripts/librarybrowser",
             events: apiClientBowerPath + "/events",
-            credentialprovider: apiClientBowerPath + "/credentials",
+            credentialprovider: apiClientBowerPath + "/credentialprovider",
             connectionManager: bowerPath + "/apiclient/connectionManager",
             visibleinviewport: componentsPath + "/visibleinviewport",
             browserdeviceprofile: componentsPath + "/browserdeviceprofile",
