@@ -689,6 +689,7 @@ var AppInfo = {};
             libraryBrowser: "scripts/librarybrowser",
             events: apiClientBowerPath + "/events",
             credentialprovider: apiClientBowerPath + "/credentials",
+            connectionManagerFactory: bowerPath + "/apiclient/connectionManagerFactory",
             visibleinviewport: componentsPath + "/visibleinviewport",
             browserdeviceprofile: componentsPath + "/browserdeviceprofile",
             browser: componentsPath + "/browser",
