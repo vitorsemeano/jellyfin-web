@@ -1,4 +1,4 @@
-define(["events", "apiclient", "appStorage"], function (events, apiClientFactory, appStorage) {
+define(["events", "apiclient", "appStorage", "credentialprovider", "apphost"], function (events, apiClientFactory, appStorage, credentialProvider, apphost) {
     "use strict";
 
     function getServerAddress(server, mode) {
@@ -1277,5 +1277,16 @@ define(["events", "apiclient", "appStorage"], function (events, apiClientFactory
         }
     };
 
-    return ConnectionManager;
+    var credentialProviderInstance = new credentialProvider();
+
+    return Promise.all([apphost.getSyncProfile(), apphost.init()]).then(function (responses) {
+        var deviceProfile = responses[0];
+        var capabilities = Dashboard.capabilities(apphost);
+
+        capabilities.DeviceProfile = deviceProfile;
+
+        var connectionManager = new ConnectionManager(credentialProviderInstance, apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), capabilities, window.devicePixelRatio);
+
+        return Promise.resolve(connectionManager);
+    });
 });

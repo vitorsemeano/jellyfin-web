@@ -236,13 +236,6 @@ var AppInfo = {};
         }
     }
 
-    function defineConnectionManager(connectionManager) {
-        window.ConnectionManager = connectionManager;
-        define("connectionManager", [], function () {
-            return connectionManager;
-        });
-    }
-
     function bindConnectionManagerEvents(connectionManager, events, userSettings) {
         window.Events = events;
         events.on(ConnectionManager, "apiclientcreated", onApiClientCreated);
@@ -271,43 +264,31 @@ var AppInfo = {};
     }
 
     function createConnectionManager() {
-        return require(["connectionManagerFactory", "apphost", "credentialprovider", "events", "userSettings"], function (ConnectionManagerFactory, apphost, credentialProvider, events, userSettings) {
-            var credentialProviderInstance = new credentialProvider();
-            var promises = [apphost.getSyncProfile(), apphost.init()];
+        return require(["connectionManager", "apphost", "events", "userSettings"], function (connectionManager, apphost, events, userSettings) {
 
-            return Promise.all(promises).then(function (responses) {
-                var deviceProfile = responses[0];
-                var capabilities = Dashboard.capabilities(apphost);
+            window.ConnectionManager = connectionManager;
 
-                capabilities.DeviceProfile = deviceProfile;
+            bindConnectionManagerEvents(connectionManager, events, userSettings);
 
-                var connectionManager = new ConnectionManagerFactory(credentialProviderInstance, apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), capabilities, window.devicePixelRatio);
+            if (!AppInfo.isNativeApp) {
+                console.log("loading ApiClient singleton");
 
-                defineConnectionManager(connectionManager);
-                bindConnectionManagerEvents(connectionManager, events, userSettings);
+                return require(["apiclient"], function (apiClientFactory) {
+                    console.log("creating ApiClient singleton");
 
-                if (!AppInfo.isNativeApp) {
-                    console.log("loading ApiClient singleton");
+                    var apiClient = new apiClientFactory(Dashboard.serverAddress(), apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), window.devicePixelRatio);
 
-                    return require(["apiclient"], function (apiClientFactory) {
-                        console.log("creating ApiClient singleton");
+                    apiClient.enableAutomaticNetworking = false;
+                    apiClient.manualAddressOnly = true;
 
-                        var apiClient = new apiClientFactory(Dashboard.serverAddress(), apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), window.devicePixelRatio);
+                    connectionManager.addApiClient(apiClient);
 
-                        apiClient.enableAutomaticNetworking = false;
-                        apiClient.manualAddressOnly = true;
+                    window.ApiClient = apiClient;
+                    localApiClient   = apiClient;
 
-                        connectionManager.addApiClient(apiClient);
-
-                        window.ApiClient = apiClient;
-                        localApiClient   = apiClient;
-
-                        console.log("loaded ApiClient singleton");
-                    });
-                }
-
-                return Promise.resolve();
-            });
+                    console.log("loaded ApiClient singleton");
+                });
+            }
         });
     }
 
@@ -689,7 +670,7 @@ var AppInfo = {};
             libraryBrowser: "scripts/librarybrowser",
             events: apiClientBowerPath + "/events",
             credentialprovider: apiClientBowerPath + "/credentials",
-            connectionManagerFactory: bowerPath + "/apiclient/connectionManagerFactory",
+            connectionManager: bowerPath + "/apiclient/connectionManager",
             visibleinviewport: componentsPath + "/visibleinviewport",
             browserdeviceprofile: componentsPath + "/browserdeviceprofile",
             browser: componentsPath + "/browser",
@@ -869,9 +850,6 @@ var AppInfo = {};
         define("serverNotifications", [componentsPath + "/serverNotifications/serverNotifications"], returnFirstDependency);
         define("appFooter-shared", ["appFooter"], createSharedAppFooter);
         define("skinManager", [componentsPath + "/skinManager"], returnFirstDependency);
-        define("connectionManager", [], function () {
-            return ConnectionManager;
-        });
         define("apiClientResolver", [], function () {
             return function () {
                 return window.ApiClient;
