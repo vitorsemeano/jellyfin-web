@@ -14,98 +14,85 @@ define(["browser", "dom", "layoutManager", "css!components/viewManager/viewConta
             var isPluginpage = -1 !== options.url.toLowerCase().indexOf("/configurationpage");
             var newViewInfo = normalizeNewView(options, isPluginpage);
             var newView = newViewInfo.elem;
-            var dependencies = "string" == typeof newView ? null : newView.getAttribute("data-require");
-            dependencies = dependencies ? dependencies.split(",") : [];
+
 
             if (isPluginpage) {
-                dependencies.push("legacy/dashboard");
+                require(["legacy/dashboard"]);
             }
 
             if (newViewInfo.hasjQuerySelect) {
-                dependencies.push("legacy/selectmenu");
+                require(["legacy/selectmenu"]);
             }
 
             if (newViewInfo.hasjQueryChecked) {
-                dependencies.push("fnchecked");
-            }
-
-            if (newViewInfo.hasjQuery) {
-                dependencies.push("jQuery");
-            }
-
-            if (isPluginpage || newView.classList && newView.classList.contains("type-interior")) {
-                dependencies.push("dashboardcss");
+                require(["fnchecked"]);
             }
 
             return new Promise(function (resolve) {
-                dependencies.join(",");
+                var currentPage = allPages[pageIndex];
 
-                require(dependencies, function () {
-                    var currentPage = allPages[pageIndex];
+                if (currentPage) {
+                    triggerDestroy(currentPage);
+                }
 
-                    if (currentPage) {
-                        triggerDestroy(currentPage);
-                    }
+                var view = newView;
 
-                    var view = newView;
+                if ("string" == typeof view) {
+                    view = document.createElement("div");
+                    view.innerHTML = newView;
+                }
 
-                    if ("string" == typeof view) {
-                        view = document.createElement("div");
-                        view.innerHTML = newView;
-                    }
+                view.classList.add("mainAnimatedPage");
 
-                    view.classList.add("mainAnimatedPage");
-
-                    if (currentPage) {
-                        if (newViewInfo.hasScript && window.$) {
-                            view = $(view).appendTo(mainAnimatedPages)[0];
-                            mainAnimatedPages.removeChild(currentPage);
-                        } else {
-                            mainAnimatedPages.replaceChild(view, currentPage);
-                        }
+                if (currentPage) {
+                    if (newViewInfo.hasScript && window.$) {
+                        view = $(view).appendTo(mainAnimatedPages)[0];
+                        mainAnimatedPages.removeChild(currentPage);
                     } else {
-                        if (newViewInfo.hasScript && window.$) {
-                            view = $(view).appendTo(mainAnimatedPages)[0];
-                        } else {
-                            mainAnimatedPages.appendChild(view);
-                        }
+                        mainAnimatedPages.replaceChild(view, currentPage);
                     }
-
-                    if (options.type) {
-                        view.setAttribute("data-type", options.type);
+                } else {
+                    if (newViewInfo.hasScript && window.$) {
+                        view = $(view).appendTo(mainAnimatedPages)[0];
+                    } else {
+                        mainAnimatedPages.appendChild(view);
                     }
+                }
 
-                    var properties = [];
+                if (options.type) {
+                    view.setAttribute("data-type", options.type);
+                }
 
-                    if (options.fullscreen) {
-                        properties.push("fullscreen");
-                    }
+                var properties = [];
 
-                    if (properties.length) {
-                        view.setAttribute("data-properties", properties.join(","));
-                    }
+                if (options.fullscreen) {
+                    properties.push("fullscreen");
+                }
 
-                    allPages[pageIndex] = view;
+                if (properties.length) {
+                    view.setAttribute("data-properties", properties.join(","));
+                }
 
-                    if (onBeforeChange) {
-                        onBeforeChange(view, false, options);
-                    }
+                allPages[pageIndex] = view;
 
-                    beforeAnimate(allPages, pageIndex, selected);
-                    selectedPageIndex = pageIndex;
-                    currentUrls[pageIndex] = options.url;
+                if (onBeforeChange) {
+                    onBeforeChange(view, false, options);
+                }
 
-                    if (!options.cancel && previousAnimatable) {
-                        afterAnimate(allPages, pageIndex);
-                    }
+                beforeAnimate(allPages, pageIndex, selected);
+                selectedPageIndex = pageIndex;
+                currentUrls[pageIndex] = options.url;
 
-                    if (window.$) {
-                        $.mobile = $.mobile || {};
-                        $.mobile.activePage = view;
-                    }
+                if (!options.cancel && previousAnimatable) {
+                    afterAnimate(allPages, pageIndex);
+                }
 
-                    resolve(view);
-                });
+                if (window.$) {
+                    $.mobile = $.mobile || {};
+                    $.mobile.activePage = view;
+                }
+
+                resolve(view);
             });
         }
     }
