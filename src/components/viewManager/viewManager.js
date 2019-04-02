@@ -23,8 +23,8 @@ define(['viewContainer', 'focusManager', 'queryString', 'layoutManager'], functi
 
             if (options.controllerFactory) {
 
-                // Use controller method
-                var controller = new options.controllerFactory(newView, eventDetail.detail.params);
+                // Use controller method - don't remove this line, since the constructor can place events or make dom manipulation, between other things
+                new options.controllerFactory(newView, eventDetail.detail.params);
             }
 
             if (!options.controllerFactory || dispatchPageEvents) {

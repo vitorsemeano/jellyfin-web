@@ -1,33 +1,6 @@
 define(["browser", "dom", "layoutManager", "css!components/viewManager/viewContainer"], function (browser, dom, layoutManager) {
     "use strict";
 
-    function setControllerClass(view, options) {
-        if (options.controllerFactory) {
-            return Promise.resolve();
-        }
-
-        var controllerUrl = view.getAttribute("data-controller");
-
-        if (controllerUrl) {
-            if (0 === controllerUrl.indexOf("__plugin/")) {
-                controllerUrl = controllerUrl.substring("__plugin/".length);
-            }
-
-            controllerUrl = Dashboard.getConfigurationResourceUrl(controllerUrl);
-            return getRequirePromise([controllerUrl]).then(function (ControllerFactory) {
-                options.controllerFactory = ControllerFactory;
-            });
-        }
-
-        return Promise.resolve();
-    }
-
-    function getRequirePromise(deps) {
-        return new Promise(function (resolve, reject) {
-            require(deps, resolve);
-        });
-    }
-
     function loadView(options) {
         if (!options.cancel) {
             var selected = selectedPageIndex;
@@ -64,7 +37,7 @@ define(["browser", "dom", "layoutManager", "css!components/viewManager/viewConta
                 dependencies.push("dashboardcss");
             }
 
-            return new Promise(function (resolve, reject) {
+            return new Promise(function (resolve) {
                 dependencies.join(",");
 
                 require(dependencies, function () {
@@ -113,26 +86,25 @@ define(["browser", "dom", "layoutManager", "css!components/viewManager/viewConta
                     }
 
                     allPages[pageIndex] = view;
-                    setControllerClass(view, options).then(function () {
-                        if (onBeforeChange) {
-                            onBeforeChange(view, false, options);
-                        }
 
-                        beforeAnimate(allPages, pageIndex, selected);
-                        selectedPageIndex = pageIndex;
-                        currentUrls[pageIndex] = options.url;
+                    if (onBeforeChange) {
+                        onBeforeChange(view, false, options);
+                    }
 
-                        if (!options.cancel && previousAnimatable) {
-                            afterAnimate(allPages, pageIndex);
-                        }
+                    beforeAnimate(allPages, pageIndex, selected);
+                    selectedPageIndex = pageIndex;
+                    currentUrls[pageIndex] = options.url;
 
-                        if (window.$) {
-                            $.mobile = $.mobile || {};
-                            $.mobile.activePage = view;
-                        }
+                    if (!options.cancel && previousAnimatable) {
+                        afterAnimate(allPages, pageIndex);
+                    }
 
-                        resolve(view);
-                    });
+                    if (window.$) {
+                        $.mobile = $.mobile || {};
+                        $.mobile.activePage = view;
+                    }
+
+                    resolve(view);
                 });
             });
         }
@@ -221,7 +193,8 @@ define(["browser", "dom", "layoutManager", "css!components/viewManager/viewConta
 
                 var selected = selectedPageIndex;
                 var previousAnimatable = -1 === selected ? null : allPages[selected];
-                return setControllerClass(view, options).then(function () {
+
+                return new Promise(function (resolve) {
                     if (onBeforeChange) {
                         onBeforeChange(view, true, options);
                     }
@@ -239,7 +212,7 @@ define(["browser", "dom", "layoutManager", "css!components/viewManager/viewConta
                         $.mobile.activePage = view;
                     }
 
-                    return view;
+                    resolve(view);
                 });
             }
         }
