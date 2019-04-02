@@ -678,7 +678,7 @@ var AppInfo = {};
             qualityoptions: componentsPath + "/qualityoptions",
             hammer: bowerPath + "/hammerjs/hammer.min",
             page: "thirdparty/page",
-            focusManager: componentsPath + "/focusmanager",
+            focusManager: componentsPath + "/focusManager",
             datetime: componentsPath + "/datetime",
             globalize: componentsPath + "/globalize",
             itemHelper: componentsPath + "/itemhelper",
