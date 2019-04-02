@@ -1,4 +1,5 @@
 define([
+    "jQuery",
     "emby-button",
     "emby-input",
     "scripts/livetvcomponents",
@@ -10,7 +11,8 @@ define([
     "emby-checkbox",
     "emby-slider",
     "listViewStyle",
-    "dashboardcss"], function () {
+    "dashboardcss",
+    "detailtablecss"], function () {
 
     function defineRoute(newRoute) {
         var path = newRoute.path;
@@ -76,17 +78,20 @@ define([
     defineRoute({
         path: "/dlnaprofile.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "dlnaprofile"
     });
     defineRoute({
         path: "/dlnaprofiles.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "dlnaprofiles"
     });
     defineRoute({
         path: "/dlnasettings.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "dlnasettings"
     });
     defineRoute({
         path: "/edititemmetadata.html",
@@ -96,7 +101,8 @@ define([
     defineRoute({
         path: "/encodingsettings.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "encodingsettings"
     });
     defineRoute({
         path: "/forgotpassword.html",
@@ -138,7 +144,8 @@ define([
     defineRoute({
         path: "/library.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "medialibrarypage"
     });
     defineRoute({
         path: "/librarydisplay.html",
@@ -161,7 +168,8 @@ define([
     defineRoute({
         path: "/livetvguideprovider.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "livetvguideprovider"
     });
     defineRoute({
         path: "/livetvseriestimer.html",
@@ -170,12 +178,14 @@ define([
     });
     defineRoute({
         path: "/livetvsettings.html",
-        autoFocus: false
+        autoFocus: false,
+        controller: "livetvsettings"
     });
     defineRoute({
         path: "/livetvstatus.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "livetvstatus"
     });
     defineRoute({
         path: "/livetvtuner.html",
@@ -203,12 +213,14 @@ define([
     defineRoute({
         path: "/metadataimages.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "metadataimagespage"
     });
     defineRoute({
         path: "/metadatanfo.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "metadatanfo"
     });
     defineRoute({
         path: "/movies.html",
@@ -261,7 +273,8 @@ define([
     defineRoute({
         path: "/notificationsetting.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "notificationsetting"
     });
     defineRoute({
         path: "/notificationsettings.html",
@@ -281,7 +294,8 @@ define([
     defineRoute({
         path: "/playbackconfiguration.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "playbackconfiguration"
     });
     defineRoute({
         path: "/plugincatalog.html",
@@ -292,7 +306,8 @@ define([
     defineRoute({
         path: "/plugins.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "pluginspage"
     });
     defineRoute({
         path: "/scheduledtask.html",
@@ -326,12 +341,14 @@ define([
     defineRoute({
         path: "/serversecurity.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "serversecurity"
     });
     defineRoute({
         path: "/streamingsettings.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "streamingsettings"
     });
     defineRoute({
         path: "/support.html",
@@ -347,22 +364,26 @@ define([
     defineRoute({
         path: "/useredit.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "useredit"
     });
     defineRoute({
         path: "/userlibraryaccess.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "userlibraryaccess"
     });
     defineRoute({
         path: "/usernew.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "usernew"
     });
     defineRoute({
         path: "/userparentalcontrol.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "userparentalcontrol"
     });
     defineRoute({
         path: "/userpassword.html",
@@ -372,7 +393,8 @@ define([
     defineRoute({
         path: "/userprofiles.html",
         autoFocus: false,
-        roles: "admin"
+        roles: "admin",
+        controller: "userprofilespage"
     });
     defineRoute({
         path: "/wizardremoteaccess.html",
@@ -389,7 +411,8 @@ define([
     defineRoute({
         path: "/wizardlibrary.html",
         autoFocus: false,
-        anonymous: true
+        anonymous: true,
+        controller: "medialibrarypage"
     });
     defineRoute({
         path: "/wizardsettings.html",

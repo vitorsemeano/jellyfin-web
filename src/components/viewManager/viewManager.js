@@ -21,7 +21,7 @@ define(['viewContainer', 'focusManager', 'queryString', 'layoutManager'], functi
         if (!newView.initComplete) {
             newView.initComplete = true;
 
-            if (options.controllerFactory) {
+            if (typeof options.controllerFactory === 'function') {
 
                 // Use controller method - don't remove this line, since the constructor can place events or make dom manipulation, between other things
                 new options.controllerFactory(newView, eventDetail.detail.params);
