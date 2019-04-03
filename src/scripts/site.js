@@ -673,7 +673,7 @@ var AppInfo = {};
             visibleinviewport: componentsPath + "/visibleinviewport",
             browserdeviceprofile: componentsPath + "/browserdeviceprofile",
             browser: componentsPath + "/browser",
-            inputManager: componentsPath + "/inputmanager",
+            inputManager: componentsPath + "/inputManager",
             qualityoptions: componentsPath + "/qualityoptions",
             hammer: bowerPath + "/hammerjs/hammer.min",
             page: "thirdparty/page",
