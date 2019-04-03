@@ -685,7 +685,7 @@ var AppInfo = {};
             playQueueManager: componentsPath + "/playback/playqueuemanager",
             autoPlayDetect: componentsPath + "/playback/autoPlayDetect",
             nowPlayingHelper: componentsPath + "/playback/nowplayinghelper",
-            pluginManager: componentsPath + "/pluginmanager",
+            pluginManager: componentsPath + "/pluginManager",
             packageManager: componentsPath + "/packagemanager"
         };
         paths.hlsjs = bowerPath + "/hlsjs/dist/hls.min";
