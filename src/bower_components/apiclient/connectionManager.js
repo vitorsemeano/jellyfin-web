@@ -113,7 +113,7 @@ define(["events", "apiclient", "appStorage", "credentialprovider", "apphost"], f
             }, function (error) {
                 clearTimeout(timeout);
                 console.log("fetchWithTimeout: timed out connecting to url: " + url);
-                reject();
+                reject(error);
             });
         });
     }
@@ -138,7 +138,7 @@ define(["events", "apiclient", "appStorage", "credentialprovider", "apphost"], f
 
             return Promise.reject(response);
         }, function (err) {
-            throw console.log("ConnectionManager request failed to url: " + request.url), err;
+            throw console.log("ConnectionManager request failed to url: " + request.url + ' with error: ' + err);
         });
     }
 

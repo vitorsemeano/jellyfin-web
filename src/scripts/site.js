@@ -402,7 +402,7 @@ var AppInfo = {};
         } else if (browser.msie) {
             define("registerElement", [bowerPath + "/webcomponentsjs/webcomponents-lite.min.js"], returnFirstDependency);
         } else {
-            define("registerElement", [bowerPath + "/document-register-element/build/document-register-element"], returnFirstDependency);
+            define("registerElement", [bowerPath + "/document-register-element/build/document-register-element", bowerPath + "/document-register-element/build/innerHTML.max"], returnFirstDependency);
         }
 
         define("imageFetcher", [componentsPath + "/images/imageFetcher"], returnFirstDependency);
