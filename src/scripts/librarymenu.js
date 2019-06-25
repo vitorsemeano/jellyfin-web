@@ -268,7 +268,7 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
         }, {
             name: globalize.translate("TabDashboard"),
             href: "dashboard.html",
-            pageIds: ["dashboardPage", "serverActivityPage"],
+            pageIds: ["dashboardPage"],
             icon: "dashboard"
         }, {
             name: globalize.translate("General"),
@@ -284,12 +284,10 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
             name: globalize.translate("TabLibrary"),
             href: "library.html",
             pageIds: ["mediaLibraryPage", "librarySettingsPage", "libraryDisplayPage", "metadataImagesConfigurationPage", "metadataNfoPage"],
-            icon: "folder",
-            color: "#38c"
+            icon: "folder"
         }, {
             name: globalize.translate("TabPlayback"),
             icon: "play_arrow",
-            color: "#E5342E",
             href: "playbackconfiguration.html",
             pageIds: ["playbackConfigurationPage", "streamingSettingsPage"]
         }, {
@@ -310,6 +308,12 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
             icon: "devices"
         });
         links.push({
+            name: globalize.translate("HeaderActivity"),
+            href: "serveractivity.html",
+            pageIds: ["serverActivityPage"],
+            icon: "assessment"
+        });
+        links.push({
             name: globalize.translate("DLNA"),
             href: "dlnasettings.html",
             pageIds: ["dlnaSettingsPage", "dlnaProfilesPage", "dlnaProfilePage"],
@@ -323,24 +327,29 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
             name: globalize.translate("TabLiveTV"),
             href: "livetvstatus.html",
             pageIds: ["liveTvStatusPage", "liveTvTunerPage"],
-            icon: "tv"
+            icon: "live_tv"
         });
         links.push({
             name: globalize.translate("DVR"),
             href: "livetvsettings.html",
             pageIds: ["liveTvSettingsPage"],
-            icon: "list"
+            icon: "dvr"
         });
         links.push({
             divider: true,
-            name: globalize.translate("TabExpert")
+            name: globalize.translate("TabAdvanced")
         });
         links.push({
-            name: globalize.translate("TabAdvanced"),
-            icon: "code",
-            href: "dashboardhosting.html",
-            color: "#F16834",
-            pageIds: ["dashboardHostingPage", "serverSecurityPage"]
+            name: globalize.translate("TabNetworking"),
+            icon: "cloud",
+            href: "networking.html",
+            pageIds: ["networkingPage"]
+        });
+        links.push({
+            name: globalize.translate("HeaderApiKeys"),
+            icon: "vpn_key",
+            href: "apikeys.html",
+            pageIds: ["apiKeysPage"]
         });
         links.push({
             name: globalize.translate("TabLogs"),
@@ -351,14 +360,12 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
         links.push({
             name: globalize.translate("TabNotifications"),
             icon: "notifications",
-            color: "brown",
             href: "notificationsettings.html",
             pageIds: ["notificationSettingsPage", "notificationSettingPage"]
         });
         links.push({
             name: globalize.translate("TabPlugins"),
             icon: "shopping_cart",
-            color: "#9D22B1",
             href: "installedplugins.html",
             pageIds: ["pluginsPage", "pluginCatalogPage"]
         });
@@ -534,12 +541,11 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
                     else if ("livetv" === i.CollectionType) {
                         itemId = "livetv";
                     }
-
-                    else if ("photos" === i.CollectionType) {
-                        icon = "photo_library";
-                    }
-                    else if ("music" === i.CollectionType || "musicvideos" === i.CollectionType) {
+                    else if ("music" === i.CollectionType) {
                         icon = "library_music";
+                    }
+                    else if ("musicvideos" === i.CollectionType) {
+                        icon = "music_video";
                     }
                     else if ("books" === i.CollectionType) {
                         icon = "library_books";
@@ -549,6 +555,9 @@ define(["dom", "layoutManager", "inputManager", "connectionManager", "events", "
                     }
                     else if ("movies" === i.CollectionType) {
                         icon = "video_library";
+                    }
+                    else if ("homevideos" === i.CollectionType || "photos" === i.CollectionType) {
+                        icon = "photo_library";
                     }
                     else if ("channels" === i.CollectionType || "Channel" === i.Type) {
                         icon = "videocam";
