@@ -213,17 +213,14 @@ var Dashboard = {
         }
     },
     capabilities: function (appHost) {
-        var caps = {
+        var capabilities = {
             PlayableMediaTypes: ["Audio", "Video"],
             SupportedCommands: ["MoveUp", "MoveDown", "MoveLeft", "MoveRight", "PageUp", "PageDown", "PreviousLetter", "NextLetter", "ToggleOsd", "ToggleContextMenu", "Select", "Back", "SendKey", "SendString", "GoHome", "GoToSettings", "VolumeUp", "VolumeDown", "Mute", "Unmute", "ToggleMute", "SetVolume", "SetAudioStreamIndex", "SetSubtitleStreamIndex", "DisplayContent", "GoToSearch", "DisplayMessage", "SetRepeatMode", "ChannelUp", "ChannelDown", "PlayMediaSource", "PlayTrailers"],
             SupportsPersistentIdentifier: "cordova" === self.appMode || "android" === self.appMode,
             SupportsMediaControl: true
         };
-        caps.IconUrl = appHost.deviceIconUrl();
-        caps.SupportsSync = appHost.supports("sync");
-        caps.SupportsContentUploading = appHost.supports("cameraupload");
         appHost.getPushTokenInfo();
-        return caps = Object.assign(caps, appHost.getPushTokenInfo());
+        return capabilities = Object.assign(capabilities, appHost.getPushTokenInfo());
     }
 };
 var AppInfo = {};
@@ -483,6 +480,9 @@ var AppInfo = {};
                     loadCoreDictionary(globalize).then(function () {
                         onGlobalizeInit(browser);
                     });
+                });
+                require(["keyboardnavigation"], function(keyboardnavigation) {
+                    keyboardnavigation.enable();
                 });
             });
         });
@@ -877,6 +877,7 @@ var AppInfo = {};
         define("serverNotifications", [componentsPath + "/serverNotifications/serverNotifications"], returnFirstDependency);
         define("appFooter-shared", ["appFooter"], createSharedAppFooter);
         define("skinManager", [componentsPath + "/skinManager"], returnFirstDependency);
+        define("keyboardnavigation", [componentsPath + "/keyboardnavigation"], returnFirstDependency);
         define("connectionManager", [], function () {
             return ConnectionManager;
         });
@@ -1012,6 +1013,9 @@ var AppInfo = {};
                 }
 
                 if ("livetv" === item) {
+                    if ("programs" === options.section) {
+                        return "livetv.html?tab=0&serverId=" + options.serverId;
+                    }					
                     if ("guide" === options.section) {
                         return "livetv.html?tab=1&serverId=" + options.serverId;
                     }
@@ -1042,6 +1046,10 @@ var AppInfo = {};
 
                     if ("dvrschedule" === options.section) {
                         return "livetv.html?tab=4&serverId=" + options.serverId;
+                    }
+
+                    if ("seriesrecording" === options.section) {
+                        return "livetv.html?tab=5&serverId=" + options.serverId;
                     }
 
                     return "livetv.html?serverId=" + options.serverId;
@@ -1144,7 +1152,7 @@ var AppInfo = {};
     })();
 
     require(["css!css/site"]);
-    
+
     return require(["browser"], onWebComponentsReady);
 }();
 pageClassOn("viewshow", "standalonePage", function () {
