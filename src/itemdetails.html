@@ -71,6 +71,17 @@
                             <span>${ButtonPlay}</span>
                         </button>
 
+                        <button is="emby-button" type="button" class="button-flat btnDownload hide detailButton-mobile">
+                            <div class="detailButton-mobile-content">
+                                <i class="md-icon detailButton-mobile-icon">&#xe884;</i>
+                                <div class="detailButton-mobile-text">${ButtonDownload}</div>
+                            </div>
+                        </button>
+
+                        <button is="emby-button" type="button" class="raised btnDownload hide detailButton">
+                            <span>${ButtonDownload}</span>
+                        </button>
+
                         <button is="emby-button" type="button" class="button-flat btnPlayTrailer hide detailButton-mobile">
                             <div class="detailButton-mobile-content">
                                 <i class="md-icon detailButton-mobile-icon">&#xE8DA;</i>
@@ -157,6 +168,10 @@
 
                         <button is="emby-ratingbutton" type="button" class="fab btnUserRating hide detailButton">
                             <i class="md-icon">&#xE87D;</i>
+                        </button>
+
+                        <button is="emby-button" type="button" class="fab btnSplitVersions hide  detailButton">
+                            <i class="md-icon">&#xe0b6;</i>
                         </button>
 
                         <button is="emby-button" type="button" class="button-flat btnMoreCommands hide detailButton-mobile">
@@ -290,16 +305,6 @@
                 <div class="scrollerframe padded-top-focusscale padded-bottom-focusscale">
                     <div is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer similarContent"></div>
                 </div>
-            </div>
-        </div>
-
-        <div class="verticalSection detailVerticalSection audioVideoMediaInfo hide">
-            <h2 class="sectionTitle padded-left" style="margin-bottom:0;">${HeaderMediaInfo}</h2>
-            <div class="padded-left padded-right">
-                <div class="splitVersionContainer" style="border-bottom: 1px solid #444; padding: 1em 0;">
-                    <button is="emby-button" type="button" class="raised btnSplitVersions subdued">${ButtonSplitVersionsApart}</button>
-                </div>
-                <div id="mediaInfoContent" class="mediaInfoContent"></div>
             </div>
         </div>
     </div>
