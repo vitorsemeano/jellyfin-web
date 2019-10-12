@@ -1,4 +1,4 @@
-define(["playbackManager", "dom", "inputmanager", "datetime", "itemHelper", "mediaInfo", "focusManager", "imageLoader", "scrollHelper", "events", "connectionManager", "browser", "globalize", "apphost", "layoutManager", "userSettings", "scrollStyles", "emby-slider", "paper-icon-button-light", "css!css/videoosd"], function (playbackManager, dom, inputManager, datetime, itemHelper, mediaInfo, focusManager, imageLoader, scrollHelper, events, connectionManager, browser, globalize, appHost, layoutManager, userSettings) {
+define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "mediaInfo", "focusManager", "imageLoader", "scrollHelper", "events", "connectionManager", "browser", "globalize", "apphost", "layoutManager", "userSettings", "scrollStyles", "emby-slider", "paper-icon-button-light", "css!css/videoosd"], function (playbackManager, dom, inputManager, datetime, itemHelper, mediaInfo, focusManager, imageLoader, scrollHelper, events, connectionManager, browser, globalize, appHost, layoutManager, userSettings) {
     "use strict";
 
     function seriesImageUrl(item, options) {
@@ -925,7 +925,7 @@ define(["playbackManager", "dom", "inputmanager", "datetime", "itemHelper", "med
                 if (player) {
 
                     // show subtitle offset feature only if player and media support it
-                    var showSubOffset = playbackManager.supportSubtitleOffset(player) && 
+                    var showSubOffset = playbackManager.supportSubtitleOffset(player) &&
                         playbackManager.canHandleOffsetOnCurrentSubtitle(player);
 
                     playerSettingsMenu.show({
@@ -1047,7 +1047,7 @@ define(["playbackManager", "dom", "inputmanager", "datetime", "itemHelper", "med
                         playbackManager.setSubtitleStreamIndex(index, player);
                     }
 
-                    toggleSubtitleSync();                    
+                    toggleSubtitleSync();
                 });
             });
         }
@@ -1223,6 +1223,7 @@ define(["playbackManager", "dom", "inputmanager", "datetime", "itemHelper", "med
         var programEndDateMs = 0;
         var playbackStartTimeTicks = 0;
         var subtitleSyncOverlay;
+        var volumeSliderTimer;
         var nowPlayingVolumeSlider = view.querySelector(".osdVolumeSlider");
         var nowPlayingVolumeSliderContainer = view.querySelector(".osdVolumeSliderContainer");
         var nowPlayingPositionSlider = view.querySelector(".osdPositionSlider");
@@ -1345,13 +1346,34 @@ define(["playbackManager", "dom", "inputmanager", "datetime", "itemHelper", "med
             playbackManager.toggleMute(currentPlayer);
         });
         nowPlayingVolumeSlider.addEventListener("change", function () {
+            if(volumeSliderTimer){
+                // interupt and remove existing timer
+                clearTimeout(volumeSliderTimer);
+                volumeSliderTimer = null;
+            }
             playbackManager.setVolume(this.value, currentPlayer);
         });
         nowPlayingVolumeSlider.addEventListener("mousemove", function () {
-            playbackManager.setVolume(this.value, currentPlayer);
+            if(!volumeSliderTimer){
+                var that = this;
+                // register new timer
+                volumeSliderTimer = setTimeout(function(){
+                    playbackManager.setVolume(that.value, currentPlayer);
+                    // delete timer after completion
+                    volumeSliderTimer = null;
+                }, 700);
+            }
         });
         nowPlayingVolumeSlider.addEventListener("touchmove", function () {
-            playbackManager.setVolume(this.value, currentPlayer);
+            if(!volumeSliderTimer){
+                var that = this;
+                // register new timer
+                volumeSliderTimer = setTimeout(function(){
+                    playbackManager.setVolume(that.value, currentPlayer);
+                    // delete timer after completion
+                    volumeSliderTimer = null;
+                }, 700);
+            }
         });
 
         nowPlayingPositionSlider.addEventListener("change", function () {

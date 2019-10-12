@@ -10,17 +10,26 @@
     "eslint": "^5.16.0",
     "file-loader": "^3.0.1",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.5",
-    "webpack-cli": "^3.2.3"
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "flv.js": "^1.5.0",
     "jstree": "^3.3.7",
-    "hls.js": "^0.12.4"
+    "jquery": "^3.4.1",
+    "hls.js": "^0.12.4",
+    "howler": "^2.1.2",
+    "shaka-player": "^2.5.5",
+    "swiper": "^4.5.0",
+    "sortablejs": "^1.9.0",
+    "libjass": "^0.11.0"
   },
   "scripts": {
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
+    "serve": "webpack-dev-server --config webpack.dev.js --open",
+    "build": "webpack --config webpack.prod.js",
     "lint": "eslint \"src\"",
-    "prepare": "webpack --mode production"
+    "prepare": "webpack --config webpack.prod.js"
   }
 }

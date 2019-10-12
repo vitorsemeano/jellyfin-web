@@ -166,7 +166,6 @@
     "ButtonOff": "Desactivado",
     "ButtonOk": "Aceptar",
     "ButtonOpen": "Abrir",
-    "ButtonOther": "Otro",
     "ButtonParentalControl": "Control parental",
     "ButtonPause": "Pausar",
     "ButtonPlay": "Reproducir",
@@ -222,7 +221,6 @@
     "ButtonSignUp": "Registrarse",
     "ButtonSkip": "Saltear",
     "ButtonSort": "Ordenar",
-    "ButtonSplitVersionsApart": "Dividir versiones aparte",
     "ButtonStart": "Iniciar",
     "ButtonStop": "Detener",
     "ButtonStopRecording": "Detener grabación",
@@ -237,7 +235,6 @@
     "ButtonUnmute": "Desilenciar",
     "ButtonUp": "Arriba",
     "ButtonUpdateNow": "Actualizar ahora",
-    "ButtonUpload": "Cargar",
     "ButtonView": "Ver",
     "ButtonViewAlbum": "Ver álbum",
     "ButtonViewArtist": "Ver artista",
@@ -397,7 +394,6 @@
     "FolderTypeMusic": "Música",
     "FolderTypeMusicVideos": "Videos Musicales",
     "FolderTypeUnset": "Sin especificar (Contenido Mixto)",
-    "ForAdditionalLiveTvOptions": "Para proveedores adicionales de TV en Vivo, hacé click en la pestaña Servicios para ver las opciones disponibles.",
     "FormatValue": "Formato: {0}",
     "Friday": "Viernes",
     "Fullscreen": "Pantalla Completa",
@@ -409,5 +405,10 @@
     "GuestStar": "Estrella invitada",
     "Guide": "Guía",
     "GuideProviderLogin": "Iniciar Sesión",
-    "GuideProviderSelectListings": "Seleccionar Listados"
+    "GuideProviderSelectListings": "Seleccionar Listados",
+    "HeaderFavoriteSongs": "Canciones favoritas",
+    "HeaderFavoriteShows": "Programas favoritos",
+    "HeaderFavoriteEpisodes": "Episodios favoritos",
+    "HeaderFavoriteArtists": "Artistas favoritos",
+    "HeaderFavoriteAlbums": "Álbumes favoritos"
 }
