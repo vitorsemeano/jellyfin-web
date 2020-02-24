@@ -419,13 +419,13 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         var offset = parentNameLast ? ".25em" : ".5em";
 
         if (html && !parentNameLast) {
-            html += '<h3 class="itemName" style="margin: .25em 0 .5em;">' + name + '</h3>';
+            html += '<h3 class="itemName infoText" style="margin: .25em 0 .5em;">' + name + '</h3>';
         } else {
-            html = '<h1 class="itemName" style="margin: .1em 0 ' + offset + ';">' + name + "</h1>" + html;
+            html = '<h1 class="itemName infoText" style="margin: .1em 0 ' + offset + ';">' + name + "</h1>" + html;
         }
 
         if (item.OriginalTitle && item.OriginalTitle != item.Name) {
-            html += '<h4 class="itemName" style="margin: -' + offset + ' 0 0">' + item.OriginalTitle + '</h4>';
+            html += '<h4 class="itemName infoText" style="margin: -' + offset + ' 0 0">' + item.OriginalTitle + '</h4>';
         }
 
         container.innerHTML = html;
@@ -445,6 +445,14 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         }
     }
 
+    function renderBackdrop(page, item, apiClient) {
+        if (dom.getWindowSize().innerWidth >= 1000) {
+            backdrop.setBackdrops([item]);
+        } else {
+            backdrop.clear();
+        }
+    }
+
     function renderDetailPageBackdrop(page, item, apiClient) {
         var imgUrl;
         var screenWidth = screen.availWidth;
@@ -453,13 +461,13 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         var usePrimaryImage = item.MediaType === "Video" && item.Type !== "Movie" && item.Type !== "Trailer" ||
             item.MediaType && item.MediaType !== "Video" ||
             item.Type === "MusicAlbum" ||
-            item.Type === "MusicArtist";
+            item.Type === "MusicArtist" ||
+            item.Type === "Person";
 
         if ("Program" === item.Type && item.ImageTags && item.ImageTags.Thumb) {
             imgUrl = apiClient.getScaledImageUrl(item.Id, {
                 type: "Thumb",
                 index: 0,
-                maxWidth: screenWidth,
                 tag: item.ImageTags.Thumb
             });
             itemBackdropElement.classList.remove("noBackdrop");
@@ -469,7 +477,6 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             imgUrl = apiClient.getScaledImageUrl(item.Id, {
                 type: "Primary",
                 index: 0,
-                maxWidth: screenWidth,
                 tag: item.ImageTags.Primary
             });
             itemBackdropElement.classList.remove("noBackdrop");
@@ -479,7 +486,6 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             imgUrl = apiClient.getScaledImageUrl(item.Id, {
                 type: "Backdrop",
                 index: 0,
-                maxWidth: screenWidth,
                 tag: item.BackdropImageTags[0]
             });
             itemBackdropElement.classList.remove("noBackdrop");
@@ -489,8 +495,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             imgUrl = apiClient.getScaledImageUrl(item.ParentBackdropItemId, {
                 type: "Backdrop",
                 index: 0,
-                tag: item.ParentBackdropImageTags[0],
-                maxWidth: screenWidth
+                tag: item.ParentBackdropImageTags[0]
             });
             itemBackdropElement.classList.remove("noBackdrop");
             imageLoader.lazyImage(itemBackdropElement, imgUrl, false);
@@ -499,7 +504,6 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             imgUrl = apiClient.getScaledImageUrl(item.Id, {
                 type: "Thumb",
                 index: 0,
-                maxWidth: screenWidth,
                 tag: item.ImageTags.Thumb
             });
             itemBackdropElement.classList.remove("noBackdrop");
@@ -510,11 +514,18 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             itemBackdropElement.style.backgroundImage = "";
         }
 
+        if ("Person" === item.Type) {
+            itemBackdropElement.classList.add("personBackdrop");
+        } else {
+            itemBackdropElement.classList.remove("personBackdrop");
+        }
+
         return hasbackdrop;
     }
 
     function reloadFromItem(instance, page, params, item, user) {
         var context = params.context;
+        page.querySelector(".detailPagePrimaryContainer").classList.add("detailSticky");
         renderName(item, page.querySelector(".nameContainer"), false, context);
         var apiClient = connectionManager.getApiClient(item.ServerId);
         renderSeriesTimerEditor(page, item, apiClient, user);
@@ -525,13 +536,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         setInitialCollapsibleState(page, item, apiClient, context, user);
         renderDetails(page, item, apiClient, context);
         renderTrackSelections(page, instance, item);
-
-        if (dom.getWindowSize().innerWidth >= 1000) {
-            backdrop.setBackdrops([item]);
-        } else {
-            backdrop.clear();
-        }
-
+        renderBackdrop(page, item, apiClient);
         renderDetailPageBackdrop(page, item, apiClient);
         var canPlay = reloadPlayButtons(page, item);
 
@@ -617,24 +622,9 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             hideAll(page, "btnDownload", true);
         }
 
-        try {
-            require(["focusManager"], function (focusManager) {
-                [".btnResume", ".btnPlay"].every(function (cls) {
-                    var elems = page.querySelectorAll(cls);
-
-                    for (var i = 0; i < elems.length; i++) {
-                        if (focusManager.isCurrentlyFocusable(elems[i])) {
-                            focusManager.focus(elems[i]);
-                            return false;
-                        }
-                    }
-
-                    return true;
-                });
-            });
-        } catch (e) {
-            console.log(e);
-        }
+        require(["autoFocuser"], function (autoFocuser) {
+            autoFocuser.autoFocus(page);
+        });
     }
 
     function logoImageUrl(item, apiClient, options) {
@@ -753,12 +743,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             editable = false;
         }
 
-        if ("Person" !== item.Type) {
-            elem.classList.add("detailimg-hidemobile");
-            page.querySelector(".detailPageContent").classList.add("detailPageContent-nodetailimg");
-        } else {
-            page.querySelector(".detailPageContent").classList.remove("detailPageContent-nodetailimg");
-        }
+        elem.classList.add("detailimg-hidemobile");
 
         var imageTags = item.ImageTags || {};
 
@@ -813,24 +798,26 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             });
         }
 
-        html += '<div style="position:relative;">';
-
-        if (editable) {
-            html += "<a class='itemDetailGalleryLink' is='emby-linkbutton' style='display:block;padding:2px;margin:0;' href='#'>";
+        if (editable && url === undefined) {
+            html += "<a class='itemDetailGalleryLink itemDetailImage defaultCardBackground defaultCardBackground"+ cardBuilder.getDefaultBackgroundClass(item.Name) + "' is='emby-linkbutton' style='display:block;margin:0;padding:0;' href='#'>";
+        } else if (!editable && url === undefined) {
+            html += "<div class='itemDetailGalleryLink itemDetailImage defaultCardBackground defaultCardBackground"+ cardBuilder.getDefaultBackgroundClass(item.Name) + "' is='emby-linkbutton' style='display:block;margin:0;padding:0;' href='#'>";
+        } else if (editable) {
+            html += "<a class='itemDetailGalleryLink' is='emby-linkbutton' style='display:block;margin:0;padding:0;' href='#'>";
         }
 
-        if (detectRatio && item.PrimaryImageAspectRatio) {
-            if (item.PrimaryImageAspectRatio >= 1.48) {
-                shape = "thumb";
-            } else if (item.PrimaryImageAspectRatio >= .85 && item.PrimaryImageAspectRatio <= 1.34) {
-                shape = "square";
-            }
+        if (url) {
+            html += "<img class='itemDetailImage lazy' src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' />";
         }
 
-        html += "<img class='itemDetailImage lazy' src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=' />";
+        if (url === undefined) {
+            html += cardBuilder.getDefaultText(item);
+        }
 
         if (editable) {
             html += "</a>";
+        } else if (!editable && url === undefined) {
+            html += "</div>"
         }
 
         var progressHtml = item.IsFolder || !item.UserData ? "" : indicators.getProgressBarHtml(item);
@@ -841,8 +828,15 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         }
 
         html += "</div>";
-        html += "</div>";
         elem.innerHTML = html;
+
+        if (detectRatio && item.PrimaryImageAspectRatio) {
+            if (item.PrimaryImageAspectRatio >= 1.48) {
+                shape = "thumb";
+            } else if (item.PrimaryImageAspectRatio >= 0.85 && item.PrimaryImageAspectRatio <= 1.34) {
+                shape = "square";
+            }
+        }
 
         if ("thumb" == shape) {
             elem.classList.add("thumbDetailImageContainer");
@@ -857,7 +851,6 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             elem.classList.add("portraitDetailImageContainer");
             elem.classList.remove("squareDetailImageContainer");
         }
-
 
         if (url) {
             imageLoader.lazyImage(elem.querySelector("img"), url);
@@ -911,7 +904,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
 
             var html = cardBuilder.getCardsHtml({
                 items: result.Items,
-                shape: getThumbShape(false),
+                shape: "overflowBackdrop",
                 showTitle: true,
                 displayAsSpecial: "Season" == item.Type && item.IndexNumber,
                 overlayText: false,
@@ -1071,11 +1064,6 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
 
         var overview = page.querySelector(".overview");
         var externalLinksElem = page.querySelector(".itemExternalLinks");
-
-        if ("Season" !== item.Type && "MusicAlbum" !== item.Type && "MusicArtist" !== item.Type) {
-            overview.classList.add("detailsHiddenOnMobile");
-            externalLinksElem.classList.add("detailsHiddenOnMobile");
-        }
 
         renderOverview([overview], item);
         var i;
@@ -1287,7 +1275,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
                     coverImage: "MusicAlbum" == item.Type || "MusicArtist" == item.Type,
                     overlayPlayButton: true,
                     overlayText: false,
-                    showYear: "Movie" === item.Type || "Trailer" === item.Type
+                    showYear: "Movie" === item.Type || "Trailer" === item.Type || "Series" === item.Type
                 });
                 var similarContent = similarCollapsible.querySelector(".similarContent");
                 similarContent.innerHTML = html;
@@ -1416,7 +1404,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
                 scrollX = enableScrollX();
                 html = cardBuilder.getCardsHtml({
                     items: result.Items,
-                    shape: getPortraitShape(),
+                    shape: "overflowPortrait",
                     showTitle: true,
                     centerText: true,
                     lazy: true,
@@ -1435,7 +1423,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
                 if ("Episode" === item.Type) {
                     html = cardBuilder.getCardsHtml({
                         items: result.Items,
-                        shape: getThumbShape(scrollX),
+                        shape: "overflowBackdrop",
                         showTitle: true,
                         displayAsSpecial: "Season" == item.Type && item.IndexNumber,
                         playFromHere: true,
@@ -1730,6 +1718,12 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             hideAll(page, "btnPlay", false);
             hideAll(page, "btnShuffle", false);
         }
+
+        // HACK: Call autoFocuser again because btnPlay may be hidden, but focused by reloadFromItem
+        // FIXME: Sometimes focus does not move until all (?) sections are loaded
+        require(["autoFocuser"], function (autoFocuser) {
+            autoFocuser.autoFocus(page);
+        });
     }
 
     function renderCollectionItemType(page, parentItem, type, items) {
@@ -1739,7 +1733,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         html += '<h2 class="sectionTitle sectionTitle-cards">';
         html += "<span>" + type.name + "</span>";
         html += "</h2>";
-        html += '<button class="btnAddToCollection sectionTitleButton" type="button" is="paper-icon-button-light" style="margin-left:1em;"><i class="md-icon" icon="add">&#xE145;</i></button>';
+        html += '<button class="btnAddToCollection sectionTitleButton" type="button" is="paper-icon-button-light" style="margin-left:1em;"><i class="material-icons" icon="add">add</i></button>';
         html += "</div>";
         html += '<div is="emby-itemscontainer" class="itemsContainer collectionItemsContainer vertical-wrap padded-left padded-right">';
         var shape = "MusicAlbum" == type.type ? getSquareShape(false) : getPortraitShape(false);
@@ -1747,6 +1741,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
             items: items,
             shape: shape,
             showTitle: true,
+            showYear: "Video" === type.mediaType || "Series" === type.type,
             centerText: true,
             lazy: true,
             showDetailsMenu: true,
@@ -1867,7 +1862,7 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
                 coverImage: true,
                 serverId: item.ServerId,
                 width: 160,
-                shape: getPortraitShape()
+                shape: "overflowPortrait"
             });
         });
     }
@@ -2108,7 +2103,10 @@ define(["loading", "appRouter", "layoutManager", "connectionManager", "cardBuild
         });
         view.addEventListener("viewshow", function (e) {
             var page = this;
-            libraryMenu.setTransparentMenu(true);
+
+            if (layoutManager.mobile) {
+                libraryMenu.setTransparentMenu(true);
+            }
 
             if (e.detail.isRestored) {
                 if (currentItem) {

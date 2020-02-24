@@ -74,7 +74,7 @@ define(['dialogHelper', 'connectionManager', 'dom', 'loading', 'scrollHelper', '
             return false;
         }
 
-        if (file.type !== "image/png" && file.type !== "image/x-png" && file.type !== "image/jpeg") {
+        if (!file.type.startsWith("image/")) {
             require(['toast'], function (toast) {
                 toast(globalize.translate('MessageImageFileTypeAllowed'));
             });
@@ -150,7 +150,7 @@ define(['dialogHelper', 'connectionManager', 'dom', 'loading', 'scrollHelper', '
                 scrollHelper.centerFocus.on(dlg, false);
             }
 
-            // Has to be assigned a z-index after the call to .open() 
+            // Has to be assigned a z-index after the call to .open()
             dlg.addEventListener('close', function () {
 
                 if (layoutManager.tv) {

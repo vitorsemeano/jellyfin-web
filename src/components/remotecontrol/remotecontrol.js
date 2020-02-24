@@ -135,7 +135,7 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             apiClient.getItem(apiClient.getCurrentUserId(), item.Id).then(function (fullItem) {
                 var userData = fullItem.UserData || {};
                 var likes = null == userData.Likes ? "" : userData.Likes;
-                context.querySelector(".nowPlayingPageUserDataButtons").innerHTML = '<button is="emby-ratingbutton" type="button" class="listItemButton paper-icon-button-light" data-id="' + fullItem.Id + '" data-serverid="' + fullItem.ServerId + '" data-itemtype="' + fullItem.Type + '" data-likes="' + likes + '" data-isfavorite="' + userData.IsFavorite + '"><i class="md-icon">&#xE87D;</i></button>';
+                context.querySelector(".nowPlayingPageUserDataButtons").innerHTML = '<button is="emby-ratingbutton" type="button" class="listItemButton paper-icon-button-light" data-id="' + fullItem.Id + '" data-serverid="' + fullItem.ServerId + '" data-itemtype="' + fullItem.Type + '" data-likes="' + likes + '" data-isfavorite="' + userData.IsFavorite + '"><i class="material-icons">favorite</i></button>';
             });
         } else {
             backdrop.clear();
@@ -179,15 +179,15 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             if (player) {
                 switch (playbackManager.getRepeatMode(player)) {
                     case "RepeatNone":
-                    playbackManager.setRepeatMode("RepeatAll", player);
-                    break;
+                        playbackManager.setRepeatMode("RepeatAll", player);
+                        break;
 
                     case "RepeatAll":
-                    playbackManager.setRepeatMode("RepeatOne", player);
-                    break;
+                        playbackManager.setRepeatMode("RepeatOne", player);
+                        break;
 
                     case "RepeatOne":
-                    playbackManager.setRepeatMode("RepeatNone", player);
+                        playbackManager.setRepeatMode("RepeatNone", player);
                 }
             }
         }
@@ -203,16 +203,22 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             updateAudioTracksDisplay(player, context);
             updateSubtitleTracksDisplay(player, context);
 
-            if (-1 != supportedCommands.indexOf("DisplayMessage")) {
+            if (-1 != supportedCommands.indexOf("DisplayMessage") && !currentPlayer.isLocalPlayer) {
                 context.querySelector(".sendMessageSection").classList.remove("hide");
             } else {
                 context.querySelector(".sendMessageSection").classList.add("hide");
             }
 
-            if (-1 != supportedCommands.indexOf("SendString")) {
+            if (-1 != supportedCommands.indexOf("SendString") && !currentPlayer.isLocalPlayer) {
                 context.querySelector(".sendTextSection").classList.remove("hide");
             } else {
                 context.querySelector(".sendTextSection").classList.add("hide");
+            }
+
+            if (-1 != supportedCommands.indexOf("Select") && !currentPlayer.isLocalPlayer) {
+                context.querySelector(".navigationSection").classList.remove("hide");
+            } else {
+                context.querySelector(".navigationSection").classList.add("hide");
             }
 
             buttonVisible(context.querySelector(".btnStop"), null != item);
@@ -257,13 +263,13 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             var toggleRepeatButton = context.querySelector(".repeatToggleButton");
 
             if ("RepeatAll" == repeatMode) {
-                toggleRepeatButton.innerHTML = "<i class='md-icon'>repeat</i>";
+                toggleRepeatButton.innerHTML = "<i class='material-icons'>repeat</i>";
                 toggleRepeatButton.classList.add("repeatButton-active");
             } else if ("RepeatOne" == repeatMode) {
-                toggleRepeatButton.innerHTML = "<i class='md-icon'>repeat_one</i>";
+                toggleRepeatButton.innerHTML = "<i class='material-icons'>repeat_one</i>";
                 toggleRepeatButton.classList.add("repeatButton-active");
             } else {
-                toggleRepeatButton.innerHTML = "<i class='md-icon'>repeat</i>";
+                toggleRepeatButton.innerHTML = "<i class='material-icons'>repeat</i>";
                 toggleRepeatButton.classList.remove("repeatButton-active");
             }
         }
@@ -273,8 +279,6 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             var supportedCommands = currentPlayerSupportedCommands;
             var showMuteButton = true;
             var showVolumeSlider = true;
-            var volumeSlider = view.querySelector('.nowPlayingVolumeSliderContainer');
-            var progressElement = volumeSlider.querySelector('.mdl-slider-background-lower');
 
             if (-1 === supportedCommands.indexOf("Mute")) {
                 showMuteButton = false;
@@ -295,10 +299,6 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             } else {
                 view.querySelector(".buttonMute").setAttribute("title", globalize.translate("Mute"));
                 view.querySelector(".buttonMute i").innerHTML = "&#xE050;";
-            }
-
-            if (progressElement) {
-                progressElement.style.width = (volumeLevel || 0) + '%';
             }
 
             if (showMuteButton) {
@@ -326,7 +326,7 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
         function updatePlayPauseState(isPaused, isActive) {
             var context = dlg;
             var btnPlayPause = context.querySelector(".btnPlayPause");
-            btnPlayPause.querySelector("i").innerHTML = isPaused ? "play_arrow" : "pause";
+            btnPlayPause.querySelector("i").innerHTML = isPaused ? "&#xE037;" : "pause";
             buttonVisible(btnPlayPause, isActive);
         }
 
@@ -609,15 +609,27 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
                 return datetime.getDisplayRunningTime(ticks);
             };
 
-            context.querySelector(".nowPlayingVolumeSlider").addEventListener("change", function () {
+            var volumeSliderTimer;
+
+            function setVolume() {
+                clearTimeout(volumeSliderTimer);
+                volumeSliderTimer = null;
+
                 playbackManager.setVolume(this.value, currentPlayer);
-            });
-            context.querySelector(".nowPlayingVolumeSlider").addEventListener("mousemove", function () {
-                playbackManager.setVolume(this.value, currentPlayer);
-            });
-            context.querySelector(".nowPlayingVolumeSlider").addEventListener("touchmove", function () {
-                playbackManager.setVolume(this.value, currentPlayer);
-            });
+            }
+
+            function setVolumeDelayed() {
+                if (!volumeSliderTimer) {
+                    var that = this;
+                    volumeSliderTimer = setTimeout(function () {
+                        setVolume.call(that);
+                    }, 700);
+                }
+            }
+
+            context.querySelector(".nowPlayingVolumeSlider").addEventListener("change", setVolume);
+            context.querySelector(".nowPlayingVolumeSlider").addEventListener("mousemove", setVolumeDelayed);
+            context.querySelector(".nowPlayingVolumeSlider").addEventListener("touchmove", setVolumeDelayed);
             context.querySelector(".buttonMute").addEventListener("click", function () {
                 playbackManager.toggleMute(currentPlayer);
             });

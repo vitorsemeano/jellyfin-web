@@ -70,15 +70,14 @@ define(['dialogHelper', 'inputManager', 'connectionManager', 'layoutManager', 'f
 
         var tabIndex = canFocus ? '' : ' tabindex="-1"';
         autoFocus = autoFocus ? ' autofocus' : '';
-        return '<button is="paper-icon-button-light" class="autoSize ' + cssClass + '"' + tabIndex + autoFocus + '><i class="md-icon slideshowButtonIcon">' + icon + '</i></button>';
+        return '<button is="paper-icon-button-light" class="autoSize ' + cssClass + '"' + tabIndex + autoFocus + '><i class="material-icons slideshowButtonIcon">' + icon + '</i></button>';
     }
 
     function setUserScalable(scalable) {
 
         try {
             appHost.setUserScalable(scalable);
-        }
-        catch (err) {
+        } catch (err) {
             console.log('error in appHost.setUserScalable: ' + err);
         }
     }
@@ -213,13 +212,15 @@ define(['dialogHelper', 'inputManager', 'connectionManager', 'layoutManager', 'f
                     // Optional parameters
                     direction: 'horizontal',
                     loop: options.loop !== false,
-                    autoplay: options.interval || 8000,
+                    autoplay: {
+                        delay: options.interval || 8000
+                    },
                     // Disable preloading of all images
                     preloadImages: false,
                     // Enable lazy loading
-                    lazyLoading: true,
-                    lazyLoadingInPrevNext: true,
-                    autoplayDisableOnInteraction: false,
+                    lazy: true,
+                    loadPrevNext: true,
+                    disableOnInteraction: false,
                     initialSlide: options.startIndex || 0,
                     speed: 240
                 });
@@ -348,7 +349,7 @@ define(['dialogHelper', 'inputManager', 'connectionManager', 'layoutManager', 'f
 
             var btnSlideshowPause = dlg.querySelector('.btnSlideshowPause i');
             if (btnSlideshowPause) {
-                btnSlideshowPause.innerHTML = "play_arrow";
+                btnSlideshowPause.innerHTML = "&#xE037;";
             }
 
             swiperInstance.stopAutoplay();

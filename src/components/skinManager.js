@@ -20,7 +20,7 @@ define(['apphost', 'userSettings', 'browser', 'events', 'pluginManager', 'backdr
         } else {
             Emby.Page.goHome();
         }
-    };
+    }
 
     function getThemes() {
         return [{
@@ -35,19 +35,16 @@ define(['apphost', 'userSettings', 'browser', 'events', 'pluginManager', 'backdr
             isDefault: true,
             isDefaultServerDashboard: true
         }, {
-            name: "Emby",
-            id: "emby",
-        }, {
             name: "Light",
             id: "light"
         }, {
             name: "Purple Haze",
-            id: "purple-haze"
+            id: "purplehaze"
         }, {
             name: "Windows Media Center",
             id: "wmc"
         }];
-    };
+    }
 
     var skinManager = {
         getThemes: getThemes,
@@ -72,7 +69,7 @@ define(['apphost', 'userSettings', 'browser', 'events', 'pluginManager', 'backdr
 
         selectedTheme = selectedTheme || defaultTheme;
         return {
-            stylesheetPath: require.toUrl('components/themes/' + selectedTheme.id + '/theme.css'),
+            stylesheetPath: require.toUrl('themes/' + selectedTheme.id + '/theme.css'),
             themeId: selectedTheme.id
         };
     }

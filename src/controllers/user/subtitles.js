@@ -1,4 +1,4 @@
-define(["subtitleSettings", "userSettingsBuilder", "userSettings"], function (SubtitleSettings, userSettingsBuilder, currentUserSettings) {
+define(["subtitleSettings", "userSettings", "autoFocuser"], function (SubtitleSettings, currentUserSettings, autoFocuser) {
     "use strict";
 
     return function (view, params) {
@@ -11,7 +11,7 @@ define(["subtitleSettings", "userSettingsBuilder", "userSettings"], function (Su
         var subtitleSettingsInstance;
         var hasChanges;
         var userId = params.userId || ApiClient.getCurrentUserId();
-        var userSettings = userId === ApiClient.getCurrentUserId() ? currentUserSettings : new userSettingsBuilder();
+        var userSettings = userId === ApiClient.getCurrentUserId() ? currentUserSettings : new userSettings();
         view.addEventListener("viewshow", function () {
             window.addEventListener("beforeunload", onBeforeUnload);
 
@@ -24,7 +24,8 @@ define(["subtitleSettings", "userSettingsBuilder", "userSettings"], function (Su
                     element: view.querySelector(".settingsContainer"),
                     userSettings: userSettings,
                     enableSaveButton: false,
-                    enableSaveConfirmation: false
+                    enableSaveConfirmation: false,
+                    autoFocus: autoFocuser.isEnabled()
                 });
             }
         });

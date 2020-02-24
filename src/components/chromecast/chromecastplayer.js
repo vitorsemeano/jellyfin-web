@@ -479,8 +479,7 @@ define(['appSettings', 'userSettings', 'playbackManager', 'connectionManager', '
                     TotalRecordCount: 1
                 };
             });
-        }
-        else {
+        } else {
 
             query.Limit = query.Limit || 100;
             query.ExcludeLocationTypes = "Virtual";
@@ -687,6 +686,13 @@ define(['appSettings', 'userSettings', 'playbackManager', 'connectionManager', '
             });
         }
 
+        if (options.items.length > 1 && options && options.ids) {
+            // Use the original request id array for sorting the result in the proper order
+            options.items.sort(function (a, b) {
+                return options.ids.indexOf(a.Id) - options.ids.indexOf(b.Id);
+            });
+        }
+
         return this._castPlayer.loadMedia(options, command);
     };
 
@@ -752,8 +758,7 @@ define(['appSettings', 'userSettings', 'playbackManager', 'connectionManager', '
 
     ChromecastPlayer.prototype.volumeDown = function () {
         var vol = this._castPlayer.session.receiver.volume.level;
-        if (vol == null)
-        {
+        if (vol == null) {
             vol = 0.5;
         }
         vol -= 0.05;
@@ -776,8 +781,7 @@ define(['appSettings', 'userSettings', 'playbackManager', 'connectionManager', '
 
     ChromecastPlayer.prototype.volumeUp = function () {
         var vol = this._castPlayer.session.receiver.volume.level;
-        if (vol == null)
-        {
+        if (vol == null) {
             vol = 0.5;
         }
         vol += 0.05;

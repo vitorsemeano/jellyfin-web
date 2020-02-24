@@ -1,4 +1,4 @@
-define(["displaySettings", "userSettingsBuilder", "userSettings"], function (DisplaySettings, userSettingsBuilder, currentUserSettings) {
+define(["displaySettings", "userSettings", "autoFocuser"], function (DisplaySettings, currentUserSettings, autoFocuser) {
     "use strict";
 
     return function (view, params) {
@@ -11,7 +11,7 @@ define(["displaySettings", "userSettingsBuilder", "userSettings"], function (Dis
         var settingsInstance;
         var hasChanges;
         var userId = params.userId || ApiClient.getCurrentUserId();
-        var userSettings = userId === ApiClient.getCurrentUserId() ? currentUserSettings : new userSettingsBuilder();
+        var userSettings = userId === ApiClient.getCurrentUserId() ? currentUserSettings : new userSettings();
         view.addEventListener("viewshow", function () {
             window.addEventListener("beforeunload", onBeforeUnload);
 
@@ -24,7 +24,8 @@ define(["displaySettings", "userSettingsBuilder", "userSettings"], function (Dis
                     element: view.querySelector(".settingsContainer"),
                     userSettings: userSettings,
                     enableSaveButton: false,
-                    enableSaveConfirmation: false
+                    enableSaveConfirmation: false,
+                    autoFocus: autoFocuser.isEnabled()
                 });
             }
         });
