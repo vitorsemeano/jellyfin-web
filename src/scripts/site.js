@@ -280,18 +280,18 @@ var AppInfo = {};
 
                 capabilities.DeviceProfile = deviceProfile;
 
-                var connectionManager = new ConnectionManager(credentialProviderInstance, apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), capabilities, window.devicePixelRatio);
+                var connectionManager = new ConnectionManager(credentialProviderInstance, apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), capabilities);
 
                 defineConnectionManager(connectionManager);
                 bindConnectionManagerEvents(connectionManager, events, userSettings);
 
                 if (!AppInfo.isNativeApp) {
-                    console.log("loading ApiClient singleton");
+                    console.debug("loading ApiClient singleton");
 
                     return require(["apiclient"], function (apiClientFactory) {
-                        console.log("creating ApiClient singleton");
+                        console.debug("creating ApiClient singleton");
 
-                        var apiClient = new apiClientFactory(Dashboard.serverAddress(), apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId(), window.devicePixelRatio);
+                        var apiClient = new apiClientFactory(Dashboard.serverAddress(), apphost.appName(), apphost.appVersion(), apphost.deviceName(), apphost.deviceId());
 
                         apiClient.enableAutomaticNetworking = false;
                         apiClient.manualAddressOnly = true;
@@ -301,7 +301,7 @@ var AppInfo = {};
                         window.ApiClient = apiClient;
                         localApiClient = apiClient;
 
-                        console.log("loaded ApiClient singleton");
+                        console.debug("loaded ApiClient singleton");
                     });
                 }
 
@@ -323,11 +323,11 @@ var AppInfo = {};
     }
 
     function getElementsPath() {
-        return "elements"
+        return "elements";
     }
 
     function getScriptsPath() {
-        return "scripts"
+        return "scripts";
     }
 
     function getPlaybackManager(playbackManager) {
@@ -335,7 +335,7 @@ var AppInfo = {};
             try {
                 playbackManager.onAppClose();
             } catch (err) {
-                console.log("error in onAppClose: " + err);
+                console.error("error in onAppClose: " + err);
             }
         });
         return playbackManager;
@@ -355,45 +355,12 @@ var AppInfo = {};
         return headroom;
     }
 
-    function getCastSenderApiLoader() {
-        var ccLoaded = false;
-        return {
-            load: function () {
-                if (ccLoaded) {
-                    return Promise.resolve();
-                }
-
-                return new Promise(function (resolve, reject) {
-                    var fileref = document.createElement("script");
-                    fileref.setAttribute("type", "text/javascript");
-
-                    fileref.onload = function () {
-                        ccLoaded = true;
-                        resolve();
-                    };
-
-                    fileref.setAttribute("src", "https://www.gstatic.com/cv/js/sender/v1/cast_sender.js");
-                    document.querySelector("head").appendChild(fileref);
-                });
-            }
-        };
-    }
-
-    function getDummyCastSenderApiLoader() {
-        return {
-            load: function () {
-                window.chrome = window.chrome || {};
-                return Promise.resolve();
-            }
-        };
-    }
-
     function createSharedAppFooter(appFooter) {
         return new appFooter({});
     }
 
     function onRequireJsError(requireType, requireModules) {
-        console.log("RequireJS error: " + (requireType || "unknown") + ". Failed modules: " + (requireModules || []).join(","));
+        console.error("RequireJS error: " + (requireType || "unknown") + ". Failed modules: " + (requireModules || []).join(","));
     }
 
     function defineResizeObserver() {
@@ -439,28 +406,16 @@ var AppInfo = {};
         defineResizeObserver();
         define("dialog", [componentsPath + "/dialog/dialog"], returnFirstDependency);
 
-        if (preferNativeAlerts && window.confirm) {
-            define("confirm", [componentsPath + "/confirm/nativeconfirm"], returnFirstDependency);
-        } else {
-            define("confirm", [componentsPath + "/confirm/confirm"], returnFirstDependency);
-        }
+        define("confirm", [componentsPath + "/confirm/confirm"], returnFirstDependency);
 
-        if ((preferNativeAlerts || browser.xboxOne) && window.confirm) {
-            define("prompt", [componentsPath + "/prompt/nativeprompt"], returnFirstDependency);
-        } else {
-            define("prompt", [componentsPath + "/prompt/prompt"], returnFirstDependency);
-        }
+        define("prompt", [componentsPath + "/prompt/prompt"], returnFirstDependency);
 
         define("loading", [componentsPath + "/loading/loading"], returnFirstDependency);
         define("multi-download", [componentsPath + "/multidownload"], returnFirstDependency);
         define("fileDownloader", [componentsPath + "/filedownloader"], returnFirstDependency);
         define("localassetmanager", [bowerPath + "/apiclient/localassetmanager"], returnFirstDependency);
 
-        if ("cordova" === self.appMode || "android" === self.appMode) {
-            define("castSenderApiLoader", [], getDummyCastSenderApiLoader);
-        } else {
-            define("castSenderApiLoader", [], getCastSenderApiLoader);
-        }
+        define("castSenderApiLoader", [componentsPath + "/castSenderApi"], returnFirstDependency);
 
         define("transfermanager", [bowerPath + "/apiclient/sync/transfermanager"], returnFirstDependency);
         define("filerepository", [bowerPath + "/apiclient/sync/filerepository"], returnFirstDependency);
@@ -481,7 +436,7 @@ var AppInfo = {};
 
         Promise.all(promises).then(function () {
             createConnectionManager().then(function () {
-                console.log("initAfterDependencies promises resolved");
+                console.debug("initAfterDependencies promises resolved");
 
                 require(["globalize", "browser"], function (globalize, browser) {
                     window.Globalize = globalize;
@@ -492,9 +447,13 @@ var AppInfo = {};
                 require(["keyboardnavigation"], function(keyboardnavigation) {
                     keyboardnavigation.enable();
                 });
+                require(["mouseManager"]);
                 require(["focusPreventScroll"]);
                 require(["autoFocuser"], function(autoFocuser) {
                     autoFocuser.enable();
+                });
+                require(['globalize', 'connectionManager', 'events'], function (globalize, connectionManager, events) {
+                    events.on(connectionManager, 'localusersignedin', globalize.updateCurrentCulture);
                 });
             });
         });
@@ -525,10 +484,10 @@ var AppInfo = {};
         document.title = Globalize.translateDocument(document.title, "core");
 
         if (browser.tv && !browser.android) {
-            console.log("Using system fonts with explicit sizes");
+            console.debug("using system fonts with explicit sizes");
             require(["systemFontsSizedCss"]);
         } else {
-            console.log("Using default fonts");
+            console.debug("using default fonts");
             require(["systemFontsCss"]);
         }
 
@@ -540,7 +499,7 @@ var AppInfo = {};
     }
 
     function loadPlugins(appHost, browser, shell) {
-        console.log("Loading installed plugins");
+        console.debug("loading installed plugins");
         var list = [
             "components/playback/playaccessvalidation",
             "components/playback/experimentalwarnings",
@@ -582,13 +541,13 @@ var AppInfo = {};
     }
 
     function onAppReady(browser) {
-        console.log("Begin onAppReady");
+        console.debug("begin onAppReady");
 
         // ensure that appHost is loaded in this point
         require(['apphost', 'appRouter'], function (appHost, appRouter) {
             window.Emby = {};
 
-            console.log("onAppReady - loading dependencies");
+            console.debug("onAppReady: loading dependencies");
             if (browser.iOS) {
                 require(['css!assets/css/ios.css']);
             }
@@ -618,6 +577,7 @@ var AppInfo = {};
                 }
 
                 require(["mediaSession", "serverNotifications"]);
+                require(["date-fns", "date-fns/locale"]);
 
                 if (!browser.tv && !browser.xboxOne) {
                     require(["components/playback/playbackorientation"]);
@@ -628,7 +588,7 @@ var AppInfo = {};
                     }
                 }
 
-                require(["playerSelectionMenu", "fullscreenManager"]);
+                require(["playerSelectionMenu"]);
 
                 var apiClient = window.ConnectionManager && window.ConnectionManager.currentApiClient();
                 if (apiClient) {
@@ -655,13 +615,17 @@ var AppInfo = {};
     }
 
     function registerServiceWorker() {
-        if (navigator.serviceWorker && "cordova" !== self.appMode && "android" !== self.appMode) {
+        /* eslint-disable compat/compat */
+        if (navigator.serviceWorker && self.appMode !== "cordova" && self.appMode !== "android") {
             try {
                 navigator.serviceWorker.register("serviceworker.js");
             } catch (err) {
-                console.log("Error registering serviceWorker: " + err);
+                console.error("error registering serviceWorker: " + err);
             }
+        } else {
+            console.warn("serviceWorker unsupported");
         }
+        /* eslint-enable compat/compat */
     }
 
     function onWebComponentsReady(browser) {
@@ -671,11 +635,7 @@ var AppInfo = {};
             AppInfo.isNativeApp = true;
         }
 
-        if (!window.Promise || browser.web0s) {
-            require(["native-promise-only"], init);
-        } else {
-            init();
-        }
+        init();
     }
 
     var localApiClient;
@@ -695,12 +655,12 @@ var AppInfo = {};
             inputManager: "scripts/inputManager",
             datetime: "scripts/datetime",
             globalize: "scripts/globalize",
+            dfnshelper: "scripts/dfnshelper",
             libraryMenu: "scripts/librarymenu",
             playlisteditor: componentsPath + "/playlisteditor/playlisteditor",
             medialibrarycreator: componentsPath + "/medialibrarycreator/medialibrarycreator",
             medialibraryeditor: componentsPath + "/medialibraryeditor/medialibraryeditor",
             imageoptionseditor: componentsPath + "/imageoptionseditor/imageoptionseditor",
-            humanedate: componentsPath + "/humanedate",
             apphost: componentsPath + "/apphost",
             visibleinviewport: componentsPath + "/visibleinviewport",
             qualityoptions: componentsPath + "/qualityoptions",
@@ -736,17 +696,29 @@ var AppInfo = {};
                     "resize-observer-polyfill",
                     "shaka",
                     "swiper",
+                    "queryString",
                     "sortable",
-                    "libjass",
                     "webcomponents",
                     "material-icons",
-                    "jellyfin-noto"
+                    "jellyfin-noto",
+                    "date-fns",
+                    "page",
+                    "polyfill",
+                    "fast-text-encoding",
+                    "intersection-observer",
+                    "classlist-polyfill",
+                    "screenfull"
                 ]
             },
             urlArgs: urlArgs,
             paths: paths,
             onError: onRequireJsError
         });
+
+        require(["polyfill"]);
+        require(["fast-text-encoding"]);
+        require(["intersection-observer"]);
+        require(["classlist-polyfill"]);
 
         // Expose jQuery globally
         require(["jQuery"], function(jQuery) {
@@ -794,13 +766,9 @@ var AppInfo = {};
 
         // TODO remove these libraries
         // all of these have been modified so we need to fix that first
-        define("page", [bowerPath + "/pagejs/page"], returnFirstDependency);
         define("headroom", [componentsPath + "/headroom/headroom"], returnFirstDependency);
         define("scroller", [componentsPath + "/scroller"], returnFirstDependency);
         define("navdrawer", [componentsPath + "/navdrawer/navdrawer"], returnFirstDependency);
-        define("queryString", [bowerPath + "/query-string/index"], function () {
-            return queryString;
-        });
 
         define("emby-button", [elementsPath + "/emby-button/emby-button"], returnFirstDependency);
         define("paper-icon-button-light", [elementsPath + "/emby-button/paper-icon-button-light"], returnFirstDependency);
@@ -813,7 +781,17 @@ var AppInfo = {};
         define("emby-slider", [elementsPath + "/emby-slider/emby-slider"], returnFirstDependency);
         define("emby-textarea", [elementsPath + "/emby-textarea/emby-textarea"], returnFirstDependency);
         define("emby-toggle", [elementsPath + "/emby-toggle/emby-toggle"], returnFirstDependency);
+        define("emby-scroller", [elementsPath + "/emby-scroller/emby-scroller"], returnFirstDependency);
+        define("emby-tabs", [elementsPath + "/emby-tabs/emby-tabs"], returnFirstDependency);
+        define("emby-scrollbuttons", [elementsPath + "/emby-scrollbuttons/emby-scrollbuttons"], returnFirstDependency);
+        define("emby-itemrefreshindicator", [elementsPath + "/emby-itemrefreshindicator/emby-itemrefreshindicator"], returnFirstDependency);
+        define("emby-itemscontainer", [elementsPath + "/emby-itemscontainer/emby-itemscontainer"], returnFirstDependency);
+        define("emby-playstatebutton", [elementsPath + "/emby-playstatebutton/emby-playstatebutton"], returnFirstDependency);
+        define("emby-ratingbutton", [elementsPath + "/emby-ratingbutton/emby-ratingbutton"], returnFirstDependency);
+        define("emby-progressbar", [elementsPath + "/emby-progressbar/emby-progressbar"], returnFirstDependency);
+        define("emby-programcell", [elementsPath + "/emby-programcell/emby-programcell"], returnFirstDependency);
 
+        define("webSettings", [scriptsPath + "/settings/webSettings"], returnFirstDependency);
         define("appSettings", [scriptsPath + "/settings/appSettings"], returnFirstDependency);
         define("userSettings", [scriptsPath + "/settings/userSettings"], returnFirstDependency);
 
@@ -830,12 +808,7 @@ var AppInfo = {};
         define("playerSettingsMenu", [componentsPath + "/playback/playersettingsmenu"], returnFirstDependency);
         define("playMethodHelper", [componentsPath + "/playback/playmethodhelper"], returnFirstDependency);
         define("brightnessOsd", [componentsPath + "/playback/brightnessosd"], returnFirstDependency);
-        define("emby-itemscontainer", [componentsPath + "/emby-itemscontainer/emby-itemscontainer"], returnFirstDependency);
         define("alphaNumericShortcuts", [componentsPath + "/alphanumericshortcuts/alphanumericshortcuts"], returnFirstDependency);
-        define("emby-scroller", [componentsPath + "/emby-scroller/emby-scroller"], returnFirstDependency);
-        define("emby-tabs", [componentsPath + "/emby-tabs/emby-tabs"], returnFirstDependency);
-        define("emby-scrollbuttons", [componentsPath + "/emby-scrollbuttons/emby-scrollbuttons"], returnFirstDependency);
-        define("emby-itemrefreshindicator", [componentsPath + "/emby-itemrefreshindicator/emby-itemrefreshindicator"], returnFirstDependency);
         define("multiSelect", [componentsPath + "/multiselect/multiselect"], returnFirstDependency);
         define("alphaPicker", [componentsPath + "/alphapicker/alphapicker"], returnFirstDependency);
         define("tabbedView", [componentsPath + "/tabbedview/tabbedview"], returnFirstDependency);
@@ -862,8 +835,6 @@ var AppInfo = {};
         define("searchFields", [componentsPath + "/search/searchfields"], returnFirstDependency);
         define("searchResults", [componentsPath + "/search/searchresults"], returnFirstDependency);
         define("upNextDialog", [componentsPath + "/upnextdialog/upnextdialog"], returnFirstDependency);
-        define("fullscreen-doubleclick", [componentsPath + "/fullscreen/fullscreen-dc"], returnFirstDependency);
-        define("fullscreenManager", [componentsPath + "/fullscreenManager", "events"], returnFirstDependency);
         define("subtitleAppearanceHelper", [componentsPath + "/subtitlesettings/subtitleappearancehelper"], returnFirstDependency);
         define("subtitleSettings", [componentsPath + "/subtitlesettings/subtitlesettings"], returnFirstDependency);
         define("displaySettings", [componentsPath + "/displaysettings/displaysettings"], returnFirstDependency);
@@ -892,8 +863,6 @@ var AppInfo = {};
         define("objectassign", [componentsPath + "/polyfills/objectassign"], returnFirstDependency);
         define("focusPreventScroll", [componentsPath + "/polyfills/focusPreventScroll"], returnFirstDependency);
         define("userdataButtons", [componentsPath + "/userdatabuttons/userdatabuttons"], returnFirstDependency);
-        define("emby-playstatebutton", [componentsPath + "/userdatabuttons/emby-playstatebutton"], returnFirstDependency);
-        define("emby-ratingbutton", [componentsPath + "/userdatabuttons/emby-ratingbutton"], returnFirstDependency);
         define("listView", [componentsPath + "/listview/listview"], returnFirstDependency);
         define("indicators", [componentsPath + "/indicators/indicators"], returnFirstDependency);
         define("viewSettings", [componentsPath + "/viewsettings/viewsettings"], returnFirstDependency);
@@ -908,9 +877,10 @@ var AppInfo = {};
         define("htmlMediaHelper", [componentsPath + "/htmlMediaHelper"], returnFirstDependency);
         define("viewContainer", [componentsPath + "/viewContainer"], returnFirstDependency);
         define("dialogHelper", [componentsPath + "/dialogHelper/dialogHelper"], returnFirstDependency);
-        define("serverNotifications", [componentsPath + "/serverNotifications/serverNotifications"], returnFirstDependency);
+        define("serverNotifications", [componentsPath + "/serverNotifications"], returnFirstDependency);
         define("skinManager", [componentsPath + "/skinManager"], returnFirstDependency);
-        define("keyboardnavigation", [componentsPath + "/keyboardnavigation"], returnFirstDependency);
+        define("keyboardnavigation", [componentsPath + "/input/keyboardnavigation"], returnFirstDependency);
+        define("mouseManager", [componentsPath + "/input/mouseManager"], returnFirstDependency);
         define("scrollManager", [componentsPath + "/scrollManager"], returnFirstDependency);
         define("autoFocuser", [componentsPath + "/autoFocuser"], returnFirstDependency);
         define("connectionManager", [], function () {
@@ -987,10 +957,6 @@ var AppInfo = {};
 
             appRouter.showSettings = function () {
                 Dashboard.navigate("mypreferencesmenu.html");
-            };
-
-            appRouter.showNowPlaying = function () {
-                Dashboard.navigate("nowplaying.html");
             };
 
             appRouter.setTitle = function (title) {

@@ -334,18 +334,24 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
 
             if (item) {
                 var imgUrl = seriesImageUrl(item, {
+                    maxWidth: osdPoster.clientWidth * 2,
                     type: "Primary"
                 }) || seriesImageUrl(item, {
+                    maxWidth: osdPoster.clientWidth * 2,
                     type: "Thumb"
                 }) || imageUrl(item, {
+                    maxWidth: osdPoster.clientWidth * 2,
                     type: "Primary"
                 });
 
                 if (!imgUrl && secondaryItem && (imgUrl = seriesImageUrl(secondaryItem, {
+                    maxWidth: osdPoster.clientWidth * 2,
                     type: "Primary"
                 }) || seriesImageUrl(secondaryItem, {
+                    maxWidth: osdPoster.clientWidth * 2,
                     type: "Thumb"
                 }) || imageUrl(secondaryItem, {
+                    maxWidth: osdPoster.clientWidth * 2,
                     type: "Primary"
                 })), imgUrl) {
                     return void (osdPoster.innerHTML = '<img src="' + imgUrl + '" />');
@@ -376,7 +382,7 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
 
         function startOsdHideTimer() {
             stopOsdHideTimer();
-            osdHideTimeout = setTimeout(hideOsd, 5e3);
+            osdHideTimeout = setTimeout(hideOsd, 3e3);
         }
 
         function stopOsdHideTimer() {
@@ -575,7 +581,7 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
         }
 
         function onPlaybackStart(e, state) {
-            console.log("nowplaying event: " + e.type);
+            console.debug("nowplaying event: " + e.type);
             var player = this;
             onStateChanged.call(player, e, state);
             resetUpNextDialog();
@@ -594,7 +600,7 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
         function onPlaybackStopped(e, state) {
             currentRuntimeTicks = null;
             resetUpNextDialog();
-            console.log("nowplaying event: " + e.type);
+            console.debug("nowplaying event: " + e.type);
 
             if ("Video" !== state.NextMediaType) {
                 view.removeEventListener("viewbeforehide", onViewHideStopPlayback);
@@ -665,7 +671,8 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
         }
 
         function onTimeUpdate(e) {
-            if (isEnabled) {
+            // Test for 'currentItem' is required for Firefox since its player spams 'timeupdate' events even being at breakpoint
+            if (isEnabled && currentItem) {
                 var now = new Date().getTime();
 
                 if (!(now - lastUpdateTime < 700)) {
@@ -725,14 +732,14 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
                         var endDate = datetime.parseISO8601Date(program.EndDate);
 
                         if (new Date().getTime() >= endDate.getTime()) {
-                            console.log("program info needs to be refreshed");
+                            console.debug("program info needs to be refreshed");
                             var state = playbackManager.getPlayerState(player);
                             onStateChanged.call(player, {
                                 type: "init"
                             }, state);
                         }
                     } catch (e) {
-                        console.log("Error parsing date: " + program.EndDate);
+                        console.error("error parsing date: " + program.EndDate);
                     }
                 }
             }
@@ -1145,7 +1152,7 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
                 case "GamepadDPadLeft":
                 case "GamepadLeftThumbstickLeft":
                     // Ignores gamepad events that are always triggered, even when not focused.
-                    if (document.hasFocus()) {
+                    if (document.hasFocus()) { /* eslint-disable-line compat/compat */
                         playbackManager.rewind(currentPlayer);
                         showOsd();
                     }
@@ -1154,7 +1161,7 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
                 case "GamepadDPadRight":
                 case "GamepadLeftThumbstickRight":
                     // Ignores gamepad events that are always triggered, even when not focused.
-                    if (document.hasFocus()) {
+                    if (document.hasFocus()) { /* eslint-disable-line compat/compat */
                         playbackManager.fastForward(currentPlayer);
                         showOsd();
                     }
@@ -1265,7 +1272,6 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
         var programEndDateMs = 0;
         var playbackStartTimeTicks = 0;
         var subtitleSyncOverlay;
-        var volumeSliderTimer;
         var nowPlayingVolumeSlider = view.querySelector(".osdVolumeSlider");
         var nowPlayingVolumeSliderContainer = view.querySelector(".osdVolumeSliderContainer");
         var nowPlayingPositionSlider = view.querySelector(".osdPositionSlider");
@@ -1416,27 +1422,15 @@ define(["playbackManager", "dom", "inputManager", "datetime", "itemHelper", "med
         }
 
         function setVolume() {
-            clearTimeout(volumeSliderTimer);
-            volumeSliderTimer = null;
-
             playbackManager.setVolume(this.value, currentPlayer);
-        }
-
-        function setVolumeDelayed() {
-            if (!volumeSliderTimer) {
-                var that = this;
-                volumeSliderTimer = setTimeout(function () {
-                    setVolume.call(that);
-                }, 700);
-            }
         }
 
         view.querySelector(".buttonMute").addEventListener("click", function () {
             playbackManager.toggleMute(currentPlayer);
         });
         nowPlayingVolumeSlider.addEventListener("change", setVolume);
-        nowPlayingVolumeSlider.addEventListener("mousemove", setVolumeDelayed);
-        nowPlayingVolumeSlider.addEventListener("touchmove", setVolumeDelayed);
+        nowPlayingVolumeSlider.addEventListener("mousemove", setVolume);
+        nowPlayingVolumeSlider.addEventListener("touchmove", setVolume);
 
         nowPlayingPositionSlider.addEventListener("change", function () {
             var player = currentPlayer;

@@ -465,7 +465,12 @@ define(['itemHelper', 'dom', 'layoutManager', 'dialogHelper', 'datetime', 'loadi
             var id = "txt1" + idInfo.Key;
             var formatString = idInfo.UrlFormatString || '';
 
-            var labelText = globalize.translate('LabelDynamicExternalId').replace('{0}', idInfo.Name);
+            var fullName = idInfo.Name;
+            if (idInfo.Type) {
+                fullName = idInfo.Name + " " + globalize.translate(idInfo.Type);
+            }
+
+            var labelText = globalize.translate('LabelDynamicExternalId', fullName);
 
             html += '<div class="inputContainer">';
             html += '<div class="flex align-items-center">';
@@ -477,7 +482,7 @@ define(['itemHelper', 'dom', 'layoutManager', 'dialogHelper', 'datetime', 'loadi
             html += '</div>';
 
             if (formatString) {
-                html += '<button type="button" is="paper-icon-button-light" class="btnOpenExternalId align-self-flex-end" data-fieldid="' + id + '"><i class="material-icons">open_in_browser</i></button>';
+                html += '<button type="button" is="paper-icon-button-light" class="btnOpenExternalId align-self-flex-end" data-fieldid="' + id + '"><i class="material-icons open_in_browser"></i></button>';
             }
             html += '</div>';
 
@@ -917,7 +922,7 @@ define(['itemHelper', 'dom', 'layoutManager', 'dialogHelper', 'datetime', 'loadi
         for (var i = 0; i < items.length; i++) {
             html += '<div class="listItem">';
 
-            html += '<i class="material-icons listItemIcon" style="background-color:#333;">live_tv</i>';
+            html += '<i class="material-icons listItemIcon live_tv" style="background-color:#333;"></i>';
 
             html += '<div class="listItemBody">';
 

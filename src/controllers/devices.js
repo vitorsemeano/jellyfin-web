@@ -1,4 +1,4 @@
-define(["loading", "dom", "libraryMenu", "globalize", "scripts/imagehelper", "humanedate", "emby-button", "emby-itemscontainer", "cardStyle"], function (loading, dom, libraryMenu, globalize, imageHelper) {
+define(["loading", "dom", "libraryMenu", "globalize", "scripts/imagehelper", "date-fns", "dfnshelper", "emby-button", "emby-itemscontainer", "cardStyle"], function (loading, dom, libraryMenu, globalize, imageHelper, datefns, dfnshelper) {
     "use strict";
 
     function canDelete(deviceId) {
@@ -80,7 +80,7 @@ define(["loading", "dom", "libraryMenu", "globalize", "scripts/imagehelper", "hu
                 deviceHtml += '<div class="cardImage" style="background-image:url(\'' + iconUrl + "');background-size: auto 64%;background-position:center center;\">";
                 deviceHtml += "</div>";
             } else {
-                deviceHtml += '<i class="cardImageIcon material-icons">tablet_android</i>';
+                deviceHtml += '<i class="cardImageIcon material-icons tablet_android"></i>';
             }
 
             deviceHtml += "</a>";
@@ -103,7 +103,7 @@ define(["loading", "dom", "libraryMenu", "globalize", "scripts/imagehelper", "hu
 
             if (device.LastUserName) {
                 deviceHtml += device.LastUserName;
-                deviceHtml += ", " + humaneDate(device.DateLastActivity);
+                deviceHtml += ", " + datefns.formatDistanceToNow(Date.parse(device.DateLastActivity), dfnshelper.localeWithSuffix);
             }
 
             deviceHtml += "&nbsp;";

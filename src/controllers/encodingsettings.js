@@ -14,7 +14,9 @@ define(["jQuery", "loading", "globalize", "dom", "libraryMenu"], function ($, lo
         $("#txtVaapiDevice", page).val(config.VaapiDevice || "");
         page.querySelector("#selectEncoderPreset").value = config.EncoderPreset || "";
         page.querySelector("#txtH264Crf").value = config.H264Crf || "";
+        page.querySelector("#selectDeinterlaceMethod").value = config.DeinterlaceMethod || "";
         page.querySelector("#chkEnableSubtitleExtraction").checked = config.EnableSubtitleExtraction || false;
+        page.querySelector("#chkEnableThrottling").checked = config.EnableThrottling || false;
         page.querySelector("#selectVideoDecoder").dispatchEvent(new CustomEvent("change", {
             bubbles: true
         }));
@@ -57,7 +59,9 @@ define(["jQuery", "loading", "globalize", "dom", "libraryMenu"], function ($, lo
                 config.VaapiDevice = $("#txtVaapiDevice", form).val();
                 config.EncoderPreset = form.querySelector("#selectEncoderPreset").value;
                 config.H264Crf = parseInt(form.querySelector("#txtH264Crf").value || "0");
+                config.DeinterlaceMethod = form.querySelector("#selectDeinterlaceMethod").value;
                 config.EnableSubtitleExtraction = form.querySelector("#chkEnableSubtitleExtraction").checked;
+                config.EnableThrottling = form.querySelector("#chkEnableThrottling").checked;
                 config.HardwareDecodingCodecs = Array.prototype.map.call(Array.prototype.filter.call(form.querySelectorAll(".chkDecodeCodec"), function (c) {
                     return c.checked;
                 }), function (c) {
@@ -66,6 +70,12 @@ define(["jQuery", "loading", "globalize", "dom", "libraryMenu"], function ($, lo
                 config.EnableHardwareEncoding = form.querySelector("#chkHardwareEncoding").checked;
                 ApiClient.updateNamedConfiguration("encoding", config).then(function () {
                     updateEncoder(form);
+                }, function () {
+                    require(["alert"], function (alert) {
+                        alert(globalize.translate("DefaultErrorMessage"));
+                    });
+
+                    Dashboard.processServerConfigurationUpdateResult();
                 });
             });
         };

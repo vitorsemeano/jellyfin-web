@@ -1,4 +1,4 @@
-define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageLoader", "playbackManager", "nowPlayingHelper", "events", "connectionManager", "apphost", "globalize", "cardStyle", "emby-itemscontainer", "css!./remotecontrol.css", "emby-ratingbutton"], function (browser, datetime, backdrop, libraryBrowser, listView, imageLoader, playbackManager, nowPlayingHelper, events, connectionManager, appHost, globalize) {
+define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageLoader", "playbackManager", "nowPlayingHelper", "events", "connectionManager", "apphost", "globalize", "layoutManager", "userSettings", "cardStyle", "emby-itemscontainer", "css!./remotecontrol.css", "emby-ratingbutton"], function (browser, datetime, backdrop, libraryBrowser, listView, imageLoader, playbackManager, nowPlayingHelper, events, connectionManager, appHost, globalize, layoutManager, userSettings) {
     "use strict";
 
     function showAudioMenu(context, player, button, item) {
@@ -122,12 +122,12 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
         }
 
         var url = item ? seriesImageUrl(item, {
-            maxHeight: 300
+            maxHeight: 300 * 2
         }) || imageUrl(item, {
-            maxHeight: 300
+            maxHeight: 300 * 2
         }) : null;
 
-        console.log("updateNowPlayingInfo");
+        console.debug("updateNowPlayingInfo");
         setImageUrl(context, url);
         if (item) {
             backdrop.setBackdrops([item]);
@@ -228,6 +228,11 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             buttonVisible(context.querySelector(".btnFastForward"), null != item);
             var positionSlider = context.querySelector(".nowPlayingPositionSlider");
 
+            if (positionSlider && item && item.RunTimeTicks) {
+                positionSlider.setKeyboardSteps(userSettings.skipBackLength() * 1000000 / item.RunTimeTicks,
+                    userSettings.skipForwardLength() * 1000000 / item.RunTimeTicks);
+            }
+
             if (positionSlider && !positionSlider.dragging) {
                 positionSlider.disabled = !playState.CanSeek;
                 var isProgressClear = state.MediaSource && null == state.MediaSource.RunTimeTicks;
@@ -266,7 +271,7 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
                 toggleRepeatButton.innerHTML = "<i class='material-icons'>repeat</i>";
                 toggleRepeatButton.classList.add("repeatButton-active");
             } else if ("RepeatOne" == repeatMode) {
-                toggleRepeatButton.innerHTML = "<i class='material-icons'>repeat_one</i>";
+                toggleRepeatButton.innerHTML = "<i class='material-icons repeat_one'></i>";
                 toggleRepeatButton.classList.add("repeatButton-active");
             } else {
                 toggleRepeatButton.innerHTML = "<i class='material-icons'>repeat</i>";
@@ -392,7 +397,7 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
         }
 
         function onPlaybackStart(e, state) {
-            console.log("remotecontrol event: " + e.type);
+            console.debug("remotecontrol event: " + e.type);
             var player = this;
             onStateChanged.call(player, e, state);
         }
@@ -420,7 +425,7 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
         }
 
         function onPlaybackStopped(e, state) {
-            console.log("remotecontrol event: " + e.type);
+            console.debug("remotecontrol event: " + e.type);
             var player = this;
 
             if (!state.NextMediaType) {
@@ -609,27 +614,13 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
                 return datetime.getDisplayRunningTime(ticks);
             };
 
-            var volumeSliderTimer;
-
             function setVolume() {
-                clearTimeout(volumeSliderTimer);
-                volumeSliderTimer = null;
-
                 playbackManager.setVolume(this.value, currentPlayer);
             }
 
-            function setVolumeDelayed() {
-                if (!volumeSliderTimer) {
-                    var that = this;
-                    volumeSliderTimer = setTimeout(function () {
-                        setVolume.call(that);
-                    }, 700);
-                }
-            }
-
             context.querySelector(".nowPlayingVolumeSlider").addEventListener("change", setVolume);
-            context.querySelector(".nowPlayingVolumeSlider").addEventListener("mousemove", setVolumeDelayed);
-            context.querySelector(".nowPlayingVolumeSlider").addEventListener("touchmove", setVolumeDelayed);
+            context.querySelector(".nowPlayingVolumeSlider").addEventListener("mousemove", setVolume);
+            context.querySelector(".nowPlayingVolumeSlider").addEventListener("touchmove", setVolume);
             context.querySelector(".buttonMute").addEventListener("click", function () {
                 playbackManager.toggleMute(currentPlayer);
             });
@@ -693,6 +684,12 @@ define(["browser", "datetime", "backdrop", "libraryBrowser", "listView", "imageL
             context.querySelector(".sendMessageForm").addEventListener("submit", onMessageSubmit);
             context.querySelector(".typeTextForm").addEventListener("submit", onSendStringSubmit);
             events.on(playbackManager, "playerchange", onPlayerChange);
+
+            if (layoutManager.tv) {
+                var positionSlider = context.querySelector(".nowPlayingPositionSlider");
+                positionSlider.classList.add("focusable");
+                positionSlider.enableKeyboardDragging();
+            }
         }
 
         function onDialogClosed(e) {

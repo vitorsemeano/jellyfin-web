@@ -136,12 +136,28 @@
                     <div class="fieldDescription">${H264CrfHelp}</div>
                 </div>
 
+                <div class="selectContainer">
+                    <select is="emby-select" id="selectDeinterlaceMethod" label="${LabelDeinterlaceMethod}">
+                        <option value="yadif">${Yadif}</option>
+                        <option value="yadif_bob">${YadifBob}</option>
+                    </select>
+                    <div class="fieldDescription">${DeinterlaceMethodHelp}</div>
+                </div>
+
                 <div class="checkboxContainer checkboxContainer-withDescription">
                     <label>
                         <input is="emby-checkbox" type="checkbox" id="chkEnableSubtitleExtraction" />
                         <span>${AllowOnTheFlySubtitleExtraction}</span>
                     </label>
                     <div class="fieldDescription checkboxFieldDescription">${AllowOnTheFlySubtitleExtractionHelp}</div>
+                </div>
+
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label>
+                        <input is="emby-checkbox" type="checkbox" id="chkEnableThrottling" />
+                        <span>${AllowFfmpegThrottling}</span>
+                    </label>
+                    <div class="fieldDescription checkboxFieldDescription">${AllowFfmpegThrottlingHelp}</div>
                 </div>
 
                 <div>
