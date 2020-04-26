@@ -418,7 +418,7 @@
     "CloudSyncFeatureDescription": "將您的媒體備份到雲端當作簡單的備份，收藏和轉檔。",
     "Collections": "合輯",
     "Composer": "作曲家",
-    "ConfigureDateAdded": "調整伺服器怎麼判定媒體褲的「新增日期」",
+    "ConfigureDateAdded": "調整伺服器怎麼判定媒體庫的「新增日期」",
     "ConfirmDeleteImage": "刪除圖片？",
     "ConfirmDeleteItems": "刪除這些項目會將檔案從系統和媒體庫中刪除。你真的要繼續嗎？",
     "ConfirmEndPlayerSession": "您要在 {0} 秒後將 Jellyfin關機嗎？",
@@ -1676,5 +1676,7 @@
     "LabelDeinterlaceMethod": "反交錯方法：",
     "Episode": "劇集",
     "DeinterlaceMethodHelp": "選擇對隔行掃描內容進行轉碼時所用的反交錯方法。",
-    "BoxSet": "套裝"
+    "BoxSet": "套裝",
+    "UnsupportedPlayback": "Jellyfin 無法解密受 DRM 保護的內容，但仍然會嘗試播放所有內容。某些檔案由於被加密或包含如互動標題等不受支援的內容，在播放時可能會沒有畫面。",
+    "MessageUnauthorizedUser": "您目前無權存取伺服器，請與您的伺服器管理員聯繫以獲取更多訊息。"
 }
