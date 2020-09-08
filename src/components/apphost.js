@@ -1,7 +1,7 @@
 
 import appSettings from '../scripts/settings/appSettings';
 import browser from '../scripts/browser';
-import { events } from 'jellyfin-apiclient';
+import { Events } from 'jellyfin-apiclient';
 import * as htmlMediaHelper from '../components/htmlMediaHelper';
 import * as webSettings from '../scripts/settings/webSettings';
 import globalize from '../scripts/globalize';
@@ -174,7 +174,7 @@ function onAppVisible() {
     if (isHidden) {
         isHidden = false;
         console.debug('triggering app resume event');
-        events.trigger(appHost, 'resume');
+        Events.trigger(appHost, 'resume');
     }
 }
 
