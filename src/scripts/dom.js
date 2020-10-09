@@ -93,7 +93,7 @@
                 supportsCaptureOption = true;
             }
         });
-        window.addEventListener("test", null, opts);
+        window.addEventListener('test', null, opts);
     } catch (e) {
         console.debug('error checking capture support');
     }
@@ -158,7 +158,7 @@
 
             if (!windowSizeEventsBound) {
                 windowSizeEventsBound = true;
-                addEventListener(window, "orientationchange", clearWindowSize, { passive: true });
+                addEventListener(window, 'orientationchange', clearWindowSize, { passive: true });
                 addEventListener(window, 'resize', clearWindowSize, { passive: true });
             }
         }
@@ -183,11 +183,9 @@
             width = height * (16.0 / 9.0);
         }
 
-        const closest = standardWidths.sort(function (a, b) {
+        return standardWidths.sort(function (a, b) {
             return Math.abs(width - a) - Math.abs(width - b);
         })[0];
-
-        return closest;
     }
 
     /**
@@ -204,14 +202,14 @@
             return _animationEvent;
         }
 
-        const el = document.createElement("div");
+        const el = document.createElement('div');
         const animations = {
-            "animation": "animationend",
-            "OAnimation": "oAnimationEnd",
-            "MozAnimation": "animationend",
-            "WebkitAnimation": "webkitAnimationEnd"
+            'animation': 'animationend',
+            'OAnimation': 'oAnimationEnd',
+            'MozAnimation': 'animationend',
+            'WebkitAnimation': 'webkitAnimationEnd'
         };
-        for (let t in animations) {
+        for (const t in animations) {
             if (el.style[t] !== undefined) {
                 _animationEvent = animations[t];
                 return animations[t];
@@ -244,14 +242,14 @@
             return _transitionEvent;
         }
 
-        const el = document.createElement("div");
+        const el = document.createElement('div');
         const transitions = {
-            "transition": "transitionend",
-            "OTransition": "oTransitionEnd",
-            "MozTransition": "transitionend",
-            "WebkitTransition": "webkitTransitionEnd"
+            'transition': 'transitionend',
+            'OTransition': 'oTransitionEnd',
+            'MozTransition': 'transitionend',
+            'WebkitTransition': 'webkitTransitionEnd'
         };
-        for (let t in transitions) {
+        for (const t in transitions) {
             if (el.style[t] !== undefined) {
                 _transitionEvent = transitions[t];
                 return transitions[t];

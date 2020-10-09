@@ -1,26 +1,35 @@
-define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "apphost", "layoutManager", "focusManager", "emby-itemscontainer", "emby-scroller"], function (appRouter, cardBuilder, dom, globalize, connectionManager, appHost, layoutManager, focusManager) {
-    "use strict";
+import appRouter from 'appRouter';
+import cardBuilder from 'cardBuilder';
+import dom from 'dom';
+import globalize from 'globalize';
+import appHost from 'apphost';
+import layoutManager from 'layoutManager';
+import focusManager from 'focusManager';
+import 'emby-itemscontainer';
+import 'emby-scroller';
+
+/* eslint-disable indent */
 
     function enableScrollX() {
         return true;
     }
 
     function getThumbShape() {
-        return enableScrollX() ? "overflowBackdrop" : "backdrop";
+        return enableScrollX() ? 'overflowBackdrop' : 'backdrop';
     }
 
     function getPosterShape() {
-        return enableScrollX() ? "overflowPortrait" : "portrait";
+        return enableScrollX() ? 'overflowPortrait' : 'portrait';
     }
 
     function getSquareShape() {
-        return enableScrollX() ? "overflowSquare" : "square";
+        return enableScrollX() ? 'overflowSquare' : 'square';
     }
 
     function getSections() {
         return [{
-            name: "HeaderFavoriteMovies",
-            types: "Movie",
+            name: 'Movies',
+            types: 'Movie',
             shape: getPosterShape(),
             showTitle: true,
             showYear: true,
@@ -28,8 +37,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayText: false,
             centerText: true
         }, {
-            name: "HeaderFavoriteShows",
-            types: "Series",
+            name: 'Shows',
+            types: 'Series',
             shape: getPosterShape(),
             showTitle: true,
             showYear: true,
@@ -37,8 +46,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayText: false,
             centerText: true
         }, {
-            name: "HeaderFavoriteEpisodes",
-            types: "Episode",
+            name: 'Episodes',
+            types: 'Episode',
             shape: getThumbShape(),
             preferThumb: false,
             showTitle: true,
@@ -47,8 +56,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayText: false,
             centerText: true
         }, {
-            name: "HeaderFavoriteVideos",
-            types: "Video",
+            name: 'Videos',
+            types: 'Video',
             shape: getThumbShape(),
             preferThumb: true,
             showTitle: true,
@@ -56,16 +65,16 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayText: false,
             centerText: true
         }, {
-            name: "HeaderFavoriteCollections",
-            types: "BoxSet",
+            name: 'Collections',
+            types: 'BoxSet',
             shape: getPosterShape(),
             showTitle: true,
             overlayPlayButton: true,
             overlayText: false,
             centerText: true
         }, {
-            name: "HeaderFavoritePlaylists",
-            types: "Playlist",
+            name: 'Playlists',
+            types: 'Playlist',
             shape: getSquareShape(),
             preferThumb: false,
             showTitle: true,
@@ -75,8 +84,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayPlayButton: true,
             coverImage: true
         }, {
-            name: "HeaderFavoritePeople",
-            types: "Person",
+            name: 'People',
+            types: 'Person',
             shape: getPosterShape(),
             preferThumb: false,
             showTitle: true,
@@ -86,8 +95,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayPlayButton: true,
             coverImage: true
         }, {
-            name: "HeaderFavoriteArtists",
-            types: "MusicArtist",
+            name: 'Artists',
+            types: 'MusicArtist',
             shape: getSquareShape(),
             preferThumb: false,
             showTitle: true,
@@ -97,8 +106,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayPlayButton: true,
             coverImage: true
         }, {
-            name: "HeaderFavoriteAlbums",
-            types: "MusicAlbum",
+            name: 'Albums',
+            types: 'MusicAlbum',
             shape: getSquareShape(),
             preferThumb: false,
             showTitle: true,
@@ -108,8 +117,8 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             overlayPlayButton: true,
             coverImage: true
         }, {
-            name: "HeaderFavoriteSongs",
-            types: "Audio",
+            name: 'Songs',
+            types: 'Audio',
             shape: getSquareShape(),
             preferThumb: false,
             showTitle: true,
@@ -117,11 +126,11 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
             showParentTitle: true,
             centerText: true,
             overlayMoreButton: true,
-            action: "instantmix",
+            action: 'instantmix',
             coverImage: true
         }, {
-            name: "HeaderFavoriteBooks",
-            types: "Book",
+            name: 'Books',
+            types: 'Book',
             shape: getPosterShape(),
             showTitle: true,
             showYear: true,
@@ -133,25 +142,25 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
 
     function getFetchDataFn(section) {
         return function () {
-            var apiClient = this.apiClient;
-            var options = {
-                SortBy: (section.types, "SeriesName,SortName"),
-                SortOrder: "Ascending",
-                Filters: "IsFavorite",
+            const apiClient = this.apiClient;
+            const options = {
+                SortBy: (section.types, 'SeriesName,SortName'),
+                SortOrder: 'Ascending',
+                Filters: 'IsFavorite',
                 Recursive: true,
-                Fields: "PrimaryImageAspectRatio,BasicSyncInfo",
+                Fields: 'PrimaryImageAspectRatio,BasicSyncInfo',
                 CollapseBoxSetItems: false,
-                ExcludeLocationTypes: "Virtual",
+                ExcludeLocationTypes: 'Virtual',
                 EnableTotalRecordCount: false
             };
             options.Limit = 20;
-            var userId = apiClient.getCurrentUserId();
+            const userId = apiClient.getCurrentUserId();
 
-            if ("MusicArtist" === section.types) {
+            if (section.types === 'MusicArtist') {
                 return apiClient.getArtists(userId, options);
             }
 
-            if ("Person" === section.types) {
+            if (section.types === 'Person') {
                 return apiClient.getPeople(userId, options);
             }
 
@@ -161,7 +170,7 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
     }
 
     function getRouteUrl(section, serverId) {
-        return appRouter.getRouteUrl("list", {
+        return appRouter.getRouteUrl('list', {
             serverId: serverId,
             itemTypes: section.types,
             isFavorite: true
@@ -170,17 +179,16 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
 
     function getItemsHtmlFn(section) {
         return function (items) {
-            var supportsImageAnalysis = appHost.supports("imageanalysis");
-            var cardLayout = (appHost.preferVisualCards || supportsImageAnalysis) && section.autoCardLayout && section.showTitle;
+            let cardLayout = appHost.preferVisualCards && section.autoCardLayout && section.showTitle;
             cardLayout = false;
-            var serverId = this.apiClient.serverId();
-            var leadingButtons = layoutManager.tv ? [{
-                name: globalize.translate("All"),
-                id: "more",
-                icon: "favorite",
+            const serverId = this.apiClient.serverId();
+            const leadingButtons = layoutManager.tv ? [{
+                name: globalize.translate('All'),
+                id: 'more',
+                icon: 'favorite',
                 routeUrl: getRouteUrl(section, serverId)
             }] : null;
-            var lines = 0;
+            let lines = 0;
 
             if (section.showTitle) {
                 lines++;
@@ -199,7 +207,7 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
                 preferThumb: section.preferThumb,
                 shape: section.shape,
                 centerText: section.centerText && !cardLayout,
-                overlayText: false !== section.overlayText,
+                overlayText: section.overlayText !== false,
                 showTitle: section.showTitle,
                 showYear: section.showYear,
                 showParentTitle: section.showParentTitle,
@@ -216,65 +224,63 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
         };
     }
 
-    function FavoritesTab(view, params) {
-        this.view = view;
-        this.params = params;
-        this.apiClient = connectionManager.currentApiClient();
-        this.sectionsContainer = view.querySelector(".sections");
-        createSections(this, this.sectionsContainer, this.apiClient);
-    }
-
     function createSections(instance, elem, apiClient) {
-        var i;
-        var length;
-        var sections = getSections();
-        var html = "";
+        const sections = getSections();
+        let html = '';
 
-        for (i = 0, length = sections.length; i < length; i++) {
-            var section = sections[i];
-            var sectionClass = "verticalSection";
+        for (const section of sections) {
+            let sectionClass = 'verticalSection';
 
             if (!section.showTitle) {
-                sectionClass += " verticalSection-extrabottompadding";
+                sectionClass += ' verticalSection-extrabottompadding';
             }
 
             html += '<div class="' + sectionClass + ' hide">';
             html += '<div class="sectionTitleContainer sectionTitleContainer-cards padded-left">';
 
             if (layoutManager.tv) {
-                html += '<h2 class="sectionTitle sectionTitle-cards">' + globalize.translate(section.name) + "</h2>";
+                html += '<h2 class="sectionTitle sectionTitle-cards">' + globalize.translate(section.name) + '</h2>';
             } else {
                 html += '<a is="emby-linkbutton" href="' + getRouteUrl(section, apiClient.serverId()) + '" class="more button-flat button-flat-mini sectionTitleTextButton">';
                 html += '<h2 class="sectionTitle sectionTitle-cards">';
                 html += globalize.translate(section.name);
-                html += "</h2>";
-                html += '<i class="material-icons chevron_right"></i>';
-                html += "</a>";
+                html += '</h2>';
+                html += '<span class="material-icons chevron_right"></span>';
+                html += '</a>';
             }
 
-            html += "</div>";
+            html += '</div>';
             html += '<div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale" data-centerfocus="true"><div is="emby-itemscontainer" class="itemsContainer scrollSlider focuscontainer-x" data-monitor="markfavorite"></div></div>';
-            html += "</div>";
+            html += '</div>';
         }
 
         elem.innerHTML = html;
-        var elems = elem.querySelectorAll(".itemsContainer");
+        const elems = elem.querySelectorAll('.itemsContainer');
 
-        for (i = 0, length = elems.length; i < length; i++) {
-            var itemsContainer = elems[i];
+        for (let i = 0, length = elems.length; i < length; i++) {
+            const itemsContainer = elems[i];
             itemsContainer.fetchData = getFetchDataFn(sections[i]).bind(instance);
             itemsContainer.getItemsHtml = getItemsHtmlFn(sections[i]).bind(instance);
-            itemsContainer.parentContainer = dom.parentWithClass(itemsContainer, "verticalSection");
+            itemsContainer.parentContainer = dom.parentWithClass(itemsContainer, 'verticalSection');
         }
     }
 
-    FavoritesTab.prototype.onResume = function (options) {
-        var promises = (this.apiClient, []);
-        var view = this.view;
-        var elems = this.sectionsContainer.querySelectorAll(".itemsContainer");
+class FavoritesTab {
+    constructor(view, params) {
+        this.view = view;
+        this.params = params;
+        this.apiClient = window.connectionManager.currentApiClient();
+        this.sectionsContainer = view.querySelector('.sections');
+        createSections(this, this.sectionsContainer, this.apiClient);
+    }
 
-        for (var i = 0, length = elems.length; i < length; i++) {
-            promises.push(elems[i].resume(options));
+    onResume(options) {
+        const promises = (this.apiClient, []);
+        const view = this.view;
+        const elems = this.sectionsContainer.querySelectorAll('.itemsContainer');
+
+        for (const elem of elems) {
+            promises.push(elem.resume(options));
         }
 
         Promise.all(promises).then(function () {
@@ -282,30 +288,32 @@ define(["appRouter", "cardBuilder", "dom", "globalize", "connectionManager", "ap
                 focusManager.autoFocus(view);
             }
         });
-    };
+    }
 
-    FavoritesTab.prototype.onPause = function () {
-        var elems = this.sectionsContainer.querySelectorAll(".itemsContainer");
+    onPause() {
+        const elems = this.sectionsContainer.querySelectorAll('.itemsContainer');
 
-        for (var i = 0, length = elems.length; i < length; i++) {
-            elems[i].pause();
+        for (const elem of elems) {
+            elem.pause();
         }
-    };
+    }
 
-    FavoritesTab.prototype.destroy = function () {
+    destroy() {
         this.view = null;
         this.params = null;
         this.apiClient = null;
-        var elems = this.sectionsContainer.querySelectorAll(".itemsContainer");
+        const elems = this.sectionsContainer.querySelectorAll('.itemsContainer');
 
-        for (var i = 0, length = elems.length; i < length; i++) {
-            elems[i].fetchData = null;
-            elems[i].getItemsHtml = null;
-            elems[i].parentContainer = null;
+        for (const elem of elems) {
+            elem.fetchData = null;
+            elem.getItemsHtml = null;
+            elem.parentContainer = null;
         }
 
         this.sectionsContainer = null;
-    };
+    }
+}
 
-    return FavoritesTab;
-});
+export default FavoritesTab;
+
+/* eslint-enable indent */

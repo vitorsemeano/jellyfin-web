@@ -1,19 +1,23 @@
-define(["loading", "libraryMenu", "dom", "emby-input", "emby-button"], function (loading, libraryMenu, dom) {
-    "use strict";
+import loading from 'loading';
+import dom from 'dom';
+import 'emby-input';
+import 'emby-button';
+
+/* eslint-disable indent */
 
     function load(page, device, deviceOptions) {
-        page.querySelector("#txtCustomName", page).value = deviceOptions.CustomName || "";
-        page.querySelector(".reportedName", page).innerHTML = device.Name || "";
+        page.querySelector('#txtCustomName', page).value = deviceOptions.CustomName || '';
+        page.querySelector('.reportedName', page).innerHTML = device.Name || '';
     }
 
     function loadData() {
-        var page = this;
+        const page = this;
         loading.show();
-        var id = getParameterByName("id");
-        var promise1 = ApiClient.getJSON(ApiClient.getUrl("Devices/Info", {
+        const id = getParameterByName('id');
+        const promise1 = ApiClient.getJSON(ApiClient.getUrl('Devices/Info', {
             Id: id
         }));
-        var promise2 = ApiClient.getJSON(ApiClient.getUrl("Devices/Options", {
+        const promise2 = ApiClient.getJSON(ApiClient.getUrl('Devices/Options', {
             Id: id
         }));
         Promise.all([promise1, promise2]).then(function (responses) {
@@ -23,28 +27,29 @@ define(["loading", "libraryMenu", "dom", "emby-input", "emby-button"], function 
     }
 
     function save(page) {
-        var id = getParameterByName("id");
+        const id = getParameterByName('id');
         ApiClient.ajax({
-            url: ApiClient.getUrl("Devices/Options", {
+            url: ApiClient.getUrl('Devices/Options', {
                 Id: id
             }),
-            type: "POST",
+            type: 'POST',
             data: JSON.stringify({
-                CustomName: page.querySelector("#txtCustomName").value
+                CustomName: page.querySelector('#txtCustomName').value
             }),
-            contentType: "application/json"
+            contentType: 'application/json'
         }).then(Dashboard.processServerConfigurationUpdateResult);
     }
 
     function onSubmit(e) {
-        var form = this;
-        save(dom.parentWithClass(form, "page"));
+        const form = this;
+        save(dom.parentWithClass(form, 'page'));
         e.preventDefault();
         return false;
     }
 
-    return function (view, params) {
-        view.querySelector("form").addEventListener("submit", onSubmit);
-        view.addEventListener("viewshow", loadData);
-    };
-});
+    export default function (view, params) {
+        view.querySelector('form').addEventListener('submit', onSubmit);
+        view.addEventListener('viewshow', loadData);
+    }
+
+/* eslint-enable indent */

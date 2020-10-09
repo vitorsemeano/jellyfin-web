@@ -1,22 +1,26 @@
-define(["libraryBrowser", "cardBuilder", "apphost", "imageLoader", "loading"], function (libraryBrowser, cardBuilder, appHost, imageLoader, loading) {
-    "use strict";
+import libraryBrowser from 'libraryBrowser';
+import cardBuilder from 'cardBuilder';
+import imageLoader from 'imageLoader';
+import loading from 'loading';
 
-    return function (view, params, tabContent) {
+/* eslint-disable indent */
+
+    export default function (view, params, tabContent) {
         function getPageData() {
-            var key = getSavedQueryKey();
-            var pageData = data[key];
+            const key = getSavedQueryKey();
+            let pageData = data[key];
 
             if (!pageData) {
                 pageData = data[key] = {
                     query: {
-                        SortBy: "SortName",
-                        SortOrder: "Ascending",
-                        IncludeItemTypes: "Playlist",
+                        SortBy: 'SortName',
+                        SortOrder: 'Ascending',
+                        IncludeItemTypes: 'Playlist',
                         Recursive: true,
-                        Fields: "PrimaryImageAspectRatio,SortName,CanDelete",
+                        Fields: 'PrimaryImageAspectRatio,SortName,CanDelete',
                         StartIndex: 0
                     },
-                    view: libraryBrowser.getSavedView(key) || "Poster"
+                    view: libraryBrowser.getSavedView(key) || 'Poster'
                 };
                 pageData.query.ParentId = params.topParentId;
                 libraryBrowser.loadSavedQueryValues(key, pageData.query);
@@ -30,22 +34,22 @@ define(["libraryBrowser", "cardBuilder", "apphost", "imageLoader", "loading"], f
         }
 
         function getSavedQueryKey() {
-            return libraryBrowser.getSavedQueryKey("genres");
+            return libraryBrowser.getSavedQueryKey('genres');
         }
 
         function getPromise() {
             loading.show();
-            var query = getQuery();
+            const query = getQuery();
             return ApiClient.getItems(ApiClient.getCurrentUserId(), query);
         }
 
         function reloadItems(context, promise) {
-            var query = getQuery();
+            const query = getQuery();
             promise.then(function (result) {
-                var html = "";
+                let html = '';
                 html = cardBuilder.getCardsHtml({
                     items: result.Items,
-                    shape: "square",
+                    shape: 'square',
                     showTitle: true,
                     coverImage: true,
                     centerText: true,
@@ -53,33 +57,33 @@ define(["libraryBrowser", "cardBuilder", "apphost", "imageLoader", "loading"], f
                     allowBottomPadding: true,
                     cardLayout: false
                 });
-                var elem = context.querySelector("#items");
+                const elem = context.querySelector('#items');
                 elem.innerHTML = html;
                 imageLoader.lazyChildren(elem);
                 libraryBrowser.saveQueryValues(getSavedQueryKey(), query);
                 loading.hide();
 
-                require(["autoFocuser"], function (autoFocuser) {
+                import('autoFocuser').then(({default: autoFocuser}) => {
                     autoFocuser.autoFocus(context);
                 });
             });
         }
 
-        var self = this;
-        var data = {};
+        const data = {};
 
-        self.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = function () {
             return getPageData().view;
         };
 
-        var promise;
+        let promise;
 
-        self.preRender = function () {
+        this.preRender = function () {
             promise = getPromise();
         };
 
-        self.renderTab = function () {
+        this.renderTab = function () {
             reloadItems(tabContent, promise);
         };
-    };
-});
+    }
+
+/* eslint-enable indent */

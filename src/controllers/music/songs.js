@@ -1,22 +1,30 @@
-define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userSettings", "emby-itemscontainer"], function (events, libraryBrowser, imageLoader, listView, loading, userSettings) {
-    "use strict";
+import events from 'events';
+import libraryBrowser from 'libraryBrowser';
+import imageLoader from 'imageLoader';
+import listView from 'listView';
+import loading from 'loading';
+import * as userSettings from 'userSettings';
+import globalize from 'globalize';
+import 'emby-itemscontainer';
 
-    return function (view, params, tabContent) {
+/* eslint-disable indent */
+
+    export default function (view, params, tabContent) {
         function getPageData(context) {
-            var key = getSavedQueryKey(context);
-            var pageData = data[key];
+            const key = getSavedQueryKey(context);
+            let pageData = data[key];
 
             if (!pageData) {
                 pageData = data[key] = {
                     query: {
-                        SortBy: "Album,SortName",
-                        SortOrder: "Ascending",
-                        IncludeItemTypes: "Audio",
+                        SortBy: 'Album,SortName',
+                        SortOrder: 'Ascending',
+                        IncludeItemTypes: 'Audio',
                         Recursive: true,
-                        Fields: "AudioInfo,ParentId",
+                        Fields: 'AudioInfo,ParentId',
                         StartIndex: 0,
                         ImageTypeLimit: 1,
-                        EnableImageTypes: "Primary"
+                        EnableImageTypes: 'Primary'
                     }
                 };
 
@@ -37,7 +45,7 @@ define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userS
 
         function getSavedQueryKey(context) {
             if (!context.savedQueryKey) {
-                context.savedQueryKey = libraryBrowser.getSavedQueryKey("songs");
+                context.savedQueryKey = libraryBrowser.getSavedQueryKey('songs');
             }
 
             return context.savedQueryKey;
@@ -46,7 +54,7 @@ define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userS
         function reloadItems(page) {
             loading.show();
             isLoading = true;
-            var query = getQuery(page);
+            const query = getQuery(page);
             ApiClient.getItems(Dashboard.getCurrentUserId(), query).then(function (result) {
                 function onNextPageClick() {
                     if (isLoading) {
@@ -71,9 +79,7 @@ define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userS
                 }
 
                 window.scrollTo(0, 0);
-                var i;
-                var length;
-                var pagingHtml = libraryBrowser.getQueryPagingHtml({
+                const pagingHtml = libraryBrowser.getQueryPagingHtml({
                     startIndex: query.StartIndex,
                     limit: query.Limit,
                     totalRecordCount: result.TotalRecordCount,
@@ -83,54 +89,54 @@ define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userS
                     sortButton: false,
                     filterButton: false
                 });
-                var html = listView.getListViewHtml({
+                const html = listView.getListViewHtml({
                     items: result.Items,
-                    action: "playallfromhere",
+                    action: 'playallfromhere',
                     smallIcon: true,
                     artist: true,
                     addToListButton: true
                 });
-                var elems = tabContent.querySelectorAll(".paging");
+                let elems = tabContent.querySelectorAll('.paging');
 
-                for (i = 0, length = elems.length; i < length; i++) {
+                for (let i = 0, length = elems.length; i < length; i++) {
                     elems[i].innerHTML = pagingHtml;
                 }
 
-                elems = tabContent.querySelectorAll(".btnNextPage");
-                for (i = 0, length = elems.length; i < length; i++) {
-                    elems[i].addEventListener("click", onNextPageClick);
+                elems = tabContent.querySelectorAll('.btnNextPage');
+                for (let i = 0, length = elems.length; i < length; i++) {
+                    elems[i].addEventListener('click', onNextPageClick);
                 }
 
-                elems = tabContent.querySelectorAll(".btnPreviousPage");
-                for (i = 0, length = elems.length; i < length; i++) {
-                    elems[i].addEventListener("click", onPreviousPageClick);
+                elems = tabContent.querySelectorAll('.btnPreviousPage');
+                for (let i = 0, length = elems.length; i < length; i++) {
+                    elems[i].addEventListener('click', onPreviousPageClick);
                 }
 
-                var itemsContainer = tabContent.querySelector(".itemsContainer");
+                const itemsContainer = tabContent.querySelector('.itemsContainer');
                 itemsContainer.innerHTML = html;
                 imageLoader.lazyChildren(itemsContainer);
                 libraryBrowser.saveQueryValues(getSavedQueryKey(page), query);
                 loading.hide();
                 isLoading = false;
 
-                require(["autoFocuser"], function (autoFocuser) {
+                import('autoFocuser').then(({default: autoFocuser}) => {
                     autoFocuser.autoFocus(page);
                 });
             });
         }
 
-        var self = this;
-        var data = {};
-        var isLoading = false;
+        const self = this;
+        const data = {};
+        let isLoading = false;
 
         self.showFilterMenu = function () {
-            require(["components/filterdialog/filterdialog"], function (filterDialogFactory) {
-                var filterDialog = new filterDialogFactory({
+            import('components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
+                const filterDialog = new filterDialogFactory({
                     query: getQuery(tabContent),
-                    mode: "songs",
+                    mode: 'songs',
                     serverId: ApiClient.serverId()
                 });
-                events.on(filterDialog, "filterchange", function () {
+                events.on(filterDialog, 'filterchange', function () {
                     getQuery(tabContent).StartIndex = 0;
                     reloadItems(tabContent);
                 });
@@ -143,38 +149,38 @@ define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userS
         };
 
         function initPage(tabContent) {
-            tabContent.querySelector(".btnFilter").addEventListener("click", function () {
+            tabContent.querySelector('.btnFilter').addEventListener('click', function () {
                 self.showFilterMenu();
             });
-            tabContent.querySelector(".btnSort").addEventListener("click", function (e) {
+            tabContent.querySelector('.btnSort').addEventListener('click', function (e) {
                 libraryBrowser.showSortMenu({
                     items: [{
-                        name: Globalize.translate("OptionTrackName"),
-                        id: "Name"
+                        name: globalize.translate('OptionTrackName'),
+                        id: 'Name'
                     }, {
-                        name: Globalize.translate("OptionAlbum"),
-                        id: "Album,SortName"
+                        name: globalize.translate('Album'),
+                        id: 'Album,SortName'
                     }, {
-                        name: Globalize.translate("OptionAlbumArtist"),
-                        id: "AlbumArtist,Album,SortName"
+                        name: globalize.translate('AlbumArtist'),
+                        id: 'AlbumArtist,Album,SortName'
                     }, {
-                        name: Globalize.translate("OptionArtist"),
-                        id: "Artist,Album,SortName"
+                        name: globalize.translate('Artist'),
+                        id: 'Artist,Album,SortName'
                     }, {
-                        name: Globalize.translate("OptionDateAdded"),
-                        id: "DateCreated,SortName"
+                        name: globalize.translate('OptionDateAdded'),
+                        id: 'DateCreated,SortName'
                     }, {
-                        name: Globalize.translate("OptionDatePlayed"),
-                        id: "DatePlayed,SortName"
+                        name: globalize.translate('OptionDatePlayed'),
+                        id: 'DatePlayed,SortName'
                     }, {
-                        name: Globalize.translate("OptionPlayCount"),
-                        id: "PlayCount,SortName"
+                        name: globalize.translate('OptionPlayCount'),
+                        id: 'PlayCount,SortName'
                     }, {
-                        name: Globalize.translate("OptionReleaseDate"),
-                        id: "PremiereDate,AlbumArtist,Album,SortName"
+                        name: globalize.translate('OptionReleaseDate'),
+                        id: 'PremiereDate,AlbumArtist,Album,SortName'
                     }, {
-                        name: Globalize.translate("OptionRuntime"),
-                        id: "Runtime,AlbumArtist,Album,SortName"
+                        name: globalize.translate('Runtime'),
+                        id: 'Runtime,AlbumArtist,Album,SortName'
                     }],
                     callback: function () {
                         getQuery(tabContent).StartIndex = 0;
@@ -193,5 +199,6 @@ define(["events", "libraryBrowser", "imageLoader", "listView", "loading", "userS
         };
 
         self.destroy = function () {};
-    };
-});
+    }
+
+/* eslint-enable indent */

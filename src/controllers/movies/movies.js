@@ -1,24 +1,38 @@
-define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", "alphaPicker", "listView", "cardBuilder", "emby-itemscontainer"], function (loading, layoutManager, userSettings, events, libraryBrowser, alphaPicker, listView, cardBuilder) {
-    "use strict";
+import loading from 'loading';
+import * as userSettings from 'userSettings';
+import events from 'events';
+import libraryBrowser from 'libraryBrowser';
+import AlphaPicker from 'alphaPicker';
+import listView from 'listView';
+import cardBuilder from 'cardBuilder';
+import globalize from 'globalize';
+import 'emby-itemscontainer';
 
-    return function (view, params, tabContent, options) {
-        function onViewStyleChange() {
-            if (self.getCurrentViewStyle() == "List") {
-                itemsContainer.classList.add("vertical-list");
-                itemsContainer.classList.remove("vertical-wrap");
+/* eslint-disable indent */
+
+    export default function (view, params, tabContent, options) {
+        const onViewStyleChange = () => {
+            if (this.getCurrentViewStyle() == 'List') {
+                itemsContainer.classList.add('vertical-list');
+                itemsContainer.classList.remove('vertical-wrap');
             } else {
-                itemsContainer.classList.remove("vertical-list");
-                itemsContainer.classList.add("vertical-wrap");
+                itemsContainer.classList.remove('vertical-list');
+                itemsContainer.classList.add('vertical-wrap');
             }
 
-            itemsContainer.innerHTML = "";
-        }
+            itemsContainer.innerHTML = '';
+        };
 
-        function updateFilterControls() {
-            if (self.alphaPicker) {
-                self.alphaPicker.value(query.NameStartsWithOrGreater);
+        const updateFilterControls = () => {
+            if (this.alphaPicker) {
+                this.alphaPicker.value(query.NameStartsWith);
+                if (query.SortBy.indexOf('SortName') === 0) {
+                    this.alphaPicker.visible(true);
+                } else {
+                    this.alphaPicker.visible(false);
+                }
             }
-        }
+        };
 
         function fetchData() {
             isLoading = true;
@@ -51,7 +65,7 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
 
             window.scrollTo(0, 0);
             updateFilterControls();
-            var pagingHtml = libraryBrowser.getQueryPagingHtml({
+            const pagingHtml = libraryBrowser.getQueryPagingHtml({
                 startIndex: query.StartIndex,
                 limit: query.Limit,
                 totalRecordCount: result.TotalRecordCount,
@@ -61,79 +75,74 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
                 sortButton: false,
                 filterButton: false
             });
-            var i;
-            var length;
-            var elems = tabContent.querySelectorAll(".paging");
 
-            for (i = 0, length = elems.length; i < length; i++) {
-                elems[i].innerHTML = pagingHtml;
+            for (const elem of tabContent.querySelectorAll('.paging')) {
+                elem.innerHTML = pagingHtml;
             }
 
-            elems = tabContent.querySelectorAll(".btnNextPage");
-            for (i = 0, length = elems.length; i < length; i++) {
-                elems[i].addEventListener("click", onNextPageClick);
+            for (const elem of tabContent.querySelectorAll('.btnNextPage')) {
+                elem.addEventListener('click', onNextPageClick);
             }
 
-            elems = tabContent.querySelectorAll(".btnPreviousPage");
-            for (i = 0, length = elems.length; i < length; i++) {
-                elems[i].addEventListener("click", onPreviousPageClick);
+            for (const elem of tabContent.querySelectorAll('.btnPreviousPage')) {
+                elem.addEventListener('click', onPreviousPageClick);
             }
 
             isLoading = false;
             loading.hide();
 
-            require(["autoFocuser"], function (autoFocuser) {
+            import('autoFocuser').then(({default: autoFocuser}) => {
                 autoFocuser.autoFocus(tabContent);
             });
         }
 
-        function getItemsHtml(items) {
-            var html;
-            var viewStyle = self.getCurrentViewStyle();
+        const getItemsHtml = (items) => {
+            let html;
+            const viewStyle = this.getCurrentViewStyle();
 
-            if (viewStyle == "Thumb") {
+            if (viewStyle == 'Thumb') {
                 html = cardBuilder.getCardsHtml({
                     items: items,
-                    shape: "backdrop",
+                    shape: 'backdrop',
                     preferThumb: true,
-                    context: "movies",
+                    context: 'movies',
                     lazy: true,
                     overlayPlayButton: true,
                     showTitle: true,
                     showYear: true,
                     centerText: true
                 });
-            } else if (viewStyle == "ThumbCard") {
+            } else if (viewStyle == 'ThumbCard') {
                 html = cardBuilder.getCardsHtml({
                     items: items,
-                    shape: "backdrop",
+                    shape: 'backdrop',
                     preferThumb: true,
-                    context: "movies",
+                    context: 'movies',
                     lazy: true,
                     cardLayout: true,
                     showTitle: true,
                     showYear: true,
                     centerText: true
                 });
-            } else if (viewStyle == "Banner") {
+            } else if (viewStyle == 'Banner') {
                 html = cardBuilder.getCardsHtml({
                     items: items,
-                    shape: "banner",
+                    shape: 'banner',
                     preferBanner: true,
-                    context: "movies",
+                    context: 'movies',
                     lazy: true
                 });
-            } else if (viewStyle == "List") {
+            } else if (viewStyle == 'List') {
                 html = listView.getListViewHtml({
                     items: items,
-                    context: "movies",
+                    context: 'movies',
                     sortBy: query.SortBy
                 });
-            } else if (viewStyle == "PosterCard") {
+            } else if (viewStyle == 'PosterCard') {
                 html = cardBuilder.getCardsHtml({
                     items: items,
-                    shape: "portrait",
-                    context: "movies",
+                    shape: 'portrait',
+                    context: 'movies',
                     showTitle: true,
                     showYear: true,
                     centerText: true,
@@ -143,8 +152,8 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
             } else {
                 html = cardBuilder.getCardsHtml({
                     items: items,
-                    shape: "portrait",
-                    context: "movies",
+                    shape: 'portrait',
+                    context: 'movies',
                     overlayPlayButton: true,
                     showTitle: true,
                     showYear: true,
@@ -153,70 +162,70 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
             }
 
             return html;
-        }
+        };
 
-        function initPage(tabContent) {
+        const initPage = (tabContent) => {
             itemsContainer.fetchData = fetchData;
             itemsContainer.getItemsHtml = getItemsHtml;
             itemsContainer.afterRefresh = afterRefresh;
-            var alphaPickerElement = tabContent.querySelector(".alphaPicker");
+            const alphaPickerElement = tabContent.querySelector('.alphaPicker');
 
             if (alphaPickerElement) {
-                alphaPickerElement.addEventListener("alphavaluechanged", function (e) {
-                    var newValue = e.detail.value;
-                    query.NameStartsWithOrGreater = newValue;
+                alphaPickerElement.addEventListener('alphavaluechanged', function (e) {
+                    const newValue = e.detail.value;
+                    query.NameStartsWith = newValue;
                     query.StartIndex = 0;
                     itemsContainer.refreshItems();
                 });
-                self.alphaPicker = new alphaPicker({
+                this.alphaPicker = new AlphaPicker({
                     element: alphaPickerElement,
-                    valueChangeEvent: "click"
+                    valueChangeEvent: 'click'
                 });
 
-                tabContent.querySelector(".alphaPicker").classList.add("alphabetPicker-right");
-                alphaPickerElement.classList.add("alphaPicker-fixed-right");
-                itemsContainer.classList.add("padded-right-withalphapicker");
+                tabContent.querySelector('.alphaPicker').classList.add('alphabetPicker-right');
+                alphaPickerElement.classList.add('alphaPicker-fixed-right');
+                itemsContainer.classList.add('padded-right-withalphapicker');
             }
 
-            var btnFilter = tabContent.querySelector(".btnFilter");
+            const btnFilter = tabContent.querySelector('.btnFilter');
 
             if (btnFilter) {
-                btnFilter.addEventListener("click", function () {
-                    self.showFilterMenu();
+                btnFilter.addEventListener('click', () => {
+                    this.showFilterMenu();
                 });
             }
-            var btnSort = tabContent.querySelector(".btnSort");
+            const btnSort = tabContent.querySelector('.btnSort');
 
             if (btnSort) {
-                btnSort.addEventListener("click", function (e) {
+                btnSort.addEventListener('click', function (e) {
                     libraryBrowser.showSortMenu({
                         items: [{
-                            name: Globalize.translate("OptionNameSort"),
-                            id: "SortName,ProductionYear"
+                            name: globalize.translate('Name'),
+                            id: 'SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionImdbRating"),
-                            id: "CommunityRating,SortName,ProductionYear"
+                            name: globalize.translate('OptionImdbRating'),
+                            id: 'CommunityRating,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionCriticRating"),
-                            id: "CriticRating,SortName,ProductionYear"
+                            name: globalize.translate('OptionCriticRating'),
+                            id: 'CriticRating,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionDateAdded"),
-                            id: "DateCreated,SortName,ProductionYear"
+                            name: globalize.translate('OptionDateAdded'),
+                            id: 'DateCreated,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionDatePlayed"),
-                            id: "DatePlayed,SortName,ProductionYear"
+                            name: globalize.translate('OptionDatePlayed'),
+                            id: 'DatePlayed,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionParentalRating"),
-                            id: "OfficialRating,SortName,ProductionYear"
+                            name: globalize.translate('OptionParentalRating'),
+                            id: 'OfficialRating,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionPlayCount"),
-                            id: "PlayCount,SortName,ProductionYear"
+                            name: globalize.translate('OptionPlayCount'),
+                            id: 'PlayCount,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionReleaseDate"),
-                            id: "PremiereDate,SortName,ProductionYear"
+                            name: globalize.translate('OptionReleaseDate'),
+                            id: 'PremiereDate,SortName,ProductionYear'
                         }, {
-                            name: Globalize.translate("OptionRuntime"),
-                            id: "Runtime,SortName,ProductionYear"
+                            name: globalize.translate('Runtime'),
+                            id: 'Runtime,SortName,ProductionYear'
                         }],
                         callback: function () {
                             query.StartIndex = 0;
@@ -228,31 +237,30 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
                     });
                 });
             }
-            var btnSelectView = tabContent.querySelector(".btnSelectView");
-            btnSelectView.addEventListener("click", function (e) {
-                libraryBrowser.showLayoutMenu(e.target, self.getCurrentViewStyle(), "Banner,List,Poster,PosterCard,Thumb,ThumbCard".split(","));
+            const btnSelectView = tabContent.querySelector('.btnSelectView');
+            btnSelectView.addEventListener('click', function (e) {
+                libraryBrowser.showLayoutMenu(e.target, this.getCurrentViewStyle, 'Banner,List,Poster,PosterCard,Thumb,ThumbCard'.split(','));
             });
-            btnSelectView.addEventListener("layoutchange", function (e) {
-                var viewStyle = e.detail.viewStyle;
+            btnSelectView.addEventListener('layoutchange', function (e) {
+                const viewStyle = e.detail.viewStyle;
                 userSettings.set(savedViewKey, viewStyle);
                 query.StartIndex = 0;
                 onViewStyleChange();
                 itemsContainer.refreshItems();
             });
-        }
+        };
 
-        var self = this;
-        var itemsContainer = tabContent.querySelector(".itemsContainer");
-        var savedQueryKey = params.topParentId + "-" + options.mode;
-        var savedViewKey = savedQueryKey + "-view";
-        var query = {
-            SortBy: "SortName,ProductionYear",
-            SortOrder: "Ascending",
-            IncludeItemTypes: "Movie",
+        let itemsContainer = tabContent.querySelector('.itemsContainer');
+        const savedQueryKey = params.topParentId + '-' + options.mode;
+        const savedViewKey = savedQueryKey + '-view';
+        let query = {
+            SortBy: 'SortName,ProductionYear',
+            SortOrder: 'Ascending',
+            IncludeItemTypes: 'Movie',
             Recursive: true,
-            Fields: "PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo",
+            Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
             ImageTypeLimit: 1,
-            EnableImageTypes: "Primary,Backdrop,Banner,Thumb",
+            EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             StartIndex: 0,
             ParentId: params.topParentId
         };
@@ -261,22 +269,22 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
             query['Limit'] = userSettings.libraryPageSize();
         }
 
-        var isLoading = false;
+        let isLoading = false;
 
-        if (options.mode === "favorites") {
+        if (options.mode === 'favorites') {
             query.IsFavorite = true;
         }
 
         query = userSettings.loadQuerySettings(savedQueryKey, query);
 
-        self.showFilterMenu = function () {
-            require(["components/filterdialog/filterdialog"], function (filterDialogFactory) {
-                var filterDialog = new filterDialogFactory({
+        this.showFilterMenu = function () {
+            import('components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
+                const filterDialog = new filterDialogFactory({
                     query: query,
-                    mode: "movies",
+                    mode: 'movies',
                     serverId: ApiClient.serverId()
                 });
-                events.on(filterDialog, "filterchange", function () {
+                events.on(filterDialog, 'filterchange', () => {
                     query.StartIndex = 0;
                     itemsContainer.refreshItems();
                 });
@@ -284,22 +292,23 @@ define(["loading", "layoutManager", "userSettings", "events", "libraryBrowser", 
             });
         };
 
-        self.getCurrentViewStyle = function () {
-            return userSettings.get(savedViewKey) || "Poster";
+        this.getCurrentViewStyle = function () {
+            return userSettings.get(savedViewKey) || 'Poster';
         };
 
-        self.initTab = function () {
+        this.initTab = function () {
             initPage(tabContent);
             onViewStyleChange();
         };
 
-        self.renderTab = function () {
+        this.renderTab = function () {
             itemsContainer.refreshItems();
             updateFilterControls();
         };
 
-        self.destroy = function () {
+        this.destroy = function () {
             itemsContainer = null;
         };
-    };
-});
+    }
+
+/* eslint-enable indent */

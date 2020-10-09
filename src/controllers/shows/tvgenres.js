@@ -1,21 +1,29 @@
-define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader", "apphost", "globalize", "appRouter", "dom", "emby-button"], function (layoutManager, loading, libraryBrowser, cardBuilder, lazyLoader, appHost, globalize, appRouter, dom) {
-    "use strict";
+import layoutManager from 'layoutManager';
+import loading from 'loading';
+import libraryBrowser from 'libraryBrowser';
+import cardBuilder from 'cardBuilder';
+import lazyLoader from 'lazyLoader';
+import globalize from 'globalize';
+import appRouter from 'appRouter';
+import 'emby-button';
 
-    return function (view, params, tabContent) {
+/* eslint-disable indent */
+
+    export default function (view, params, tabContent) {
         function getPageData() {
-            var key = getSavedQueryKey();
-            var pageData = data[key];
+            const key = getSavedQueryKey();
+            let pageData = data[key];
 
             if (!pageData) {
                 pageData = data[key] = {
                     query: {
-                        SortBy: "SortName",
-                        SortOrder: "Ascending",
-                        IncludeItemTypes: "Series",
+                        SortBy: 'SortName',
+                        SortOrder: 'Ascending',
+                        IncludeItemTypes: 'Series',
                         Recursive: true,
                         EnableTotalRecordCount: false
                     },
-                    view: "Poster"
+                    view: 'Poster'
                 };
                 pageData.query.ParentId = params.topParentId;
                 libraryBrowser.loadSavedQueryValues(key, pageData.query);
@@ -29,12 +37,12 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
         }
 
         function getSavedQueryKey() {
-            return libraryBrowser.getSavedQueryKey("seriesgenres");
+            return libraryBrowser.getSavedQueryKey('seriesgenres');
         }
 
         function getPromise() {
             loading.show();
-            var query = getQuery();
+            const query = getQuery();
             return ApiClient.getGenres(ApiClient.getCurrentUserId(), query);
         }
 
@@ -43,29 +51,30 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
         }
 
         function getThumbShape() {
-            return enableScrollX() ? "overflowBackdrop" : "backdrop";
+            return enableScrollX() ? 'overflowBackdrop' : 'backdrop';
         }
 
         function getPortraitShape() {
-            return enableScrollX() ? "overflowPortrait" : "portrait";
+            return enableScrollX() ? 'overflowPortrait' : 'portrait';
         }
 
-        function fillItemsContainer(elem) {
-            var id = elem.getAttribute("data-id");
-            var viewStyle = self.getCurrentViewStyle();
-            var limit = "Thumb" == viewStyle || "ThumbCard" == viewStyle ? 5 : 9;
+        function fillItemsContainer(entry) {
+            const elem = entry.target;
+            const id = elem.getAttribute('data-id');
+            const viewStyle = self.getCurrentViewStyle();
+            let limit = viewStyle == 'Thumb' || viewStyle == 'ThumbCard' ? 5 : 9;
 
             if (enableScrollX()) {
                 limit = 10;
             }
 
-            var enableImageTypes = "Thumb" == viewStyle || "ThumbCard" == viewStyle ? "Primary,Backdrop,Thumb" : "Primary";
-            var query = {
-                SortBy: "SortName",
-                SortOrder: "Ascending",
-                IncludeItemTypes: "Series",
+            const enableImageTypes = viewStyle == 'Thumb' || viewStyle == 'ThumbCard' ? 'Primary,Backdrop,Thumb' : 'Primary';
+            const query = {
+                SortBy: 'SortName',
+                SortOrder: 'Ascending',
+                IncludeItemTypes: 'Series',
                 Recursive: true,
-                Fields: "PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo",
+                Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
                 ImageTypeLimit: 1,
                 EnableImageTypes: enableImageTypes,
                 Limit: limit,
@@ -74,9 +83,7 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
                 ParentId: params.topParentId
             };
             ApiClient.getItems(ApiClient.getCurrentUserId(), query).then(function (result) {
-                var supportsImageAnalysis = appHost.supports("imageanalysis");
-
-                if (viewStyle == "Thumb") {
+                if (viewStyle == 'Thumb') {
                     cardBuilder.buildCards(result.Items, {
                         itemsContainer: elem,
                         shape: getThumbShape(),
@@ -87,7 +94,7 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
                         overlayMoreButton: true,
                         allowBottomPadding: false
                     });
-                } else if (viewStyle == "ThumbCard") {
+                } else if (viewStyle == 'ThumbCard') {
                     cardBuilder.buildCards(result.Items, {
                         itemsContainer: elem,
                         shape: getThumbShape(),
@@ -98,7 +105,7 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
                         cardLayout: true,
                         showYear: true
                     });
-                } else if (viewStyle == "PosterCard") {
+                } else if (viewStyle == 'PosterCard') {
                     cardBuilder.buildCards(result.Items, {
                         itemsContainer: elem,
                         shape: getPortraitShape(),
@@ -108,7 +115,7 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
                         cardLayout: true,
                         showYear: true
                     });
-                } else if (viewStyle == "Poster") {
+                } else if (viewStyle == 'Poster') {
                     cardBuilder.buildCards(result.Items, {
                         itemsContainer: elem,
                         shape: getPortraitShape(),
@@ -121,43 +128,51 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
                     });
                 }
                 if (result.Items.length >= query.Limit) {
-                    tabContent.querySelector(".btnMoreFromGenre" + id + " i").classList.remove("hide");
+                    tabContent.querySelector('.btnMoreFromGenre' + id + ' .material-icons').classList.remove('hide');
                 }
             });
         }
 
         function reloadItems(context, promise) {
-            var query = getQuery();
+            const query = getQuery();
             promise.then(function (result) {
-                var elem = context.querySelector("#items");
-                var html = "";
-                var items = result.Items;
+                const elem = context.querySelector('#items');
+                let html = '';
+                const items = result.Items;
 
-                for (var i = 0, length = items.length; i < length; i++) {
-                    var item = items[i];
+                for (const item of items) {
                     html += '<div class="verticalSection">';
                     html += '<div class="sectionTitleContainer sectionTitleContainer-cards padded-left">';
                     html += '<a is="emby-linkbutton" href="' + appRouter.getRouteUrl(item, {
-                        context: "tvshows",
+                        context: 'tvshows',
                         parentId: params.topParentId
                     }) + '" class="more button-flat button-flat-mini sectionTitleTextButton btnMoreFromGenre' + item.Id + '">';
                     html += '<h2 class="sectionTitle sectionTitle-cards">';
                     html += item.Name;
-                    html += "</h2>";
-                    html += '<i class="material-icons hide chevron_right"></i>';
-                    html += "</a>";
-                    html += "</div>";
+                    html += '</h2>';
+                    html += '<span class="material-icons hide chevron_right"></span>';
+                    html += '</a>';
+                    html += '</div>';
                     if (enableScrollX()) {
-                        var scrollXClass = "scrollX hiddenScrollX";
+                        let scrollXClass = 'scrollX hiddenScrollX';
                         if (layoutManager.tv) {
-                            scrollXClass += "smoothScrollX padded-top-focusscale padded-bottom-focusscale";
+                            scrollXClass += 'smoothScrollX padded-top-focusscale padded-bottom-focusscale';
                         }
                         html += '<div is="emby-itemscontainer" class="itemsContainer ' + scrollXClass + ' lazy padded-left padded-right" data-id="' + item.Id + '">';
                     } else {
                         html += '<div is="emby-itemscontainer" class="itemsContainer vertical-wrap lazy padded-left padded-right" data-id="' + item.Id + '">';
                     }
-                    html += "</div>";
-                    html += "</div>";
+                    html += '</div>';
+                    html += '</div>';
+                }
+
+                if (!result.Items.length) {
+                    html = '';
+
+                    html += '<div class="noItemsMessage centerMessage">';
+                    html += '<h1>' + globalize.translate('MessageNothingHere') + '</h1>';
+                    html += '<p>' + globalize.translate('MessageNoGenresAvailable') + '</p>';
+                    html += '</div>';
                 }
 
                 elem.innerHTML = html;
@@ -172,11 +187,11 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
             self.renderTab();
         }
 
-        var self = this;
-        var data = {};
+        const self = this;
+        const data = {};
 
         self.getViewStyles = function () {
-            return "Poster,PosterCard,Thumb,ThumbCard".split(",");
+            return 'Poster,PosterCard,Thumb,ThumbCard'.split(',');
         };
 
         self.getCurrentViewStyle = function () {
@@ -190,7 +205,7 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
         };
 
         self.enableViewSelection = true;
-        var promise;
+        let promise;
 
         self.preRender = function () {
             promise = getPromise();
@@ -199,5 +214,6 @@ define(["layoutManager", "loading", "libraryBrowser", "cardBuilder", "lazyLoader
         self.renderTab = function () {
             reloadItems(tabContent, promise);
         };
-    };
-});
+    }
+
+/* eslint-enable indent */

@@ -1,25 +1,34 @@
-define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardBuilder", "userSettings", "emby-itemscontainer"], function (loading, events, libraryBrowser, imageLoader, listView, cardBuilder, userSettings) {
-    "use strict";
+import loading from 'loading';
+import events from 'events';
+import libraryBrowser from 'libraryBrowser';
+import imageLoader from 'imageLoader';
+import listView from 'listView';
+import cardBuilder from 'cardBuilder';
+import * as userSettings from 'userSettings';
+import globalize from 'globalize';
+import 'emby-itemscontainer';
 
-    return function (view, params, tabContent) {
+/* eslint-disable indent */
+
+    export default function (view, params, tabContent) {
         function getPageData(context) {
-            var key = getSavedQueryKey(context);
-            var pageData = data[key];
+            const key = getSavedQueryKey(context);
+            let pageData = data[key];
 
             if (!pageData) {
                 pageData = data[key] = {
                     query: {
-                        SortBy: "SeriesSortName,SortName",
-                        SortOrder: "Ascending",
-                        IncludeItemTypes: "Episode",
+                        SortBy: 'SeriesSortName,SortName',
+                        SortOrder: 'Ascending',
+                        IncludeItemTypes: 'Episode',
                         Recursive: true,
-                        Fields: "PrimaryImageAspectRatio,MediaSourceCount,UserData",
+                        Fields: 'PrimaryImageAspectRatio,MediaSourceCount,UserData',
                         IsMissing: false,
                         ImageTypeLimit: 1,
-                        EnableImageTypes: "Primary,Backdrop,Thumb",
+                        EnableImageTypes: 'Primary,Backdrop,Thumb',
                         StartIndex: 0
                     },
-                    view: libraryBrowser.getSavedView(key) || "Poster"
+                    view: libraryBrowser.getSavedView(key) || 'Poster'
                 };
 
                 if (userSettings.libraryPageSize() > 0) {
@@ -39,31 +48,31 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
 
         function getSavedQueryKey(context) {
             if (!context.savedQueryKey) {
-                context.savedQueryKey = libraryBrowser.getSavedQueryKey("episodes");
+                context.savedQueryKey = libraryBrowser.getSavedQueryKey('episodes');
             }
 
             return context.savedQueryKey;
         }
 
         function onViewStyleChange() {
-            var viewStyle = self.getCurrentViewStyle();
-            var itemsContainer = tabContent.querySelector(".itemsContainer");
+            const viewStyle = self.getCurrentViewStyle();
+            const itemsContainer = tabContent.querySelector('.itemsContainer');
 
-            if ("List" == viewStyle) {
-                itemsContainer.classList.add("vertical-list");
-                itemsContainer.classList.remove("vertical-wrap");
+            if (viewStyle == 'List') {
+                itemsContainer.classList.add('vertical-list');
+                itemsContainer.classList.remove('vertical-wrap');
             } else {
-                itemsContainer.classList.remove("vertical-list");
-                itemsContainer.classList.add("vertical-wrap");
+                itemsContainer.classList.remove('vertical-list');
+                itemsContainer.classList.add('vertical-wrap');
             }
 
-            itemsContainer.innerHTML = "";
+            itemsContainer.innerHTML = '';
         }
 
         function reloadItems(page) {
             loading.show();
             isLoading = true;
-            var query = getQuery(page);
+            const query = getQuery(page);
             ApiClient.getItems(Dashboard.getCurrentUserId(), query).then(function (result) {
                 function onNextPageClick() {
                     if (isLoading) {
@@ -88,8 +97,8 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
                 }
 
                 window.scrollTo(0, 0);
-                var html;
-                var pagingHtml = libraryBrowser.getQueryPagingHtml({
+                let html;
+                const pagingHtml = libraryBrowser.getQueryPagingHtml({
                     startIndex: query.StartIndex,
                     limit: query.Limit,
                     totalRecordCount: result.TotalRecordCount,
@@ -99,18 +108,18 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
                     sortButton: false,
                     filterButton: false
                 });
-                var viewStyle = self.getCurrentViewStyle();
-                var itemsContainer = tabContent.querySelector(".itemsContainer");
-                if (viewStyle == "List") {
+                const viewStyle = self.getCurrentViewStyle();
+                const itemsContainer = tabContent.querySelector('.itemsContainer');
+                if (viewStyle == 'List') {
                     html = listView.getListViewHtml({
                         items: result.Items,
                         sortBy: query.SortBy,
                         showParentTitle: true
                     });
-                } else if (viewStyle == "PosterCard") {
+                } else if (viewStyle == 'PosterCard') {
                     html = cardBuilder.getCardsHtml({
                         items: result.Items,
-                        shape: "backdrop",
+                        shape: 'backdrop',
                         showTitle: true,
                         showParentTitle: true,
                         scalable: true,
@@ -119,7 +128,7 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
                 } else {
                     html = cardBuilder.getCardsHtml({
                         items: result.Items,
-                        shape: "backdrop",
+                        shape: 'backdrop',
                         showTitle: true,
                         showParentTitle: true,
                         overlayText: false,
@@ -128,23 +137,21 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
                         overlayPlayButton: true
                     });
                 }
-                var i;
-                var length;
-                var elems;
+                let elems;
 
-                elems = tabContent.querySelectorAll(".paging");
-                for (i = 0, length = elems.length; i < length; i++) {
+                elems = tabContent.querySelectorAll('.paging');
+                for (let i = 0, length = elems.length; i < length; i++) {
                     elems[i].innerHTML = pagingHtml;
                 }
 
-                elems = tabContent.querySelectorAll(".btnNextPage");
-                for (i = 0, length = elems.length; i < length; i++) {
-                    elems[i].addEventListener("click", onNextPageClick);
+                elems = tabContent.querySelectorAll('.btnNextPage');
+                for (let i = 0, length = elems.length; i < length; i++) {
+                    elems[i].addEventListener('click', onNextPageClick);
                 }
 
-                elems = tabContent.querySelectorAll(".btnPreviousPage");
-                for (i = 0, length = elems.length; i < length; i++) {
-                    elems[i].addEventListener("click", onPreviousPageClick);
+                elems = tabContent.querySelectorAll('.btnPreviousPage');
+                for (let i = 0, length = elems.length; i < length; i++) {
+                    elems[i].addEventListener('click', onPreviousPageClick);
                 }
 
                 itemsContainer.innerHTML = html;
@@ -153,24 +160,24 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
                 loading.hide();
                 isLoading = false;
 
-                require(["autoFocuser"], function (autoFocuser) {
+                import('autoFocuser').then(({default: autoFocuser}) => {
                     autoFocuser.autoFocus(page);
                 });
             });
         }
 
-        var self = this;
-        var data = {};
-        var isLoading = false;
+        const self = this;
+        const data = {};
+        let isLoading = false;
 
         self.showFilterMenu = function () {
-            require(["components/filterdialog/filterdialog"], function (filterDialogFactory) {
-                var filterDialog = new filterDialogFactory({
+            import('components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
+                const filterDialog = new filterDialogFactory({
                     query: getQuery(tabContent),
-                    mode: "episodes",
+                    mode: 'episodes',
                     serverId: ApiClient.serverId()
                 });
-                events.on(filterDialog, "filterchange", function () {
+                events.on(filterDialog, 'filterchange', function () {
                     reloadItems(tabContent);
                 });
                 filterDialog.show();
@@ -182,35 +189,35 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
         };
 
         function initPage(tabContent) {
-            tabContent.querySelector(".btnFilter").addEventListener("click", function () {
+            tabContent.querySelector('.btnFilter').addEventListener('click', function () {
                 self.showFilterMenu();
             });
-            tabContent.querySelector(".btnSort").addEventListener("click", function (e) {
+            tabContent.querySelector('.btnSort').addEventListener('click', function (e) {
                 libraryBrowser.showSortMenu({
                     items: [{
-                        name: Globalize.translate("OptionNameSort"),
-                        id: "SeriesSortName,SortName"
+                        name: globalize.translate('Name'),
+                        id: 'SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionTvdbRating"),
-                        id: "CommunityRating,SeriesSortName,SortName"
+                        name: globalize.translate('OptionTvdbRating'),
+                        id: 'CommunityRating,SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionDateAdded"),
-                        id: "DateCreated,SeriesSortName,SortName"
+                        name: globalize.translate('OptionDateAdded'),
+                        id: 'DateCreated,SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionPremiereDate"),
-                        id: "PremiereDate,SeriesSortName,SortName"
+                        name: globalize.translate('OptionPremiereDate'),
+                        id: 'PremiereDate,SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionDatePlayed"),
-                        id: "DatePlayed,SeriesSortName,SortName"
+                        name: globalize.translate('OptionDatePlayed'),
+                        id: 'DatePlayed,SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionParentalRating"),
-                        id: "OfficialRating,SeriesSortName,SortName"
+                        name: globalize.translate('OptionParentalRating'),
+                        id: 'OfficialRating,SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionPlayCount"),
-                        id: "PlayCount,SeriesSortName,SortName"
+                        name: globalize.translate('OptionPlayCount'),
+                        id: 'PlayCount,SeriesSortName,SortName'
                     }, {
-                        name: Globalize.translate("OptionRuntime"),
-                        id: "Runtime,SeriesSortName,SortName"
+                        name: globalize.translate('Runtime'),
+                        id: 'Runtime,SeriesSortName,SortName'
                     }],
                     callback: function () {
                         reloadItems(tabContent);
@@ -219,12 +226,12 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
                     button: e.target
                 });
             });
-            var btnSelectView = tabContent.querySelector(".btnSelectView");
-            btnSelectView.addEventListener("click", function (e) {
-                libraryBrowser.showLayoutMenu(e.target, self.getCurrentViewStyle(), "List,Poster,PosterCard".split(","));
+            const btnSelectView = tabContent.querySelector('.btnSelectView');
+            btnSelectView.addEventListener('click', function (e) {
+                libraryBrowser.showLayoutMenu(e.target, self.getCurrentViewStyle(), 'List,Poster,PosterCard'.split(','));
             });
-            btnSelectView.addEventListener("layoutchange", function (e) {
-                var viewStyle = e.detail.viewStyle;
+            btnSelectView.addEventListener('layoutchange', function (e) {
+                const viewStyle = e.detail.viewStyle;
                 getPageData(tabContent).view = viewStyle;
                 libraryBrowser.saveViewSetting(getSavedQueryKey(tabContent), viewStyle);
                 onViewStyleChange();
@@ -240,5 +247,6 @@ define(["loading", "events", "libraryBrowser", "imageLoader", "listView", "cardB
         };
 
         self.destroy = function () {};
-    };
-});
+    }
+
+/* eslint-enable indent */

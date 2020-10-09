@@ -1,31 +1,46 @@
-define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu", "mainTabsManager", "cardBuilder", "dom", "imageLoader", "playbackManager", "emby-scroller", "emby-itemscontainer", "emby-tabs", "emby-button"], function (events, layoutManager, inputManager, userSettings, libraryMenu, mainTabsManager, cardBuilder, dom, imageLoader, playbackManager) {
-    "use strict";
+import events from 'events';
+import layoutManager from 'layoutManager';
+import inputManager from 'inputManager';
+import * as userSettings from 'userSettings';
+import libraryMenu from 'libraryMenu';
+import * as mainTabsManager from 'mainTabsManager';
+import cardBuilder from 'cardBuilder';
+import dom from 'dom';
+import imageLoader from 'imageLoader';
+import playbackManager from 'playbackManager';
+import globalize from 'globalize';
+import 'emby-scroller';
+import 'emby-itemscontainer';
+import 'emby-tabs';
+import 'emby-button';
+
+/* eslint-disable indent */
 
     function enableScrollX() {
         return !layoutManager.desktop;
     }
 
     function getPortraitShape() {
-        return enableScrollX() ? "overflowPortrait" : "portrait";
+        return enableScrollX() ? 'overflowPortrait' : 'portrait';
     }
 
     function getThumbShape() {
-        return enableScrollX() ? "overflowBackdrop" : "backdrop";
+        return enableScrollX() ? 'overflowBackdrop' : 'backdrop';
     }
 
     function loadLatest(page, userId, parentId) {
-        var options = {
-            IncludeItemTypes: "Movie",
+        const options = {
+            IncludeItemTypes: 'Movie',
             Limit: 18,
-            Fields: "PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo",
+            Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
             ParentId: parentId,
             ImageTypeLimit: 1,
-            EnableImageTypes: "Primary,Backdrop,Banner,Thumb",
+            EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             EnableTotalRecordCount: false
         };
-        ApiClient.getJSON(ApiClient.getUrl("Users/" + userId + "/Items/Latest", options)).then(function (items) {
-            var allowBottomPadding = !enableScrollX();
-            var container = page.querySelector("#recentlyAddedItems");
+        ApiClient.getJSON(ApiClient.getUrl('Users/' + userId + '/Items/Latest', options)).then(function (items) {
+            const allowBottomPadding = !enableScrollX();
+            const container = page.querySelector('#recentlyAddedItems');
             cardBuilder.buildCards(items, {
                 itemsContainer: container,
                 shape: getPortraitShape(),
@@ -43,30 +58,30 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
     }
 
     function loadResume(page, userId, parentId) {
-        var screenWidth = dom.getWindowSize().innerWidth;
-        var options = {
-            SortBy: "DatePlayed",
-            SortOrder: "Descending",
-            IncludeItemTypes: "Movie",
-            Filters: "IsResumable",
+        const screenWidth = dom.getWindowSize().innerWidth;
+        const options = {
+            SortBy: 'DatePlayed',
+            SortOrder: 'Descending',
+            IncludeItemTypes: 'Movie',
+            Filters: 'IsResumable',
             Limit: screenWidth >= 1920 ? 5 : screenWidth >= 1600 ? 5 : 3,
             Recursive: true,
-            Fields: "PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo",
+            Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
             CollapseBoxSetItems: false,
             ParentId: parentId,
             ImageTypeLimit: 1,
-            EnableImageTypes: "Primary,Backdrop,Banner,Thumb",
+            EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             EnableTotalRecordCount: false
         };
         ApiClient.getItems(userId, options).then(function (result) {
             if (result.Items.length) {
-                page.querySelector("#resumableSection").classList.remove("hide");
+                page.querySelector('#resumableSection').classList.remove('hide');
             } else {
-                page.querySelector("#resumableSection").classList.add("hide");
+                page.querySelector('#resumableSection').classList.add('hide');
             }
 
-            var allowBottomPadding = !enableScrollX();
-            var container = page.querySelector("#resumableItems");
+            const allowBottomPadding = !enableScrollX();
+            const container = page.querySelector('#resumableItems');
             cardBuilder.buildCards(result.Items, {
                 itemsContainer: container,
                 preferThumb: true,
@@ -86,32 +101,32 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
     }
 
     function getRecommendationHtml(recommendation) {
-        var html = "";
-        var title = "";
+        let html = '';
+        let title = '';
 
         switch (recommendation.RecommendationType) {
-            case "SimilarToRecentlyPlayed":
-                title = Globalize.translate("RecommendationBecauseYouWatched", recommendation.BaselineItemName);
+            case 'SimilarToRecentlyPlayed':
+                title = globalize.translate('RecommendationBecauseYouWatched', recommendation.BaselineItemName);
                 break;
 
-            case "SimilarToLikedItem":
-                title = Globalize.translate("RecommendationBecauseYouLike", recommendation.BaselineItemName);
+            case 'SimilarToLikedItem':
+                title = globalize.translate('RecommendationBecauseYouLike', recommendation.BaselineItemName);
                 break;
 
-            case "HasDirectorFromRecentlyPlayed":
-            case "HasLikedDirector":
-                title = Globalize.translate("RecommendationDirectedBy", recommendation.BaselineItemName);
+            case 'HasDirectorFromRecentlyPlayed':
+            case 'HasLikedDirector':
+                title = globalize.translate('RecommendationDirectedBy', recommendation.BaselineItemName);
                 break;
 
-            case "HasActorFromRecentlyPlayed":
-            case "HasLikedActor":
-                title = Globalize.translate("RecommendationStarring", recommendation.BaselineItemName);
+            case 'HasActorFromRecentlyPlayed':
+            case 'HasLikedActor':
+                title = globalize.translate('RecommendationStarring', recommendation.BaselineItemName);
                 break;
         }
 
         html += '<div class="verticalSection">';
-        html += '<h2 class="sectionTitle sectionTitle-cards padded-left">' + title + "</h2>";
-        var allowBottomPadding = true;
+        html += '<h2 class="sectionTitle sectionTitle-cards padded-left">' + title + '</h2>';
+        const allowBottomPadding = true;
 
         if (enableScrollX()) {
             html += '<div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale" data-mousewheel="false" data-centerfocus="true">';
@@ -133,31 +148,31 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
         if (enableScrollX()) {
             html += '</div>';
         }
-        html += "</div>";
-        html += "</div>";
+        html += '</div>';
+        html += '</div>';
         return html;
     }
 
     function loadSuggestions(page, userId, parentId) {
-        var screenWidth = dom.getWindowSize().innerWidth;
-        var url = ApiClient.getUrl("Movies/Recommendations", {
+        const screenWidth = dom.getWindowSize().innerWidth;
+        const url = ApiClient.getUrl('Movies/Recommendations', {
             userId: userId,
             categoryLimit: 6,
             ItemLimit: screenWidth >= 1920 ? 8 : screenWidth >= 1600 ? 8 : screenWidth >= 1200 ? 6 : 5,
-            Fields: "PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo",
+            Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
             ImageTypeLimit: 1,
-            EnableImageTypes: "Primary,Backdrop,Banner,Thumb"
+            EnableImageTypes: 'Primary,Backdrop,Banner,Thumb'
         });
         ApiClient.getJSON(url).then(function (recommendations) {
             if (!recommendations.length) {
-                page.querySelector(".noItemsMessage").classList.remove("hide");
-                page.querySelector(".recommendations").innerHTML = "";
+                page.querySelector('.noItemsMessage').classList.remove('hide');
+                page.querySelector('.recommendations').innerHTML = '';
                 return;
             }
 
-            var html = recommendations.map(getRecommendationHtml).join("");
-            page.querySelector(".noItemsMessage").classList.add("hide");
-            var recs = page.querySelector(".recommendations");
+            const html = recommendations.map(getRecommendationHtml).join('');
+            page.querySelector('.noItemsMessage').classList.add('hide');
+            const recs = page.querySelector('.recommendations');
             recs.innerHTML = html;
             imageLoader.lazyChildren(recs);
 
@@ -167,43 +182,42 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
     }
 
     function autoFocus(page) {
-        require(["autoFocuser"], function (autoFocuser) {
+        import('autoFocuser').then(({default: autoFocuser}) => {
             autoFocuser.autoFocus(page);
         });
     }
 
     function setScrollClasses(elem, scrollX) {
         if (scrollX) {
-            elem.classList.add("hiddenScrollX");
+            elem.classList.add('hiddenScrollX');
 
             if (layoutManager.tv) {
-                elem.classList.add("smoothScrollX");
-                elem.classList.add("padded-top-focusscale");
-                elem.classList.add("padded-bottom-focusscale");
+                elem.classList.add('smoothScrollX');
+                elem.classList.add('padded-top-focusscale');
+                elem.classList.add('padded-bottom-focusscale');
             }
 
-            elem.classList.add("scrollX");
-            elem.classList.remove("vertical-wrap");
+            elem.classList.add('scrollX');
+            elem.classList.remove('vertical-wrap');
         } else {
-            elem.classList.remove("hiddenScrollX");
-            elem.classList.remove("smoothScrollX");
-            elem.classList.remove("scrollX");
-            elem.classList.add("vertical-wrap");
+            elem.classList.remove('hiddenScrollX');
+            elem.classList.remove('smoothScrollX');
+            elem.classList.remove('scrollX');
+            elem.classList.add('vertical-wrap');
         }
     }
 
     function initSuggestedTab(page, tabContent) {
-        var containers = tabContent.querySelectorAll(".itemsContainer");
+        const containers = tabContent.querySelectorAll('.itemsContainer');
 
-        for (var i = 0, length = containers.length; i < length; i++) {
-            setScrollClasses(containers[i], enableScrollX());
+        for (const container of containers) {
+            setScrollClasses(container, enableScrollX());
         }
     }
 
     function loadSuggestionsTab(view, params, tabContent) {
-        var parentId = params.topParentId;
-        var userId = ApiClient.getCurrentUserId();
-        console.debug("loadSuggestionsTab");
+        const parentId = params.topParentId;
+        const userId = ApiClient.getCurrentUserId();
         loadResume(tabContent, userId, parentId);
         loadLatest(tabContent, userId, parentId);
         loadSuggestions(tabContent, userId, parentId);
@@ -211,35 +225,32 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
 
     function getTabs() {
         return [{
-            name: Globalize.translate("Movies")
+            name: globalize.translate('Movies')
         }, {
-            name: Globalize.translate("TabSuggestions")
+            name: globalize.translate('Suggestions')
         }, {
-            name: Globalize.translate("TabTrailers")
+            name: globalize.translate('Trailers')
         }, {
-            name: Globalize.translate("TabFavorites")
+            name: globalize.translate('Favorites')
         }, {
-            name: Globalize.translate("TabCollections")
+            name: globalize.translate('Collections')
         }, {
-            name: Globalize.translate("TabGenres")
-        }, {
-            name: Globalize.translate("ButtonSearch"),
-            cssClass: "searchTabButton"
+            name: globalize.translate('Genres')
         }];
     }
 
     function getDefaultTabIndex(folderId) {
-        switch (userSettings.get("landing-" + folderId)) {
-            case "suggestions":
+        switch (userSettings.get('landing-' + folderId)) {
+            case 'suggestions':
                 return 1;
 
-            case "favorites":
+            case 'favorites':
                 return 3;
 
-            case "collections":
+            case 'collections':
                 return 4;
 
-            case "genres":
+            case 'genres':
                 return 5;
 
             default:
@@ -247,78 +258,76 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
         }
     }
 
-    return function (view, params) {
+    export default function (view, params) {
         function onBeforeTabChange(e) {
             preLoadTab(view, parseInt(e.detail.selectedTabIndex));
         }
 
         function onTabChange(e) {
-            var newIndex = parseInt(e.detail.selectedTabIndex);
+            const newIndex = parseInt(e.detail.selectedTabIndex);
             loadTab(view, newIndex);
         }
 
         function getTabContainers() {
-            return view.querySelectorAll(".pageTabContent");
+            return view.querySelectorAll('.pageTabContent');
         }
 
         function initTabs() {
             mainTabsManager.setTabs(view, currentTabIndex, getTabs, getTabContainers, onBeforeTabChange, onTabChange);
         }
 
-        function getTabController(page, index, callback) {
-            var depends = [];
+        const getTabController = (page, index, callback) => {
+            let depends = '';
 
             switch (index) {
                 case 0:
-                    depends.push("controllers/movies/movies");
+                    depends = 'controllers/movies/movies';
                     break;
 
                 case 1:
+                    depends = 'controllers/movies/moviesrecommended.js';
                     break;
 
                 case 2:
-                    depends.push("controllers/movies/movietrailers");
+                    depends = 'controllers/movies/movietrailers';
                     break;
 
                 case 3:
-                    depends.push("controllers/movies/movies");
+                    depends = 'controllers/movies/movies';
                     break;
 
                 case 4:
-                    depends.push("controllers/movies/moviecollections");
+                    depends = 'controllers/movies/moviecollections';
                     break;
 
                 case 5:
-                    depends.push("controllers/movies/moviegenres");
+                    depends = 'controllers/movies/moviegenres';
                     break;
-
-                case 6:
-                    depends.push("scripts/searchtab");
             }
 
-            require(depends, function (controllerFactory) {
-                var tabContent;
+            import(depends).then(({default: controllerFactory}) => {
+                let tabContent;
 
                 if (index === suggestionsTabIndex) {
                     tabContent = view.querySelector(".pageTabContent[data-index='" + index + "']");
-                    self.tabContent = tabContent;
+                    this.tabContent = tabContent;
                 }
 
-                var controller = tabControllers[index];
+                let controller = tabControllers[index];
 
                 if (!controller) {
                     tabContent = view.querySelector(".pageTabContent[data-index='" + index + "']");
 
                     if (index === suggestionsTabIndex) {
-                        controller = self;
+                        controller = this;
                     } else if (index === 6) {
                         controller = new controllerFactory(view, tabContent, {
-                            collectionType: "movies",
+                            collectionType: 'movies',
                             parentId: params.topParentId
                         });
                     } else if (index == 0 || index == 3) {
                         controller = new controllerFactory(view, params, tabContent, {
-                            mode: index ? "favorites" : "movies"
+                            mode: index ? 'favorites' : 'movies'
                         });
                     } else {
                         controller = new controllerFactory(view, params, tabContent);
@@ -333,7 +342,7 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
 
                 callback(controller);
             });
-        }
+        };
 
         function preLoadTab(page, index) {
             getTabController(page, index, function (controller) {
@@ -345,18 +354,16 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
 
         function loadTab(page, index) {
             currentTabIndex = index;
-            getTabController(page, index, function (controller) {
-                initialTabIndex = null;
-
+            getTabController(page, index, ((controller) => {
                 if (renderedTabs.indexOf(index) == -1) {
                     renderedTabs.push(index);
                     controller.renderTab();
                 }
-            });
+            }));
         }
 
         function onPlaybackStop(e, state) {
-            if (state.NowPlayingItem && state.NowPlayingItem.MediaType == "Video") {
+            if (state.NowPlayingItem && state.NowPlayingItem.MediaType == 'Video') {
                 renderedTabs = [];
                 mainTabsManager.getTabsElement().triggerTabChange();
             }
@@ -364,57 +371,54 @@ define(["events", "layoutManager", "inputManager", "userSettings", "libraryMenu"
 
         function onInputCommand(e) {
             switch (e.detail.command) {
-                case "search":
+                case 'search':
                     e.preventDefault();
-                    Dashboard.navigate("search.html?collectionType=movies&parentId=" + params.topParentId);
+                    Dashboard.navigate('search.html?collectionType=movies&parentId=' + params.topParentId);
             }
         }
 
-        var isViewRestored;
-        var self = this;
-        var currentTabIndex = parseInt(params.tab || getDefaultTabIndex(params.topParentId));
-        var initialTabIndex = currentTabIndex;
-        var suggestionsTabIndex = 1;
+        let currentTabIndex = parseInt(params.tab || getDefaultTabIndex(params.topParentId));
+        const suggestionsTabIndex = 1;
 
-        self.initTab = function () {
-            var tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
+        this.initTab = function () {
+            const tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
             initSuggestedTab(view, tabContent);
         };
 
-        self.renderTab = function () {
-            var tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
+        this.renderTab = function () {
+            const tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
             loadSuggestionsTab(view, params, tabContent);
         };
 
-        var tabControllers = [];
-        var renderedTabs = [];
-        view.addEventListener("viewshow", function (e) {
-            if (isViewRestored = e.detail.isRestored, initTabs(), !view.getAttribute("data-title")) {
-                var parentId = params.topParentId;
+        const tabControllers = [];
+        let renderedTabs = [];
+        view.addEventListener('viewshow', function (e) {
+            initTabs();
+            if (!view.getAttribute('data-title')) {
+                const parentId = params.topParentId;
 
                 if (parentId) {
                     ApiClient.getItem(ApiClient.getCurrentUserId(), parentId).then(function (item) {
-                        view.setAttribute("data-title", item.Name);
+                        view.setAttribute('data-title', item.Name);
                         libraryMenu.setTitle(item.Name);
                     });
                 } else {
-                    view.setAttribute("data-title", Globalize.translate("TabMovies"));
-                    libraryMenu.setTitle(Globalize.translate("TabMovies"));
+                    view.setAttribute('data-title', globalize.translate('Movies'));
+                    libraryMenu.setTitle(globalize.translate('Movies'));
                 }
             }
 
-            events.on(playbackManager, "playbackstop", onPlaybackStop);
+            events.on(playbackManager, 'playbackstop', onPlaybackStop);
             inputManager.on(window, onInputCommand);
         });
-        view.addEventListener("viewbeforehide", function (e) {
+        view.addEventListener('viewbeforehide', function () {
             inputManager.off(window, onInputCommand);
         });
-        view.addEventListener("viewdestroy", function (e) {
-            tabControllers.forEach(function (t) {
-                if (t.destroy) {
-                    t.destroy();
-                }
-            });
-        });
-    };
-});
+        for (const tabController of tabControllers) {
+            if (tabController.destroy) {
+                tabController.destroy();
+            }
+        }
+    }
+
+/* eslint-enable indent */
