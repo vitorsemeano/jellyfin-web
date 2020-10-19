@@ -73,7 +73,7 @@ window.pageIdOn = function(eventName, id, fn) {
     });
 };
 
-if (self.appMode === 'cordova' || self.appMode === 'android' || self.appMode === 'standalone') {
+if (window.appMode === 'cordova' || window.appMode === 'android' || window.appMode === 'standalone') {
     AppInfo.isNativeApp = true;
 }
 
@@ -108,8 +108,6 @@ function init() {
 
     Events.on(ServerConnections, 'localusersignedin', globalize.updateCurrentCulture);
 }
-
-
 
 function onGlobalizeInit() {
     if (window.appMode === 'android') {
