@@ -1853,10 +1853,14 @@ function onTrackSelectionsSubmit(e) {
 window.ItemDetailPage = new itemDetailPage();
 
 export default function (view, params) {
+    function getApiClient() {
+        return params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
+    }
+
     function reload(instance, page, params) {
         loading.show();
 
-        const apiClient = params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
+        const apiClient = getApiClient();
 
         Promise.all([getPromise(apiClient, params), apiClient.getCurrentUser()]).then(([item, user]) => {
             currentItem = item;
@@ -1952,7 +1956,7 @@ export default function (view, params) {
 
     function onDownloadClick() {
         import('../../scripts/fileDownloader').then(({ default: fileDownloader }) => {
-            const downloadHref = apiClient.getItemDownloadUrl(currentItem.Id);
+            const downloadHref = getApiClient().getItemDownloadUrl(currentItem.Id);
             fileDownloader.download([{
                 url: downloadHref,
                 itemId: currentItem.Id,
@@ -1964,6 +1968,8 @@ export default function (view, params) {
     function onMoreCommandsClick() {
         const button = this;
         let selectedItem = view.querySelector('.selectSource').value || currentItem.Id;
+
+        const apiClient = getApiClient();
 
         apiClient.getItem(apiClient.getCurrentUserId(), selectedItem).then(function (item) {
             selectedItem = item;
@@ -2004,7 +2010,7 @@ export default function (view, params) {
 
     let currentItem;
     const self = this;
-    const apiClient = params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
+    const apiClient = getApiClient();
 
     const btnResume = view.querySelector('.mainDetailButtons .btnResume');
     const btnPlay = view.querySelector('.mainDetailButtons .btnPlay');
