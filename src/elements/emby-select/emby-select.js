@@ -1,9 +1,9 @@
 
+import 'webcomponents.js/webcomponents-lite';
 import layoutManager from '../../components/layoutManager';
 import browser from '../../scripts/browser';
 import actionsheet from '../../components/actionSheet/actionSheet';
 import './emby-select.css';
-import 'webcomponents.js/webcomponents-lite';
 
 /* eslint-disable indent */
 

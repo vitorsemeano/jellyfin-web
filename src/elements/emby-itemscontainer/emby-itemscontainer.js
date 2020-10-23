@@ -1,4 +1,5 @@
 
+import 'webcomponents.js/webcomponents-lite';
 import itemShortcuts from '../../components/shortcuts';
 import inputManager from '../../scripts/inputManager';
 import { playbackManager } from '../../components/playback/playbackmanager';
@@ -10,7 +11,6 @@ import loading from '../../components/loading/loading';
 import focusManager from '../../components/focusManager';
 import serverNotifications from '../../scripts/serverNotifications';
 import { Events } from 'jellyfin-apiclient';
-import 'webcomponents.js/webcomponents-lite';
 import ServerConnections from '../../components/ServerConnections';
 
 /* eslint-disable indent */
