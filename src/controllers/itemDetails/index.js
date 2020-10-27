@@ -143,7 +143,7 @@ function renderSeriesTimerEditor(page, item, apiClient, user) {
     }
 
     if (user.Policy.EnableLiveTvManagement) {
-        import('../../components/recordingcreator/seriesrecordingeditor').then(({ default: seriesRecordingEditor }) => {
+        import('../../components/recordingcreator/seriesrecordingeditor').then(seriesRecordingEditor => {
             seriesRecordingEditor.embed(item, apiClient.serverId(), {
                 context: page.querySelector('.seriesRecordingEditor')
             });

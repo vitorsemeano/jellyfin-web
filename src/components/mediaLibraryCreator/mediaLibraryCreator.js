@@ -104,10 +104,10 @@ import alert from '../alert';
         libraryoptionseditor.setAdvancedVisible(dlg.querySelector('.libraryOptions'), this.checked);
     }
 
-    function onAddButtonClick() {
+    async function onAddButtonClick() {
         const page = dom.parentWithClass(this, 'dlg-librarycreator');
+        const {default: directoryBrowser} = await import('../directorybrowser/directorybrowser');
 
-        import('../directorybrowser/directorybrowser').then((directoryBrowser) => {
             const picker = new directoryBrowser();
             picker.show({
                 enableNetworkSharePath: true,
@@ -119,7 +119,6 @@ import alert from '../alert';
                     picker.close();
                 }
             });
-        });
     }
 
     function getFolderHtml(pathInfo, index) {
@@ -192,43 +191,46 @@ import alert from '../alert';
         });
     }
 
-export class showEditor {
-    constructor(options) {
-        return new Promise((resolve) => {
-            currentOptions = options;
-            currentResolve = resolve;
-            hasChanges = false;
-            import('./mediaLibraryCreator.template.html').then(({default: template}) => {
-                const dlg = dialogHelper.createDialog({
-                    size: 'small',
-                    modal: false,
-                    removeOnClose: true,
-                    scrollY: false
+    export class MediaLibraryCreator {
+        constructor(options) {
+            this.show = options => {
+                return new Promise((resolve) => {
+                    currentOptions = options;
+                    currentResolve = resolve;
+                    hasChanges = false;
+                    import('./mediaLibraryCreator.template.html').then(({default: template}) => {
+                        const dlg = dialogHelper.createDialog({
+                            size: 'small',
+                            modal: false,
+                            removeOnClose: true,
+                            scrollY: false
+                        });
+                        dlg.classList.add('ui-body-a');
+                        dlg.classList.add('background-theme-a');
+                        dlg.classList.add('dlg-librarycreator');
+                        dlg.classList.add('formDialog');
+                        dlg.innerHTML = globalize.translateHtml(template);
+                        initEditor(dlg, options.collectionTypeOptions);
+                        dlg.addEventListener('close', onDialogClosed);
+                        dialogHelper.open(dlg);
+                        dlg.querySelector('.btnCancel').addEventListener('click', () => {
+                            dialogHelper.close(dlg);
+                        });
+                        pathInfos = [];
+                        renderPaths(dlg);
+                        initLibraryOptions(dlg);
+                    });
                 });
-                dlg.classList.add('ui-body-a');
-                dlg.classList.add('background-theme-a');
-                dlg.classList.add('dlg-librarycreator');
-                dlg.classList.add('formDialog');
-                dlg.innerHTML = globalize.translateHtml(template);
-                initEditor(dlg, options.collectionTypeOptions);
-                dlg.addEventListener('close', onDialogClosed);
-                dialogHelper.open(dlg);
-                dlg.querySelector('.btnCancel').addEventListener('click', () => {
-                    dialogHelper.close(dlg);
-                });
-                pathInfos = [];
-                renderPaths(dlg);
-                initLibraryOptions(dlg);
-            });
-        });
+            };
+        }
     }
-}
 
-    let pathInfos = [];
-    let currentResolve;
-    let currentOptions;
-    let hasChanges = false;
-    let isCreating = false;
+        let pathInfos = [];
+        let currentResolve;
+        let currentOptions;
+        let hasChanges = false;
+        let isCreating = false;
 
 /* eslint-enable indent */
-export default showEditor;
+export default MediaLibraryCreator;
+

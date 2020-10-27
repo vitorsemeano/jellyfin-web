@@ -142,22 +142,20 @@ export default function (page, providerId, options) {
         page.querySelector('.tunerList').innerHTML = html;
     }
 
-    function onSelectPathClick(e) {
+    async function onSelectPathClick(e) {
         const page = $(e.target).parents('.xmltvForm')[0];
-
-        import('../directorybrowser/directorybrowser').then((directoryBrowser) => {
-            const picker = new directoryBrowser();
-            picker.show({
-                includeFiles: true,
-                callback: function (path) {
-                    if (path) {
-                        const txtPath = page.querySelector('.txtPath');
-                        txtPath.value = path;
-                        txtPath.focus();
-                    }
-                    picker.close();
+        const {default: directoryBrowser} = await import('../directorybrowser/directorybrowser');
+        const picker = new directoryBrowser();
+        picker.show({
+            includeFiles: true,
+            callback: function (path) {
+                if (path) {
+                    const txtPath = page.querySelector('.txtPath');
+                    txtPath.value = path;
+                    txtPath.focus();
                 }
-            });
+                picker.close();
+            }
         });
     }
 

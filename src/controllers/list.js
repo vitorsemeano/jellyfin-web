@@ -344,10 +344,10 @@ import { appRouter } from '../components/appRouter';
         return Promise.resolve(null);
     }
 
-    function showViewSettingsMenu() {
+    async function showViewSettingsMenu() {
         const instance = this;
+        const {default: ViewSettings} = await import('../components/viewSettings/viewSettings');
 
-        import('../components/viewSettings/viewSettings').then((ViewSettings) => {
             new ViewSettings().show({
                 settingsKey: instance.getSettingsKey(),
                 settings: instance.getViewSettings(),
@@ -356,13 +356,12 @@ import { appRouter } from '../components/appRouter';
                 updateItemsContainerForViewType(instance);
                 instance.itemsContainer.refreshItems();
             });
-        });
     }
 
-    function showFilterMenu() {
+    async function showFilterMenu() {
         const instance = this;
+        const {default: FilterMenu} = await import('../components/filtermenu/filtermenu');
 
-        import('../components/filtermenu/filtermenu').then(({default: FilterMenu}) => {
             new FilterMenu().show({
                 settingsKey: instance.getSettingsKey(),
                 settings: instance.getFilters(),
@@ -375,13 +374,12 @@ import { appRouter } from '../components/appRouter';
             }).then(function () {
                 instance.itemsContainer.refreshItems();
             });
-        });
     }
 
-    function showSortMenu() {
+    async function showSortMenu() {
         const instance = this;
+        const {default: SortMenu} = await import('../components/sortmenu/sortmenu');
 
-        import('../components/sortmenu/sortmenu').then((SortMenu) => {
             new SortMenu().show({
                 settingsKey: instance.getSettingsKey(),
                 settings: instance.getSortValues(),
@@ -393,18 +391,15 @@ import { appRouter } from '../components/appRouter';
                 updateAlphaPickerState(instance);
                 instance.itemsContainer.refreshItems();
             });
-        });
     }
 
-    function onNewItemClick() {
+    async function onNewItemClick() {
         const instance = this;
-
-        import('../components/playlisteditor/playlisteditor').then((playlistEditor) => {
-            new playlistEditor({
+        const {default: PlaylistEditor} = await import('../components/playlisteditor/playlisteditor');
+            new PlaylistEditor().show({
                 items: [],
                 serverId: instance.params.serverId
             });
-        });
     }
 
     function hideOrShowAll(elems, hide) {

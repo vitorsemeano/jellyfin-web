@@ -420,7 +420,7 @@ function showEditorInternal(itemId, serverId, template) {
     });
 }
 
-function showEditor(itemId, serverId) {
+export function show(itemId, serverId) {
     loading.show();
 
     return new Promise(function (resolve, reject) {
@@ -430,6 +430,3 @@ function showEditor(itemId, serverId) {
     });
 }
 
-export default {
-    show: showEditor
-};

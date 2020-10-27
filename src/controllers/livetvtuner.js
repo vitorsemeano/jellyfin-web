@@ -211,19 +211,18 @@ export default function (view, params) {
             fillTunerHostInfo(view, info);
         });
     });
-    view.querySelector('.btnSelectPath').addEventListener('click', function () {
-        import('../components/directorybrowser/directorybrowser').then(({default: directorybrowser}) => {
-            const picker = new directorybrowser();
-            picker.show({
-                includeFiles: true,
-                callback: function (path) {
-                    if (path) {
-                        view.querySelector('.txtDevicePath').value = path;
-                    }
-
-                    picker.close();
+    view.querySelector('.btnSelectPath').addEventListener('click', async function () {
+        const {default: directoryBrowser} = await import('../components/directorybrowser/directorybrowser');
+        const picker = new directoryBrowser();
+        picker.show({
+            includeFiles: true,
+            callback: function (path) {
+                if (path) {
+                    view.querySelector('.txtDevicePath').value = path;
                 }
-            });
+
+                picker.close();
+            }
         });
     });
 }

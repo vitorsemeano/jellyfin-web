@@ -160,8 +160,8 @@ import confirm from '../confirm/confirm';
         showDirectoryBrowser(dom.parentWithClass(this, 'dlg-libraryeditor'));
     }
 
-    function showDirectoryBrowser(context, originalPath, networkPath) {
-        import('../directorybrowser/directorybrowser').then((directoryBrowser) => {
+    async function showDirectoryBrowser(context, originalPath, networkPath) {
+        const {default: directoryBrowser} = await import('../directorybrowser/directorybrowser');
             const picker = new directoryBrowser();
             picker.show({
                 enableNetworkSharePath: true,
@@ -180,7 +180,6 @@ import confirm from '../confirm/confirm';
                     picker.close();
                 }
             });
-        });
     }
 
     function onToggleAdvancedChange() {
@@ -203,36 +202,38 @@ import confirm from '../confirm/confirm';
         currentDeferred.resolveWith(null, [hasChanges]);
     }
 
-export class showEditor {
-    constructor(options) {
-        const deferred = jQuery.Deferred();
-        currentOptions = options;
-        currentDeferred = deferred;
-        hasChanges = false;
-        import('./mediaLibraryEditor.template.html').then((template) => {
-            const dlg = dialogHelper.createDialog({
-                size: 'small',
-                modal: false,
-                removeOnClose: true,
-                scrollY: false
-            });
-            dlg.classList.add('dlg-libraryeditor');
-            dlg.classList.add('ui-body-a');
-            dlg.classList.add('background-theme-a');
-            dlg.classList.add('formDialog');
-            dlg.innerHTML = globalize.translateHtml(template);
-            dlg.querySelector('.formDialogHeaderTitle').innerHTML = options.library.Name;
-            initEditor(dlg, options);
-            dlg.addEventListener('close', onDialogClosed);
-            dialogHelper.open(dlg);
-            dlg.querySelector('.btnCancel').addEventListener('click', () => {
-                dialogHelper.close(dlg);
-            });
-            refreshLibraryFromServer(dlg);
-        });
-        return deferred.promise();
+    export class MediaLibraryEditor {
+        constructor() {
+            this.show = options => {
+                const deferred = jQuery.Deferred();
+                currentOptions = options;
+                currentDeferred = deferred;
+                hasChanges = false;
+                import('./mediaLibraryEditor.template.html').then((template) => {
+                    const dlg = dialogHelper.createDialog({
+                        size: 'small',
+                        modal: false,
+                        removeOnClose: true,
+                        scrollY: false
+                    });
+                    dlg.classList.add('dlg-libraryeditor');
+                    dlg.classList.add('ui-body-a');
+                    dlg.classList.add('background-theme-a');
+                    dlg.classList.add('formDialog');
+                    dlg.innerHTML = globalize.translateHtml(template);
+                    dlg.querySelector('.formDialogHeaderTitle').innerHTML = options.library.Name;
+                    initEditor(dlg, options);
+                    dlg.addEventListener('close', onDialogClosed);
+                    dialogHelper.open(dlg);
+                    dlg.querySelector('.btnCancel').addEventListener('click', () => {
+                        dialogHelper.close(dlg);
+                    });
+                    refreshLibraryFromServer(dlg);
+                });
+                return deferred.promise();
+            };
+        }
     }
-}
 
     let currentDeferred;
     let currentOptions;
@@ -240,4 +241,5 @@ export class showEditor {
     let isCreating = false;
 
 /* eslint-enable indent */
-export default showEditor;
+export default MediaLibraryEditor;
+

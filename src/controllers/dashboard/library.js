@@ -12,9 +12,9 @@ import confirm from '../../components/confirm/confirm';
 
 /* eslint-disable indent */
 
-    function addVirtualFolder(page) {
-        import('../../components/mediaLibraryCreator/mediaLibraryCreator').then((medialibrarycreator) => {
-            new medialibrarycreator({
+    async function addVirtualFolder(page) {
+        const {default: MediaLibraryCreator} = await import('../../components/mediaLibraryCreator/mediaLibraryCreator');
+            new MediaLibraryCreator().show({
                 collectionTypeOptions: getCollectionTypeOptions().filter(function (f) {
                     return !f.hidden;
                 }),
@@ -24,12 +24,11 @@ import confirm from '../../components/confirm/confirm';
                     reloadLibrary(page);
                 }
             });
-        });
     }
 
-    function editVirtualFolder(page, virtualFolder) {
-        import('../../components/mediaLibraryEditor/mediaLibraryEditor').then((medialibraryeditor) => {
-            new medialibraryeditor({
+    async function editVirtualFolder(page, virtualFolder) {
+        const {default: MediaLibraryEditor} = await import('../../components/mediaLibraryEditor/mediaLibraryEditor');
+            new MediaLibraryEditor().show({
                 refresh: shouldRefreshLibraryAfterChanges(page),
                 library: virtualFolder
             }).then(function (hasChanges) {
@@ -37,7 +36,6 @@ import confirm from '../../components/confirm/confirm';
                     reloadLibrary(page);
                 }
             });
-        });
     }
 
     function deleteVirtualFolder(page, virtualFolder) {
@@ -61,14 +59,13 @@ import confirm from '../../components/confirm/confirm';
         });
     }
 
-    function refreshVirtualFolder(page, virtualFolder) {
-        import('../../components/refreshdialog/refreshdialog').then((refreshDialog) => {
-            new refreshDialog({
+    async function refreshVirtualFolder(page, virtualFolder) {
+        const {default: RefreshDialog} = await import('../../components/refreshdialog/refreshdialog');
+            new RefreshDialog({
                 itemIds: [virtualFolder.ItemId],
                 serverId: ApiClient.serverId(),
                 mode: 'scan'
             }).show();
-        });
     }
 
     function renameVirtualFolder(page, virtualFolder) {

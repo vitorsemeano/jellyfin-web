@@ -177,8 +177,8 @@ import alert from '../../components/alert';
 
             setDecodingCodecsVisible(page, this.value);
         });
-        $('#btnSelectEncoderPath', page).on('click.selectDirectory', function () {
-            import('../../components/directorybrowser/directorybrowser').then(({default: directoryBrowser}) => {
+        $('#btnSelectEncoderPath', page).on('click.selectDirectory', async function () {
+            const {default: directoryBrowser} = await import('../../components/directorybrowser/directorybrowser');
                 const picker = new directoryBrowser();
                 picker.show({
                     includeFiles: true,
@@ -190,10 +190,9 @@ import alert from '../../components/alert';
                         picker.close();
                     }
                 });
-            });
         });
-        $('#btnSelectTranscodingTempPath', page).on('click.selectDirectory', function () {
-            import('../../components/directorybrowser/directorybrowser').then(({default: directoryBrowser}) => {
+        $('#btnSelectTranscodingTempPath', page).on('click.selectDirectory', async function () {
+            const {default: directoryBrowser} = await import('../../components/directorybrowser/directorybrowser');
                 const picker = new directoryBrowser();
                 picker.show({
                     callback: function (path) {
@@ -207,7 +206,6 @@ import alert from '../../components/alert';
                     header: globalize.translate('HeaderSelectTranscodingPath'),
                     instruction: globalize.translate('HeaderSelectTranscodingPathHelp')
                 });
-            });
         });
         $('.encodingSettingsForm').off('submit', onSubmit).on('submit', onSubmit);
     }).on('pageshow', '#encodingSettingsPage', function () {

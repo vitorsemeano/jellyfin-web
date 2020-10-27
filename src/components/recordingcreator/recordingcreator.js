@@ -131,7 +131,7 @@ function executeCloseAction(action, programId, serverId) {
     }
 }
 
-function showEditor(itemId, serverId) {
+export function show(itemId, serverId) {
     return new Promise(function (resolve, reject) {
         closeAction = null;
 
@@ -198,6 +198,3 @@ function showEditor(itemId, serverId) {
     });
 }
 
-export default {
-    show: showEditor
-};
