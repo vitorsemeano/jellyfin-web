@@ -7,7 +7,6 @@ import cardBuilder from '../../components/cardbuilder/cardBuilder';
 import * as userSettings from '../../scripts/settings/userSettings';
 import globalize from '../../scripts/globalize';
 import '../../elements/emby-itemscontainer/emby-itemscontainer';
-import Dashboard from '../../scripts/clientUtils';
 
 /* eslint-disable indent */
 
@@ -55,8 +54,8 @@ import Dashboard from '../../scripts/clientUtils';
             return context.savedQueryKey;
         }
 
-        function onViewStyleChange() {
-            const viewStyle = self.getCurrentViewStyle();
+        const onViewStyleChange = () => {
+            const viewStyle = this.getCurrentViewStyle();
             const itemsContainer = tabContent.querySelector('.itemsContainer');
 
             if (viewStyle == 'List') {
@@ -68,13 +67,13 @@ import Dashboard from '../../scripts/clientUtils';
             }
 
             itemsContainer.innerHTML = '';
-        }
+        };
 
-        function reloadItems(page) {
+        const reloadItems = (page) => {
             loading.show();
             isLoading = true;
             const query = getQuery(page);
-            ApiClient.getItems(Dashboard.getCurrentUserId(), query).then(function (result) {
+            ApiClient.getItems(ApiClient.getCurrentUserId(), query).then(result => {
                 function onNextPageClick() {
                     if (isLoading) {
                         return;
@@ -109,7 +108,7 @@ import Dashboard from '../../scripts/clientUtils';
                     sortButton: false,
                     filterButton: false
                 });
-                const viewStyle = self.getCurrentViewStyle();
+                const viewStyle = this.getCurrentViewStyle();
                 const itemsContainer = tabContent.querySelector('.itemsContainer');
                 if (viewStyle == 'List') {
                     html = listView.getListViewHtml({
@@ -165,35 +164,34 @@ import Dashboard from '../../scripts/clientUtils';
                     autoFocuser.autoFocus(page);
                 });
             });
-        }
+        };
 
-        const self = this;
         const data = {};
         let isLoading = false;
 
-        self.showFilterMenu = function () {
+        this.showFilterMenu = () => {
             import('../../components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
                 const filterDialog = new filterDialogFactory({
                     query: getQuery(tabContent),
                     mode: 'episodes',
                     serverId: ApiClient.serverId()
                 });
-                Events.on(filterDialog, 'filterchange', function () {
+                Events.on(filterDialog, 'filterchange', () => {
                     reloadItems(tabContent);
                 });
                 filterDialog.show();
             });
         };
 
-        self.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData(tabContent).view;
         };
 
-        function initPage(tabContent) {
-            tabContent.querySelector('.btnFilter').addEventListener('click', function () {
-                self.showFilterMenu();
+        const initPage = (tabContent) => {
+            tabContent.querySelector('.btnFilter').addEventListener('click', () => {
+                this.showFilterMenu();
             });
-            tabContent.querySelector('.btnSort').addEventListener('click', function (e) {
+            tabContent.querySelector('.btnSort').addEventListener('click', (e) => {
                 libraryBrowser.showSortMenu({
                     items: [{
                         name: globalize.translate('Name'),
@@ -220,7 +218,7 @@ import Dashboard from '../../scripts/clientUtils';
                         name: globalize.translate('Runtime'),
                         id: 'Runtime,SeriesSortName,SortName'
                     }],
-                    callback: function () {
+                    callback: () => {
                         reloadItems(tabContent);
                     },
                     query: getQuery(tabContent),
@@ -228,26 +226,26 @@ import Dashboard from '../../scripts/clientUtils';
                 });
             });
             const btnSelectView = tabContent.querySelector('.btnSelectView');
-            btnSelectView.addEventListener('click', function (e) {
-                libraryBrowser.showLayoutMenu(e.target, self.getCurrentViewStyle(), 'List,Poster,PosterCard'.split(','));
+            btnSelectView.addEventListener('click', (e) => {
+                libraryBrowser.showLayoutMenu(e.target, this.getCurrentViewStyle(), 'List,Poster,PosterCard'.split(','));
             });
-            btnSelectView.addEventListener('layoutchange', function (e) {
+            btnSelectView.addEventListener('layoutchange', (e) => {
                 const viewStyle = e.detail.viewStyle;
                 getPageData(tabContent).view = viewStyle;
                 libraryBrowser.saveViewSetting(getSavedQueryKey(tabContent), viewStyle);
                 onViewStyleChange();
                 reloadItems(tabContent);
             });
-        }
+        };
 
         initPage(tabContent);
         onViewStyleChange();
 
-        self.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent);
         };
 
-        self.destroy = function () {};
+        this.destroy = () => {};
     }
 
 /* eslint-enable indent */

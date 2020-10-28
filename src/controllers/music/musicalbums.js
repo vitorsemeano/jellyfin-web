@@ -14,7 +14,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
 
     export default function (view, params, tabContent) {
         function playAll() {
-            ApiClient.getItem(ApiClient.getCurrentUserId(), params.topParentId).then(function (item) {
+            ApiClient.getItem(ApiClient.getCurrentUserId(), params.topParentId).then(item => {
                 playbackManager.play({
                     items: [item]
                 });
@@ -22,7 +22,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
         }
 
         function shuffle() {
-            ApiClient.getItem(ApiClient.getCurrentUserId(), params.topParentId).then(function (item) {
+            ApiClient.getItem(ApiClient.getCurrentUserId(), params.topParentId).then(item => {
                 getQuery();
                 playbackManager.shuffle(item, null);
             });
@@ -203,14 +203,14 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
         let pageData;
         let isLoading = false;
 
-        this.showFilterMenu = function () {
+        this.showFilterMenu = () => {
             import('../../components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
                 const filterDialog = new filterDialogFactory({
                     query: getQuery(),
                     mode: 'albums',
                     serverId: ApiClient.serverId()
                 });
-                Events.on(filterDialog, 'filterchange', function () {
+                Events.on(filterDialog, 'filterchange', () => {
                     getQuery().StartIndex = 0;
                     reloadItems(tabContent);
                 });
@@ -219,7 +219,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
             });
         };
 
-        this.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData().view;
         };
 
@@ -227,7 +227,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
             const alphaPickerElement = tabContent.querySelector('.alphaPicker');
             const itemsContainer = tabContent.querySelector('.itemsContainer');
 
-            alphaPickerElement.addEventListener('alphavaluechanged', function (e) {
+            alphaPickerElement.addEventListener('alphavaluechanged', e => {
                 const newValue = e.detail.value;
                 const query = getQuery();
                 query.NameStartsWith = newValue;
@@ -272,7 +272,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                         name: globalize.translate('OptionRandom'),
                         id: 'Random,SortName'
                     }],
-                    callback: function () {
+                    callback: () => {
                         getQuery().StartIndex = 0;
                         reloadItems(tabContent);
                     },
@@ -286,7 +286,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                 libraryBrowser.showLayoutMenu(e.target, this.getCurrentViewStyle(), 'List,Poster,PosterCard'.split(','));
             });
 
-            btnSelectView.addEventListener('layoutchange', function (e) {
+            btnSelectView.addEventListener('layoutchange', e => {
                 const viewStyle = e.detail.viewStyle;
                 getPageData().view = viewStyle;
                 libraryBrowser.saveViewSetting(getSavedQueryKey(), viewStyle);
@@ -302,12 +302,12 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
         initPage(tabContent);
         onViewStyleChange();
 
-        this.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent);
             updateFilterControls(tabContent);
         };
 
-        this.destroy = function () {};
+        this.destroy = () => {};
     }
 
 /* eslint-enable indent */

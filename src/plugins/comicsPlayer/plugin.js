@@ -5,6 +5,7 @@ import dialogHelper from '../../components/dialogHelper/dialogHelper';
 import keyboardnavigation from '../../scripts/keyboardNavigation';
 import { appRouter } from '../../components/appRouter';
 import ServerConnections from '../../components/ServerConnections';
+import 'swiper/swiper-bundle.css';
 
 export class ComicsPlayer {
     constructor() {

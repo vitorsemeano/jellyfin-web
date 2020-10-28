@@ -107,7 +107,7 @@ import autoFocuser from '../../components/autoFocuser';
             EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             EnableTotalRecordCount: false
         };
-        ApiClient.getItems(userId, options).then(function (result) {
+        ApiClient.getItems(userId, options).then(result => {
             if (result.Items.length) {
                 view.querySelector('#resumableSection').classList.remove('hide');
             } else {
@@ -144,7 +144,7 @@ import autoFocuser from '../../components/autoFocuser';
             ImageTypeLimit: 1,
             EnableImageTypes: 'Primary,Backdrop,Thumb'
         };
-        ApiClient.getLatestItems(options).then(function (items) {
+        ApiClient.getLatestItems(options).then(items => {
             const section = view.querySelector('#latestItemsSection');
             const allowBottomPadding = !enableScrollX();
             const container = section.querySelector('#latestEpisodesItems');
@@ -184,7 +184,7 @@ import autoFocuser from '../../components/autoFocuser';
             EnableTotalRecordCount: false
         };
         query.ParentId = libraryMenu.getTopParentId();
-        ApiClient.getNextUpEpisodes(query).then(function (result) {
+        ApiClient.getNextUpEpisodes(query).then(result => {
             if (result.Items.length) {
                 view.querySelector('.noNextUpItems').classList.add('hide');
             } else {
@@ -238,7 +238,7 @@ import autoFocuser from '../../components/autoFocuser';
             mainTabsManager.setTabs(view, currentTabIndex, getTabs, getTabContainers, onBeforeTabChange, onTabChange);
         }
 
-        function getTabController(page, index, callback) {
+        const getTabController = (page, index, callback) => {
             let depends;
 
             switch (index) {
@@ -272,7 +272,7 @@ import autoFocuser from '../../components/autoFocuser';
 
                 if (index === 1) {
                     tabContent = view.querySelector(".pageTabContent[data-index='" + index + "']");
-                    self.tabContent = tabContent;
+                    this.tabContent = tabContent;
                 }
 
                 let controller = tabControllers[index];
@@ -281,7 +281,7 @@ import autoFocuser from '../../components/autoFocuser';
                     tabContent = view.querySelector(".pageTabContent[data-index='" + index + "']");
 
                     if (index === 1) {
-                        controller = self;
+                        controller = this;
                     } else {
                         controller = new controllerFactory(view, params, tabContent);
                     }
@@ -295,10 +295,10 @@ import autoFocuser from '../../components/autoFocuser';
 
                 callback(controller);
             });
-        }
+        };
 
         function preLoadTab(page, index) {
-            getTabController(page, index, function (controller) {
+            getTabController(page, index, controller => {
                 if (renderedTabs.indexOf(index) == -1 && controller.preRender) {
                     controller.preRender();
                 }
@@ -307,7 +307,7 @@ import autoFocuser from '../../components/autoFocuser';
 
         function loadTab(page, index) {
             currentTabIndex = index;
-            getTabController(page, index, function (controller) {
+            getTabController(page, index, controller => {
                 if (renderedTabs.indexOf(index) == -1) {
                     renderedTabs.push(index);
                     controller.renderTab();
@@ -338,29 +338,28 @@ import autoFocuser from '../../components/autoFocuser';
             }
         }
 
-        const self = this;
         let currentTabIndex = parseInt(params.tab || getDefaultTabIndex(params.topParentId));
         const suggestionsTabIndex = 1;
 
-        self.initTab = function () {
+        this.initTab = () => {
             const tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
             initSuggestedTab(view, tabContent);
         };
 
-        self.renderTab = function () {
+        this.renderTab = () => {
             const tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
             loadSuggestionsTab(view, params, tabContent);
         };
 
         const tabControllers = [];
         let renderedTabs = [];
-        view.addEventListener('viewshow', function (e) {
+        view.addEventListener('viewshow', e => {
             initTabs();
             if (!view.getAttribute('data-title')) {
                 const parentId = params.topParentId;
 
                 if (parentId) {
-                    ApiClient.getItem(ApiClient.getCurrentUserId(), parentId).then(function (item) {
+                    ApiClient.getItem(ApiClient.getCurrentUserId(), parentId).then(item => {
                         view.setAttribute('data-title', item.Name);
                         libraryMenu.setTitle(item.Name);
                     });
@@ -374,13 +373,13 @@ import autoFocuser from '../../components/autoFocuser';
             Events.on(ApiClient, 'message', onWebSocketMessage);
             inputManager.on(window, onInputCommand);
         });
-        view.addEventListener('viewbeforehide', function (e) {
+        view.addEventListener('viewbeforehide', e => {
             inputManager.off(window, onInputCommand);
             Events.off(playbackManager, 'playbackstop', onPlaybackStop);
             Events.off(ApiClient, 'message', onWebSocketMessage);
         });
-        view.addEventListener('viewdestroy', function (e) {
-            tabControllers.forEach(function (t) {
+        view.addEventListener('viewdestroy', e => {
+            tabControllers.forEach(t => {
                 if (t.destroy) {
                     t.destroy();
                 }

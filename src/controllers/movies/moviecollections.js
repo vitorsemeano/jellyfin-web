@@ -202,12 +202,12 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
         const data = {};
         let isLoading = false;
 
-        this.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData(tabContent).view;
         };
 
         const initPage = (tabContent) => {
-            tabContent.querySelector('.btnSort').addEventListener('click', function (e) {
+            tabContent.querySelector('.btnSort').addEventListener('click', e => {
                 libraryBrowser.showSortMenu({
                     items: [{
                         name: globalize.translate('Name'),
@@ -225,7 +225,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                         name: globalize.translate('OptionReleaseDate'),
                         id: 'PremiereDate,SortName'
                     }],
-                    callback: function () {
+                    callback: () => {
                         getQuery(tabContent).StartIndex = 0;
                         reloadItems(tabContent);
                     },
@@ -234,10 +234,10 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                 });
             });
             const btnSelectView = tabContent.querySelector('.btnSelectView');
-            btnSelectView.addEventListener('click', function (e) {
+            btnSelectView.addEventListener('click', (e) => {
                 libraryBrowser.showLayoutMenu(e.target, this.getCurrentViewStyle(), 'List,Poster,PosterCard,Thumb,ThumbCard'.split(','));
             });
-            btnSelectView.addEventListener('layoutchange', function (e) {
+            btnSelectView.addEventListener('layoutchange', e => {
                 const viewStyle = e.detail.viewStyle;
                 getPageData(tabContent).view = viewStyle;
                 libraryBrowser.saveViewSetting(getSavedQueryKey(tabContent), viewStyle);
@@ -245,25 +245,24 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                 onViewStyleChange();
                 reloadItems(tabContent);
             });
-            tabContent.querySelector('.btnNewCollection').addEventListener('click', () => {
-                import('../../components/collectionEditor/collectionEditor').then(({default: collectionEditor}) => {
-                    const serverId = ApiClient.serverInfo().Id;
-                    new collectionEditor.showEditor({
+            tabContent.querySelector('.btnNewCollection').addEventListener('click', async () => {
+                const {default: CollectionEditor} = await import('../../components/collectionEditor/collectionEditor');
+                const serverId = ApiClient.serverInfo().Id;
+                    new CollectionEditor().show({
                         items: [],
                         serverId: serverId
                     });
-                });
             });
         };
 
         initPage(tabContent);
         onViewStyleChange();
 
-        this.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent);
         };
 
-        this.destroy = function () {};
+        this.destroy = () => {};
     }
 
 /* eslint-enable indent */

@@ -45,7 +45,7 @@ import loading from '../../components/loading/loading';
 
         function reloadItems(context, promise) {
             const query = getQuery();
-            promise.then(function (result) {
+            promise.then(result => {
                 let html = '';
                 html = cardBuilder.getCardsHtml({
                     items: result.Items,
@@ -71,17 +71,17 @@ import loading from '../../components/loading/loading';
 
         const data = {};
 
-        this.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData().view;
         };
 
         let promise;
 
-        this.preRender = function () {
+        this.preRender = () => {
             promise = getPromise();
         };
 
-        this.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent, promise);
         };
     }

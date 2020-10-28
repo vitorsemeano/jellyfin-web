@@ -13,6 +13,7 @@ import './style.css';
 import 'material-design-icons-iconfont';
 import '../../elements/emby-button/paper-icon-button-light';
 import ServerConnections from '../ServerConnections';
+import 'swiper/swiper-bundle.css';
 
 /**
  * Name of transition event.
