@@ -152,7 +152,7 @@ function showActivePlayerMenu(playerInfo) {
 
 function disconnectFromPlayer(currentDeviceName) {
     if (playbackManager.getSupportedCommands().indexOf('EndSession') !== -1) {
-        import('../dialog/dialog').then(({default: dialog}) => {
+        import('../dialog/dialog').then(({default: Dialog}) => {
             const menuItems = [];
 
             menuItems.push({
@@ -164,7 +164,7 @@ function disconnectFromPlayer(currentDeviceName) {
                 id: 'no'
             });
 
-            dialog({
+            Dialog({
                 buttons: menuItems,
                 text: globalize.translate('ConfirmEndPlayerSession', currentDeviceName)
 

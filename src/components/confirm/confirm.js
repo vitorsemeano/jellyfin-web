@@ -1,5 +1,5 @@
 import browser from '../../scripts/browser';
-import dialog from '../dialog/dialog';
+import Dialog from '../dialog/dialog';
 import globalize from '../../scripts/globalize';
 
 function replaceAll(str, find, replace) {
@@ -51,7 +51,7 @@ function customConfirm(text, title) {
 
     options.buttons = items;
 
-    return dialog.show(options).then(result => {
+    return Dialog(options).then(result => {
         if (result === 'ok') {
             return Promise.resolve();
         }

@@ -32,15 +32,12 @@ function changeRecordingToSeries(apiClient, timerId, programId, confirmTimerCanc
 function cancelTimerWithConfirmation(timerId, serverId) {
     return new Promise(function (resolve, reject) {
         confirm({
-
             text: globalize.translate('MessageConfirmRecordingCancellation'),
             primary: 'delete',
             confirmText: globalize.translate('HeaderCancelRecording'),
             cancelText: globalize.translate('HeaderKeepRecording')
-
         }).then(function () {
             loading.show();
-
             const apiClient = ServerConnections.getApiClient(serverId);
             cancelTimer(apiClient, timerId, true).then(resolve, reject);
         }, reject);
@@ -50,19 +47,15 @@ function cancelTimerWithConfirmation(timerId, serverId) {
 function cancelSeriesTimerWithConfirmation(timerId, serverId) {
     return new Promise(function (resolve, reject) {
         confirm({
-
             text: globalize.translate('MessageConfirmRecordingCancellation'),
             primary: 'delete',
             confirmText: globalize.translate('HeaderCancelSeries'),
             cancelText: globalize.translate('HeaderKeepSeries')
-
         }).then(function () {
             loading.show();
-
             const apiClient = ServerConnections.getApiClient(serverId);
             apiClient.cancelLiveTvSeriesTimer(timerId).then(function () {
                 toast(globalize.translate('SeriesCancelled'));
-
                 loading.hide();
                 resolve();
             }, reject);
@@ -100,7 +93,7 @@ function sendToast(msg) {
 
 function showMultiCancellationPrompt(serverId, programId, timerId, timerStatus, seriesTimerId) {
     return new Promise(function (resolve, reject) {
-        import('../dialog/dialog').then((dialog) => {
+        import('../dialog/dialog').then(({default: Dialog}) => {
             const items = [];
 
             items.push({
@@ -129,7 +122,7 @@ function showMultiCancellationPrompt(serverId, programId, timerId, timerStatus, 
                 type: 'cancel'
             });
 
-            dialog({
+            Dialog({
 
                 text: globalize.translate('MessageConfirmRecordingCancellation'),
                 buttons: items

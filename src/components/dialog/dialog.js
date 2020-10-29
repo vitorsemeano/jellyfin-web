@@ -117,7 +117,7 @@ import '../../assets/css/flexstyles.css';
         });
     }
 
-    export async function show(text, title) {
+    async function Dialog(text, title) {
         let options;
         if (typeof text === 'string') {
             options = {
@@ -135,6 +135,4 @@ import '../../assets/css/flexstyles.css';
     }
 
 /* eslint-enable indent */
-export default {
-    show: show
-};
+export default Dialog;
