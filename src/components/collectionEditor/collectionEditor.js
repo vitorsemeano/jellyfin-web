@@ -205,8 +205,8 @@ import toast from '../toast/toast';
         });
     }
 
-    export class showEditor {
-        constructor(options) {
+    class CollectionEditor {
+        async show(options) {
             const items = options.items || {};
             currentServerId = options.serverId;
 
@@ -250,19 +250,16 @@ import toast from '../toast/toast';
                 centerFocus(dlg.querySelector('.formDialogContent'), false, true);
             }
 
-            return dialogHelper.open(dlg).then(() => {
-                if (layoutManager.tv) {
-                    centerFocus(dlg.querySelector('.formDialogContent'), false, false);
-                }
-
-                if (dlg.submitted) {
-                    return Promise.resolve();
-                }
-
-                return Promise.reject();
-            });
+            await dialogHelper.open(dlg);
+            if (layoutManager.tv) {
+                centerFocus(dlg.querySelector('.formDialogContent'), false, false);
+            }
+            if (dlg.submitted) {
+                return Promise.resolve();
+            }
+            return Promise.reject();
         }
     }
 
 /* eslint-enable indent */
-export default showEditor;
+export default CollectionEditor;

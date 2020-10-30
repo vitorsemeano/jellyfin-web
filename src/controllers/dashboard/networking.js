@@ -144,8 +144,8 @@ import alert from '../../components/alert';
                 view.querySelector('.fldEnableUpnp').classList.add('hide');
             }
         });
-        view.querySelector('#btnSelectCertPath').addEventListener('click', function () {
-            import('../../components/directorybrowser/directorybrowser').then(({default: directoryBrowser}) => {
+        view.querySelector('#btnSelectCertPath').addEventListener('click', async function () {
+            const {default: directoryBrowser} = await import('../../components/directorybrowser/directorybrowser');
                 const picker = new directoryBrowser();
                 picker.show({
                     includeFiles: true,
@@ -159,7 +159,6 @@ import alert from '../../components/alert';
                     },
                     header: globalize.translate('HeaderSelectCertificatePath')
                 });
-            });
         });
         view.querySelector('.dashboardHostingForm').addEventListener('submit', onSubmit);
         view.addEventListener('viewshow', function (e) {

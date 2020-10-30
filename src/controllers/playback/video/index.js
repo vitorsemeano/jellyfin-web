@@ -892,8 +892,8 @@ import { appRouter } from '../../../components/appRouter';
             }
         }
 
-        function toggleStats() {
-            import('../../../components/playerstats/playerstats').then((PlayerStats) => {
+        async function toggleStats() {
+            const {default: PlayerStats} = await import('../../../components/playerstats/playerstats');
                 const player = currentPlayer;
 
                 if (player) {
@@ -905,7 +905,6 @@ import { appRouter } from '../../../components/appRouter';
                         });
                     }
                 }
-            });
         }
 
         function destroyStats() {

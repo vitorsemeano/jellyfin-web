@@ -1,49 +1,61 @@
-
 import browser from '../scripts/browser';
-import dialog from './dialog/dialog';
+import Dialog from './dialog/dialog';
 import globalize from '../scripts/globalize';
 
-/* eslint-disable indent */
+function replaceAll(originalString, strReplace, strWith) {
+    const reg = new RegExp(strReplace, 'ig');
+    return originalString.replace(reg, strWith);
+}
 
-    function replaceAll(originalString, strReplace, strWith) {
-        const reg = new RegExp(strReplace, 'ig');
-        return originalString.replace(reg, strWith);
+function nativeAlert(options) {
+    if (typeof options === 'string') {
+        options = {
+            title: '',
+            text: options
+        };
     }
 
-    export default function (text, title) {
-        let options;
-        if (typeof text === 'string') {
-            options = {
-                title: title,
-                text: text
-            };
-        } else {
-            options = text;
-        }
+    const text = replaceAll(options.text || '', '<br/>', '\n');
+    const result = window.alert(text);
 
-        if (browser.tv && window.alert) {
-            alert(replaceAll(options.text || '', '<br/>', '\n'));
-        } else {
-            const items = [];
-
-            items.push({
-                name: globalize.translate('ButtonGotIt'),
-                id: 'ok',
-                type: 'submit'
-            });
-
-            options.buttons = items;
-
-            return dialog.show(options).then(function (result) {
-                if (result === 'ok') {
-                    return Promise.resolve();
-                }
-
-                return Promise.reject();
-            });
-        }
-
+    if (result) {
         return Promise.resolve();
+    } else {
+        return Promise.reject();
+    }
+}
+
+function customAlert(text, title) {
+    let options;
+    if (typeof text === 'string') {
+        options = {
+            title: title,
+            text: text
+        };
+    } else {
+        options = text;
     }
 
-/* eslint-enable indent */
+    const items = [];
+
+    items.push({
+        name: globalize.translate('ButtonGotIt'),
+        id: 'ok',
+        type: 'submit'
+    });
+
+    options.buttons = items;
+
+    return Dialog(options).then(result => {
+        if (result === 'ok') {
+            return Promise.resolve();
+        }
+
+        return Promise.reject();
+    });
+}
+
+const alert = browser.tv && window.alert ? nativeAlert : customAlert;
+
+export default alert;
+

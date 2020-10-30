@@ -7,7 +7,6 @@ import loading from '../../components/loading/loading';
 import * as userSettings from '../../scripts/settings/userSettings';
 import globalize from '../../scripts/globalize';
 import '../../elements/emby-itemscontainer/emby-itemscontainer';
-import Dashboard from '../../scripts/clientUtils';
 
 /* eslint-disable indent */
 
@@ -53,11 +52,11 @@ import Dashboard from '../../scripts/clientUtils';
             return context.savedQueryKey;
         }
 
-        function reloadItems(page) {
+        const reloadItems = (page) => {
             loading.show();
             isLoading = true;
             const query = getQuery(page);
-            ApiClient.getItems(Dashboard.getCurrentUserId(), query).then(function (result) {
+            ApiClient.getItems(ApiClient.getCurrentUserId(), query).then(result => {
                 function onNextPageClick() {
                     if (isLoading) {
                         return;
@@ -125,20 +124,19 @@ import Dashboard from '../../scripts/clientUtils';
                     autoFocuser.autoFocus(page);
                 });
             });
-        }
+        };
 
-        const self = this;
         const data = {};
         let isLoading = false;
 
-        self.showFilterMenu = function () {
+        this.showFilterMenu = () => {
             import('../../components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
                 const filterDialog = new filterDialogFactory({
                     query: getQuery(tabContent),
                     mode: 'songs',
                     serverId: ApiClient.serverId()
                 });
-                Events.on(filterDialog, 'filterchange', function () {
+                Events.on(filterDialog, 'filterchange', () => {
                     getQuery(tabContent).StartIndex = 0;
                     reloadItems(tabContent);
                 });
@@ -146,15 +144,15 @@ import Dashboard from '../../scripts/clientUtils';
             });
         };
 
-        self.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData(tabContent).view;
         };
 
-        function initPage(tabContent) {
-            tabContent.querySelector('.btnFilter').addEventListener('click', function () {
-                self.showFilterMenu();
+        const initPage = (tabContent) => {
+            tabContent.querySelector('.btnFilter').addEventListener('click', () => {
+                this.showFilterMenu();
             });
-            tabContent.querySelector('.btnSort').addEventListener('click', function (e) {
+            tabContent.querySelector('.btnSort').addEventListener('click', e => {
                 libraryBrowser.showSortMenu({
                     items: [{
                         name: globalize.translate('OptionTrackName'),
@@ -184,7 +182,7 @@ import Dashboard from '../../scripts/clientUtils';
                         name: globalize.translate('Runtime'),
                         id: 'Runtime,AlbumArtist,Album,SortName'
                     }],
-                    callback: function () {
+                    callback: () => {
                         getQuery(tabContent).StartIndex = 0;
                         reloadItems(tabContent);
                     },
@@ -192,15 +190,15 @@ import Dashboard from '../../scripts/clientUtils';
                     button: e.target
                 });
             });
-        }
+        };
 
         initPage(tabContent);
 
-        self.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent);
         };
 
-        self.destroy = function () {};
+        this.destroy = () => {};
     }
 
 /* eslint-enable indent */

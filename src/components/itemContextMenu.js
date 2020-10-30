@@ -336,25 +336,26 @@ import toast from './toast/toast';
         return new Promise(function (resolve, reject) {
             switch (id) {
                 case 'addtocollection':
-                    import('./collectionEditor/collectionEditor').then((collectionEditor) => {
-                        new collectionEditor({
+                    import('./collectionEditor/collectionEditor').then(({default: CollectionEditor}) => {
+                        new CollectionEditor().show({
                             items: [itemId],
                             serverId: serverId
                         }).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
                     });
                     break;
                 case 'addtoplaylist':
-                    import('./playlisteditor/playlisteditor').then((playlistEditor) => {
-                        new playlistEditor({
+                    import('./playlisteditor/playlisteditor').then(({default: PlaylistEditor}) => {
+                        new PlaylistEditor().show({
                             items: [itemId],
                             serverId: serverId
                         }).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
                     });
+
                     break;
                 case 'download':
-                    import('../scripts/fileDownloader').then((fileDownloader) => {
+                    import('../scripts/fileDownloader').then(({ default: FileDownloader }) => {
                         const downloadHref = apiClient.getItemDownloadUrl(itemId);
-                        fileDownloader.download([{
+                        FileDownloader([{
                             url: downloadHref,
                             itemId: itemId,
                             serverId: serverId,
@@ -396,15 +397,16 @@ import toast from './toast/toast';
                     break;
                 }
                 case 'editsubtitles':
-                    import('./subtitleeditor/subtitleeditor').then((subtitleEditor) => {
+                    import('./subtitleeditor/subtitleeditor').then(subtitleEditor => {
                         subtitleEditor.show(itemId, serverId).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
                     });
                     break;
                 case 'edit':
-                    editItem(apiClient, item).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
+                    editItem(apiClient, item).then(getResolveFunction(resolve, id, true),
+                    getResolveFunction(resolve, id));
                     break;
                 case 'editimages':
-                    import('./imageeditor/imageeditor').then((imageEditor) => {
+                    import('./imageeditor/imageeditor').then(imageEditor => {
                         imageEditor.show({
                             itemId: itemId,
                             serverId: serverId
@@ -412,12 +414,12 @@ import toast from './toast/toast';
                     });
                     break;
                 case 'identify':
-                    import('./itemidentifier/itemidentifier').then((itemIdentifier) => {
+                    import('./itemidentifier/itemidentifier').then(itemIdentifier => {
                         itemIdentifier.show(itemId, serverId).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
                     });
                     break;
                 case 'moremediainfo':
-                    import('./itemMediaInfo/itemMediaInfo').then((itemMediaInfo) => {
+                    import('./itemMediaInfo/itemMediaInfo').then(itemMediaInfo => {
                         itemMediaInfo.show(itemId, serverId).then(getResolveFunction(resolve, id), getResolveFunction(resolve, id));
                     });
                     break;
@@ -452,7 +454,7 @@ import toast from './toast/toast';
                     playbackManager.clearQueue();
                     break;
                 case 'record':
-                    import('./recordingcreator/recordingcreator').then((recordingCreator) => {
+                    import('./recordingcreator/recordingcreator').then(recordingCreator => {
                         recordingCreator.show(itemId, serverId).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
                     });
                     break;
@@ -566,15 +568,15 @@ import toast from './toast/toast';
             const serverId = apiClient.serverInfo().Id;
 
             if (item.Type === 'Timer') {
-                import('./recordingcreator/recordingeditor').then((recordingEditor) => {
+                import('./recordingcreator/recordingeditor').then(recordingEditor => {
                     recordingEditor.show(item.Id, serverId).then(resolve, reject);
                 });
             } else if (item.Type === 'SeriesTimer') {
-                import('./recordingcreator/seriesrecordingeditor').then((recordingEditor) => {
-                    recordingEditor.show(item.Id, serverId).then(resolve, reject);
+                import('./recordingcreator/seriesrecordingeditor').then(seriesrecordingEditor => {
+                    seriesrecordingEditor.show(item.Id, serverId).then(resolve, reject);
                 });
             } else {
-                import('./metadataEditor/metadataEditor').then((metadataEditor) => {
+                import('./metadataEditor/metadataEditor').then(metadataEditor => {
                     metadataEditor.show(item.Id, serverId).then(resolve, reject);
                 });
             }
@@ -594,14 +596,13 @@ import toast from './toast/toast';
         });
     }
 
-    function refresh(apiClient, item) {
-        import('./refreshdialog/refreshdialog').then((refreshDialog) => {
-            new refreshDialog({
+    async function refresh(apiClient, item) {
+        const {default: RefreshDialog} = await import('./refreshdialog/refreshdialog');
+            new RefreshDialog({
                 itemIds: [item.Id],
                 serverId: apiClient.serverInfo().Id,
                 mode: item.Type === 'CollectionFolder' ? 'scan' : null
             }).show();
-        });
     }
 
     export function show(options) {

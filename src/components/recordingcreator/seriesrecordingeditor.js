@@ -144,7 +144,7 @@ function onFieldChange() {
     this.querySelector('.btnSubmit').click();
 }
 
-function embed(itemId, serverId, options) {
+export function embed(itemId, serverId, options) {
     recordingUpdated = false;
     recordingDeleted = false;
     currentServerId = serverId;
@@ -185,7 +185,7 @@ function embed(itemId, serverId, options) {
     });
 }
 
-function showEditor(itemId, serverId, options) {
+export function show(itemId, serverId, options) {
     return new Promise(function (resolve, reject) {
         recordingUpdated = false;
         recordingDeleted = false;
@@ -256,7 +256,3 @@ function showEditor(itemId, serverId, options) {
     });
 }
 
-export default {
-    show: showEditor,
-    embed: embed
-};

@@ -143,7 +143,7 @@ function renderSeriesTimerEditor(page, item, apiClient, user) {
     }
 
     if (user.Policy.EnableLiveTvManagement) {
-        import('../../components/recordingcreator/seriesrecordingeditor').then(({ default: seriesRecordingEditor }) => {
+        import('../../components/recordingcreator/seriesrecordingeditor').then(seriesRecordingEditor => {
             seriesRecordingEditor.embed(item, apiClient.serverId(), {
                 context: page.querySelector('.seriesRecordingEditor')
             });
@@ -1955,9 +1955,9 @@ export default function (view, params) {
     }
 
     function onDownloadClick() {
-        import('../../scripts/fileDownloader').then(({ default: fileDownloader }) => {
+        import('../../scripts/fileDownloader').then(({ default: FileDownloader }) => {
             const downloadHref = getApiClient().getItemDownloadUrl(currentItem.Id);
-            fileDownloader.download([{
+            FileDownloader([{
                 url: downloadHref,
                 itemId: currentItem.Id,
                 serverId: currentItem.serverId

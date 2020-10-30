@@ -1,4 +1,5 @@
 import 'jquery';
+import 'jstree/dist/themes/default/style.css';
 import globalize from './globalize';
 import 'material-design-icons-iconfont';
 import Dashboard from './clientUtils';

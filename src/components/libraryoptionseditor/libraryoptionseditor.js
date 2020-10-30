@@ -305,8 +305,8 @@ import '../../elements/emby-input/emby-input';
         }
     }
 
-    function showImageOptionsForType(type) {
-        import('../imageOptionsEditor/imageOptionsEditor').then(({default: ImageOptionsEditor}) => {
+    async function showImageOptionsForType(type) {
+        const {default: ImageOptionsEditor} = await import('../imageOptionsEditor/imageOptionsEditor');
             let typeOptions = getTypeOptions(currentLibraryOptions, type);
             if (!typeOptions) {
                 typeOptions = {
@@ -317,7 +317,6 @@ import '../../elements/emby-input/emby-input';
             const availableOptions = getTypeOptions(currentAvailableOptions || {}, type);
             const imageOptionsEditor = new ImageOptionsEditor();
             imageOptionsEditor.show(type, typeOptions, availableOptions);
-        });
     }
 
     function onImageFetchersContainerClick(e) {
@@ -364,8 +363,7 @@ import '../../elements/emby-input/emby-input';
         currentAvailableOptions = null;
         const isNewLibrary = libraryOptions === null;
         isNewLibrary && parent.classList.add('newlibrary');
-        const response = await fetch('components/libraryoptionseditor/libraryoptionseditor.template.html');
-        const template = await response.text();
+        const template = await import('./libraryoptionseditor.template.html');
         parent.innerHTML = globalize.translateHtml(template);
         populateRefreshInterval(parent.querySelector('#selectAutoRefreshInterval'));
         const promises = [populateLanguages(parent), populateCountries(parent.querySelector('#selectCountry'))];

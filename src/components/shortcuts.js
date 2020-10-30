@@ -71,8 +71,7 @@ import toast from './toast/toast';
     }
 
     function showProgramDialog(item) {
-        import('./recordingcreator/recordingcreator' +
-        '').then(({default:recordingCreator}) => {
+        import('./recordingcreator/recordingcreator').then(recordingCreator => {
             recordingCreator.show(item.Id, item.ServerId);
         });
     }
@@ -269,14 +268,13 @@ import toast from './toast/toast';
         }
     }
 
-    function addToPlaylist(item) {
-        import('./playlisteditor/playlisteditor').then((playlistEditor) => {
-            new playlistEditor().show({
+    async function addToPlaylist(item) {
+        const {default: PlaylistEditor} = await import('./playlisteditor/playlisteditor');
+            new PlaylistEditor().show({
                 items: [item.Id],
                 serverId: item.ServerId
 
             });
-        });
     }
 
     function playTrailer(item) {
@@ -295,16 +293,16 @@ import toast from './toast/toast';
 
             if (item.Type === 'Timer') {
                 if (item.ProgramId) {
-                    import('./recordingcreator/recordingcreator').then((recordingCreator) => {
+                    import('./recordingcreator/recordingcreator').then(recordingCreator => {
                         recordingCreator.show(item.ProgramId, serverId).then(resolve, reject);
                     });
                 } else {
-                    import('./recordingcreator/recordingeditor').then((recordingEditor) => {
+                    import('./recordingcreator/recordingeditor').then(recordingEditor => {
                         recordingEditor.show(item.Id, serverId).then(resolve, reject);
                     });
                 }
             } else {
-                import('./metadataEditor/metadataEditor').then((metadataEditor) => {
+                import('./metadataEditor/metadataEditor').then(metadataEditor => {
                     metadataEditor.show(item.Id, serverId).then(resolve, reject);
                 });
             }

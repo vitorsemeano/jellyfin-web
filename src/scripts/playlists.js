@@ -188,13 +188,12 @@ export default function (view, params) {
     view.addEventListener('viewbeforeshow', function () {
         reloadItems();
     });
-    view.querySelector('.btnNewPlaylist').addEventListener('click', function () {
-        import('playlistEditor').then(({default: playlistEditor}) => {
-            const serverId = ApiClient.serverInfo().Id;
-            new playlistEditor({
-                items: [],
-                serverId: serverId
-            });
+    view.querySelector('.btnNewPlaylist').addEventListener('click', async function () {
+        const {default: PlaylistEditor} = await import('../components/playlisteditor/playlisteditor');
+        const serverId = ApiClient.serverInfo().Id;
+        new PlaylistEditor().show({
+            items: [],
+            serverId: serverId
         });
     });
     onViewStyleChange();

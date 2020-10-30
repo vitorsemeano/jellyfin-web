@@ -24,7 +24,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
     }
 
     function loadUpcoming(context, params, promise) {
-        promise.then(function (result) {
+        promise.then(result => {
             const items = result.Items;
 
             if (items.length) {
@@ -130,13 +130,12 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
 
     export default function (view, params, tabContent) {
         let upcomingPromise;
-        const self = this;
 
-        self.preRender = function () {
+        this.preRender = () => {
             upcomingPromise = getUpcomingPromise(view, params);
         };
 
-        self.renderTab = function () {
+        this.renderTab = () => {
             loadUpcoming(tabContent, params, upcomingPromise);
         };
     }

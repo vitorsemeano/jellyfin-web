@@ -105,15 +105,15 @@ import loading from '../../components/loading/loading';
 
         const data = {};
 
-        this.getViewStyles = function () {
+        this.getViewStyles = () => {
             return 'Poster,PosterCard,Thumb,ThumbCard'.split(',');
         };
 
-        this.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData().view;
         };
 
-        this.setCurrentViewStyle = function (viewStyle) {
+        this.setCurrentViewStyle = viewStyle => {
             getPageData().view = viewStyle;
             libraryBrowser.saveViewSetting(getSavedQueryKey(), viewStyle);
             fullyReload();
@@ -122,11 +122,11 @@ import loading from '../../components/loading/loading';
         this.enableViewSelection = true;
         let promise;
 
-        this.preRender = function () {
+        this.preRender = () => {
             promise = getPromise();
         };
 
-        this.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent, promise);
         };
     }

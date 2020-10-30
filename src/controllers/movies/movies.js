@@ -171,7 +171,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
             const alphaPickerElement = tabContent.querySelector('.alphaPicker');
 
             if (alphaPickerElement) {
-                alphaPickerElement.addEventListener('alphavaluechanged', function (e) {
+                alphaPickerElement.addEventListener('alphavaluechanged', e => {
                     const newValue = e.detail.value;
                     query.NameStartsWith = newValue;
                     query.StartIndex = 0;
@@ -197,7 +197,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
             const btnSort = tabContent.querySelector('.btnSort');
 
             if (btnSort) {
-                btnSort.addEventListener('click', function (e) {
+                btnSort.addEventListener('click', e => {
                     libraryBrowser.showSortMenu({
                         items: [{
                             name: globalize.translate('Name'),
@@ -227,7 +227,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                             name: globalize.translate('Runtime'),
                             id: 'Runtime,SortName,ProductionYear'
                         }],
-                        callback: function () {
+                        callback: () => {
                             query.StartIndex = 0;
                             userSettings.saveQuerySettings(savedQueryKey, query);
                             itemsContainer.refreshItems();
@@ -238,10 +238,10 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
                 });
             }
             const btnSelectView = tabContent.querySelector('.btnSelectView');
-            btnSelectView.addEventListener('click', function (e) {
+            btnSelectView.addEventListener('click', (e) => {
                 libraryBrowser.showLayoutMenu(e.target, this.getCurrentViewStyle, 'Banner,List,Poster,PosterCard,Thumb,ThumbCard'.split(','));
             });
-            btnSelectView.addEventListener('layoutchange', function (e) {
+            btnSelectView.addEventListener('layoutchange', e => {
                 const viewStyle = e.detail.viewStyle;
                 userSettings.set(savedViewKey, viewStyle);
                 query.StartIndex = 0;
@@ -277,7 +277,7 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
 
         query = userSettings.loadQuerySettings(savedQueryKey, query);
 
-        this.showFilterMenu = function () {
+        this.showFilterMenu = () => {
             import('../../components/filterdialog/filterdialog').then(({default: filterDialogFactory}) => {
                 const filterDialog = new filterDialogFactory({
                     query: query,
@@ -292,21 +292,21 @@ import '../../elements/emby-itemscontainer/emby-itemscontainer';
             });
         };
 
-        this.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return userSettings.get(savedViewKey) || 'Poster';
         };
 
-        this.initTab = function () {
+        this.initTab = () => {
             initPage(tabContent);
             onViewStyleChange();
         };
 
-        this.renderTab = function () {
+        this.renderTab = () => {
             itemsContainer.refreshItems();
             updateFilterControls();
         };
 
-        this.destroy = function () {
+        this.destroy = () => {
             itemsContainer = null;
         };
     }

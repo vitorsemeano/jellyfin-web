@@ -89,9 +89,9 @@ import '../../elements/emby-input/emby-input';
         });
     }
 
-    async function showEditor(itemType, options, availableOptions) {
-        const response = await fetch('components/imageOptionsEditor/imageOptionsEditor.template.html');
-        const template = await response.text();
+class ImageOptionsEditor {
+    async show(itemType, options, availableOptions) {
+        const template = await import('./imageOptionsEditor.template.html');
 
         const dlg = dialogHelper.createDialog({
             size: 'small',
@@ -113,12 +113,7 @@ import '../../elements/emby-input/emby-input';
             dialogHelper.close(dlg);
         });
     }
-
-export class editor {
-    constructor() {
-        this.show = showEditor;
-    }
 }
 
 /* eslint-enable indent */
-export default editor;
+export default ImageOptionsEditor;

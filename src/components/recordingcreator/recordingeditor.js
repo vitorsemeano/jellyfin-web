@@ -83,7 +83,7 @@ function reload(context, id) {
     });
 }
 
-function showEditor(itemId, serverId, options) {
+export function show(itemId, serverId, options) {
     return new Promise(function (resolve, reject) {
         recordingDeleted = false;
         currentServerId = serverId;
@@ -151,6 +151,3 @@ function showEditor(itemId, serverId, options) {
     });
 }
 
-export default {
-    show: showEditor
-};

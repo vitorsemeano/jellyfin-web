@@ -1,5 +1,5 @@
-import './emby-progressring';
 import 'webcomponents.js/webcomponents-lite';
+import './emby-progressring.css';
 
 /* eslint-disable indent */
 

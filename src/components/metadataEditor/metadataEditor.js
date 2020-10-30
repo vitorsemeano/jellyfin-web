@@ -1026,81 +1026,75 @@ import toast from '../toast/toast';
         });
     }
 
-    function show(itemId, serverId, resolve, reject) {
-        loading.show();
+    export function show(itemId, serverId) {
+        return new Promise(function (resolve, reject) {
+            loading.show();
 
-        import('./metadataEditor.template.html').then(({default: template}) => {
-            const dialogOptions = {
-                removeOnClose: true,
-                scrollY: false
-            };
+            import('./metadataEditor.template.html').then(({default: template}) => {
+                const dialogOptions = {
+                    removeOnClose: true,
+                    scrollY: false
+                };
 
-            if (layoutManager.tv) {
-                dialogOptions.size = 'fullscreen';
-            } else {
-                dialogOptions.size = 'small';
-            }
-
-            const dlg = dialogHelper.createDialog(dialogOptions);
-
-            dlg.classList.add('formDialog');
-
-            let html = '';
-
-            html += globalize.translateHtml(template, 'core');
-
-            dlg.innerHTML = html;
-
-            if (layoutManager.tv) {
-                centerFocus(dlg.querySelector('.formDialogContent'), false, true);
-            }
-
-            dialogHelper.open(dlg);
-
-            dlg.addEventListener('close', function () {
                 if (layoutManager.tv) {
-                    centerFocus(dlg.querySelector('.formDialogContent'), false, false);
+                    dialogOptions.size = 'fullscreen';
+                } else {
+                    dialogOptions.size = 'small';
                 }
 
-                resolve();
+                const dlg = dialogHelper.createDialog(dialogOptions);
+
+                dlg.classList.add('formDialog');
+
+                let html = '';
+
+                html += globalize.translateHtml(template, 'core');
+
+                dlg.innerHTML = html;
+
+                if (layoutManager.tv) {
+                    centerFocus(dlg.querySelector('.formDialogContent'), false, true);
+                }
+
+                dialogHelper.open(dlg);
+
+                dlg.addEventListener('close', function () {
+                    if (layoutManager.tv) {
+                        centerFocus(dlg.querySelector('.formDialogContent'), false, false);
+                    }
+
+                    resolve();
+                });
+
+                currentContext = dlg;
+
+                init(dlg, ServerConnections.getApiClient(serverId));
+
+                reload(dlg, itemId, serverId);
             });
-
-            currentContext = dlg;
-
-            init(dlg, ServerConnections.getApiClient(serverId));
-
-            reload(dlg, itemId, serverId);
         });
     }
 
-    export default {
-        show: function (itemId, serverId) {
-            return new Promise(function (resolve, reject) {
-                return show(itemId, serverId, resolve, reject);
+    export function embed(elem, itemId, serverId) {
+        return new Promise(function (resolve, reject) {
+            loading.show();
+
+            import('./metadataEditor.template.html').then(({default: template}) => {
+                elem.innerHTML = globalize.translateHtml(template, 'core');
+
+                elem.querySelector('.formDialogFooter').classList.remove('formDialogFooter');
+                elem.querySelector('.btnClose').classList.add('hide');
+                elem.querySelector('.btnHeaderSave').classList.remove('hide');
+                elem.querySelector('.btnCancel').classList.add('hide');
+
+                currentContext = elem;
+
+                init(elem, ServerConnections.getApiClient(serverId));
+                reload(elem, itemId, serverId);
+
+                focusManager.autoFocus(elem);
             });
-        },
-
-        embed: function (elem, itemId, serverId) {
-            return new Promise(function (resolve, reject) {
-                loading.show();
-
-                import('./metadataEditor.template.html').then(({default: template}) => {
-                    elem.innerHTML = globalize.translateHtml(template, 'core');
-
-                    elem.querySelector('.formDialogFooter').classList.remove('formDialogFooter');
-                    elem.querySelector('.btnClose').classList.add('hide');
-                    elem.querySelector('.btnHeaderSave').classList.remove('hide');
-                    elem.querySelector('.btnCancel').classList.add('hide');
-
-                    currentContext = elem;
-
-                    init(elem, ServerConnections.getApiClient(serverId));
-                    reload(elem, itemId, serverId);
-
-                    focusManager.autoFocus(elem);
-                });
-            });
-        }
-    };
+        });
+    }
 
 /* eslint-enable indent */

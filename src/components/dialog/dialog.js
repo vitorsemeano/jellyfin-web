@@ -1,5 +1,5 @@
 import dialogHelper from '../dialogHelper/dialogHelper';
-import dom from '../../scripts/dom';
+import { getWindowSize } from '../../scripts/dom';
 import layoutManager from '../layoutManager';
 import scrollHelper from '../../scripts/scrollHelper';
 import globalize from '../../scripts/globalize';
@@ -40,7 +40,7 @@ import '../../assets/css/flexstyles.css';
             formDialogContent.style['max-height'] = '60%';
             scrollHelper.centerFocus.on(formDialogContent, false);
         } else {
-            formDialogContent.style.maxWidth = `${Math.min((options.buttons.length * 150) + 200, dom.getWindowSize().innerWidth - 50)}px`;
+            formDialogContent.style.maxWidth = `${Math.min((options.buttons.length * 150) + 200, getWindowSize().innerWidth - 50)}px`;
             dlg.classList.add('dialog-fullscreen-lowres');
         }
 
@@ -80,8 +80,7 @@ import '../../assets/css/flexstyles.css';
                 buttonClass += ' formDialogFooterItem-vertical formDialogFooterItem-nomarginbottom';
             }
 
-            html += `<button is="
-            " type="button" class="${buttonClass}" data-id="${item.id}"${autoFocus}>${item.name}</button>`;
+            html += `<button is="emby-button" type="button" class="${buttonClass}" data-id="${item.id}"${autoFocus}>${item.name}</button>`;
 
             if (item.description) {
                 html += `<div class="formDialogFooterItem formDialogFooterItem-autosize fieldDescription" style="margin-top:.25em!important;margin-bottom:1.25em!important;">${item.description}</div>`;
@@ -118,7 +117,7 @@ import '../../assets/css/flexstyles.css';
         });
     }
 
-    export async function show(text, title) {
+    async function Dialog(text, title) {
         let options;
         if (typeof text === 'string') {
             options = {
@@ -136,6 +135,4 @@ import '../../assets/css/flexstyles.css';
     }
 
 /* eslint-enable indent */
-export default {
-    show: show
-};
+export default Dialog;

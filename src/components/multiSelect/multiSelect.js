@@ -239,8 +239,8 @@ import confirm from '../confirm/confirm';
 
                         switch (id) {
                             case 'addtocollection':
-                                import('../collectionEditor/collectionEditor').then((collectionEditor) => {
-                                    new collectionEditor({
+                                import('../collectionEditor/collectionEditor').then(({default: CollectionEditor}) => {
+                                    new CollectionEditor().show({
                                         items: items,
                                         serverId: serverId
                                     });
@@ -249,8 +249,8 @@ import confirm from '../confirm/confirm';
                                 dispatchNeedsRefresh();
                                 break;
                             case 'playlist':
-                                import('../playlisteditor/playlisteditor').then((laylistEditor) => {
-                                    new playlistEditor({
+                                import('../playlisteditor/playlisteditor').then(({default: PlaylistEditor}) => {
+                                    new PlaylistEditor().show({
                                         items: items,
                                         serverId: serverId
                                     });
@@ -281,8 +281,8 @@ import confirm from '../confirm/confirm';
                                 dispatchNeedsRefresh();
                                 break;
                             case 'refresh':
-                                import('../refreshdialog/refreshdialog').then((refreshDialog) => {
-                                    new refreshDialog({
+                                import('../refreshdialog/refreshdialog').then(({default: RefreshDialog}) => {
+                                    new RefreshDialog({
                                         itemIds: items,
                                         serverId: serverId
                                     }).show();

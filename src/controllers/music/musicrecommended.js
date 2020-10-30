@@ -56,7 +56,7 @@ import Dashboard from '../../scripts/clientUtils';
             EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             EnableTotalRecordCount: false
         };
-        ApiClient.getJSON(ApiClient.getUrl('Users/' + userId + '/Items/Latest', options)).then(function (items) {
+        ApiClient.getJSON(ApiClient.getUrl('Users/' + userId + '/Items/Latest', options)).then(items => {
             const elem = page.querySelector('#recentlyAddedSongs');
             elem.innerHTML = cardBuilder.getCardsHtml({
                 items: items,
@@ -95,7 +95,7 @@ import Dashboard from '../../scripts/clientUtils';
             EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             EnableTotalRecordCount: false
         };
-        ApiClient.getItems(ApiClient.getCurrentUserId(), options).then(function (result) {
+        ApiClient.getItems(ApiClient.getCurrentUserId(), options).then(result => {
             const elem = page.querySelector('#recentlyPlayed');
 
             if (result.Items.length) {
@@ -137,7 +137,7 @@ import Dashboard from '../../scripts/clientUtils';
             EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
             EnableTotalRecordCount: false
         };
-        ApiClient.getItems(ApiClient.getCurrentUserId(), options).then(function (result) {
+        ApiClient.getItems(ApiClient.getCurrentUserId(), options).then(result => {
             const elem = page.querySelector('#topPlayed');
 
             if (result.Items.length) {
@@ -330,7 +330,7 @@ import Dashboard from '../../scripts/clientUtils';
         };
 
         function preLoadTab(page, index) {
-            getTabController(page, index, function (controller) {
+            getTabController(page, index, controller => {
                 if (renderedTabs.indexOf(index) == -1 && controller.preRender) {
                     controller.preRender();
                 }
@@ -339,7 +339,7 @@ import Dashboard from '../../scripts/clientUtils';
 
         function loadTab(page, index) {
             currentTabIndex = index;
-            getTabController(page, index, function (controller) {
+            getTabController(page, index, controller => {
                 if (renderedTabs.indexOf(index) == -1) {
                     renderedTabs.push(index);
                     controller.renderTab();
@@ -358,7 +358,7 @@ import Dashboard from '../../scripts/clientUtils';
         let currentTabIndex = parseInt(params.tab || getDefaultTabIndex(params.topParentId));
         const suggestionsTabIndex = 1;
 
-        this.initTab = function () {
+        this.initTab = () => {
             const tabContent = view.querySelector(".pageTabContent[data-index='" + suggestionsTabIndex + "']");
             const containers = tabContent.querySelectorAll('.itemsContainer');
 
@@ -367,19 +367,19 @@ import Dashboard from '../../scripts/clientUtils';
             }
         };
 
-        this.renderTab = function () {
+        this.renderTab = () => {
             reload();
         };
 
         const tabControllers = [];
         const renderedTabs = [];
-        view.addEventListener('viewshow', function (e) {
+        view.addEventListener('viewshow', e => {
             initTabs();
             if (!view.getAttribute('data-title')) {
                 const parentId = params.topParentId;
 
                 if (parentId) {
-                    ApiClient.getItem(ApiClient.getCurrentUserId(), parentId).then(function (item) {
+                    ApiClient.getItem(ApiClient.getCurrentUserId(), parentId).then(item => {
                         view.setAttribute('data-title', item.Name);
                         libraryMenu.setTitle(item.Name);
                     });
@@ -391,11 +391,11 @@ import Dashboard from '../../scripts/clientUtils';
 
             inputManager.on(window, onInputCommand);
         });
-        view.addEventListener('viewbeforehide', function (e) {
+        view.addEventListener('viewbeforehide', e => {
             inputManager.off(window, onInputCommand);
         });
-        view.addEventListener('viewdestroy', function (e) {
-            tabControllers.forEach(function (t) {
+        view.addEventListener('viewdestroy', e => {
+            tabControllers.forEach(t => {
                 if (t.destroy) {
                     t.destroy();
                 }

@@ -1,6 +1,6 @@
+import 'webcomponents.js/webcomponents-lite';
 import layoutManager from '../../components/layoutManager';
 import './emby-button.css';
-import 'webcomponents.js/webcomponents-lite';
 
 const EmbyButtonPrototype = Object.create(HTMLButtonElement.prototype);
 

@@ -36,7 +36,7 @@ import cardBuilder from '../../components/cardbuilder/cardBuilder';
     }
 
     function reloadItems(context, params, promise) {
-        promise.then(function (result) {
+        promise.then(result => {
             const elem = context.querySelector('#items');
             cardBuilder.buildCards(result.Items, {
                 itemsContainer: elem,
@@ -60,13 +60,12 @@ import cardBuilder from '../../components/cardbuilder/cardBuilder';
 
     export default function (view, params, tabContent) {
         let promise;
-        const self = this;
 
-        self.preRender = function () {
+        this.preRender = () => {
             promise = getPromise(view, params);
         };
 
-        self.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent, params, promise);
         };
     }

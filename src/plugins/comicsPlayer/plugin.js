@@ -5,6 +5,7 @@ import dialogHelper from '../../components/dialogHelper/dialogHelper';
 import keyboardnavigation from '../../scripts/keyboardNavigation';
 import { appRouter } from '../../components/appRouter';
 import ServerConnections from '../../components/ServerConnections';
+import 'swiper/swiper-bundle.css';
 
 export class ComicsPlayer {
     constructor() {
@@ -106,7 +107,7 @@ export class ComicsPlayer {
             const archiveSource = new ArchiveSource(downloadUrl);
 
             const instance = this;
-            import('swiper').then(({default: Swiper}) => {
+            import('swiper/swiper-bundle').then(({default: Swiper}) => {
                 archiveSource.load().then(() => {
                     loading.hide();
                     this.swiperInstance = new Swiper(elem.querySelector('.slideshowSwiperContainer'), {

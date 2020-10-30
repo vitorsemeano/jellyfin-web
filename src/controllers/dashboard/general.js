@@ -65,8 +65,8 @@ import alert from '../../components/alert';
     let currentLanguage;
     const brandingConfigKey = 'branding';
     export default function (view, params) {
-        $('#btnSelectCachePath', view).on('click.selectDirectory', function () {
-            import('../../components/directorybrowser/directorybrowser').then(({default: directoryBrowser}) => {
+        $('#btnSelectCachePath', view).on('click.selectDirectory', async function () {
+            const {default: directoryBrowser} = await import('../../components/directorybrowser/directorybrowser');
                 const picker = new directoryBrowser();
                 picker.show({
                     callback: function (path) {
@@ -80,10 +80,9 @@ import alert from '../../components/alert';
                     header: globalize.translate('HeaderSelectServerCachePath'),
                     instruction: globalize.translate('HeaderSelectServerCachePathHelp')
                 });
-            });
         });
-        $('#btnSelectMetadataPath', view).on('click.selectDirectory', function () {
-            import('../../components/directorybrowser/directorybrowser').then(({default: directoryBrowser}) => {
+        $('#btnSelectMetadataPath', view).on('click.selectDirectory', async function () {
+            const {default: directoryBrowser} = await import('../../components/directorybrowser/directorybrowser');
                 const picker = new directoryBrowser();
                 picker.show({
                     path: $('#txtMetadataPath', view).val(),
@@ -104,7 +103,6 @@ import alert from '../../components/alert';
                     instruction: globalize.translate('HeaderSelectMetadataPathHelp'),
                     enableNetworkSharePath: true
                 });
-            });
         });
         $('.dashboardGeneralForm', view).off('submit', onSubmit).on('submit', onSubmit);
         view.addEventListener('viewshow', function () {

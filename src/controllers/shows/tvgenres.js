@@ -58,10 +58,10 @@ import '../../elements/emby-button/emby-button';
             return enableScrollX() ? 'overflowPortrait' : 'portrait';
         }
 
-        function fillItemsContainer(entry) {
+        const fillItemsContainer = (entry) => {
             const elem = entry.target;
             const id = elem.getAttribute('data-id');
-            const viewStyle = self.getCurrentViewStyle();
+            const viewStyle = this.getCurrentViewStyle();
             let limit = viewStyle == 'Thumb' || viewStyle == 'ThumbCard' ? 5 : 9;
 
             if (enableScrollX()) {
@@ -82,7 +82,7 @@ import '../../elements/emby-button/emby-button';
                 EnableTotalRecordCount: false,
                 ParentId: params.topParentId
             };
-            ApiClient.getItems(ApiClient.getCurrentUserId(), query).then(function (result) {
+            ApiClient.getItems(ApiClient.getCurrentUserId(), query).then(result => {
                 if (viewStyle == 'Thumb') {
                     cardBuilder.buildCards(result.Items, {
                         itemsContainer: elem,
@@ -120,27 +120,29 @@ import '../../elements/emby-button/emby-button';
                         itemsContainer: elem,
                         shape: getPortraitShape(),
                         scalable: true,
+                        overlayMoreButton: true,
+                        allowBottomPadding: true,
                         showTitle: true,
                         centerText: true,
-                        showYear: true,
-                        overlayMoreButton: true,
-                        allowBottomPadding: false
+                        showYear: true
                     });
                 }
                 if (result.Items.length >= query.Limit) {
                     tabContent.querySelector('.btnMoreFromGenre' + id + ' .material-icons').classList.remove('hide');
                 }
             });
-        }
+        };
 
         function reloadItems(context, promise) {
             const query = getQuery();
-            promise.then(function (result) {
+            promise.then(result => {
                 const elem = context.querySelector('#items');
                 let html = '';
                 const items = result.Items;
 
-                for (const item of items) {
+                for (let i = 0, length = items.length; i < length; i++) {
+                    const item = items[i];
+
                     html += '<div class="verticalSection">';
                     html += '<div class="sectionTitleContainer sectionTitleContainer-cards padded-left">';
                     html += '<a is="emby-linkbutton" href="' + appRouter.getRouteUrl(item, {
@@ -155,13 +157,16 @@ import '../../elements/emby-button/emby-button';
                     html += '</div>';
                     if (enableScrollX()) {
                         let scrollXClass = 'scrollX hiddenScrollX';
+
                         if (layoutManager.tv) {
                             scrollXClass += 'smoothScrollX padded-top-focusscale padded-bottom-focusscale';
                         }
+
                         html += '<div is="emby-itemscontainer" class="itemsContainer ' + scrollXClass + ' lazy padded-left padded-right" data-id="' + item.Id + '">';
                     } else {
                         html += '<div is="emby-itemscontainer" class="itemsContainer vertical-wrap lazy padded-left padded-right" data-id="' + item.Id + '">';
                     }
+
                     html += '</div>';
                     html += '</div>';
                 }
@@ -182,36 +187,35 @@ import '../../elements/emby-button/emby-button';
             });
         }
 
-        function fullyReload() {
-            self.preRender();
-            self.renderTab();
-        }
+        const fullyReload = () => {
+            this.preRender();
+            this.renderTab();
+        };
 
-        const self = this;
         const data = {};
 
-        self.getViewStyles = function () {
+        this.getViewStyles = () => {
             return 'Poster,PosterCard,Thumb,ThumbCard'.split(',');
         };
 
-        self.getCurrentViewStyle = function () {
+        this.getCurrentViewStyle = () => {
             return getPageData().view;
         };
 
-        self.setCurrentViewStyle = function (viewStyle) {
+        this.setCurrentViewStyle = viewStyle => {
             getPageData().view = viewStyle;
             libraryBrowser.saveViewSetting(getSavedQueryKey(), viewStyle);
             fullyReload();
         };
 
-        self.enableViewSelection = true;
+        this.enableViewSelection = true;
         let promise;
 
-        self.preRender = function () {
+        this.preRender = () => {
             promise = getPromise();
         };
 
-        self.renderTab = function () {
+        this.renderTab = () => {
             reloadItems(tabContent, promise);
         };
     }

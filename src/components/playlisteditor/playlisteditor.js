@@ -216,8 +216,8 @@ import ServerConnections from '../ServerConnections';
         });
     }
 
-    export class showEditor {
-        constructor(options) {
+    class PlaylistEditor {
+        async show(options) {
             const items = options.items || {};
             currentServerId = options.serverId;
 
@@ -261,19 +261,16 @@ import ServerConnections from '../ServerConnections';
                 centerFocus(dlg.querySelector('.formDialogContent'), false, true);
             }
 
-            return dialogHelper.open(dlg).then(() => {
-                if (layoutManager.tv) {
-                    centerFocus(dlg.querySelector('.formDialogContent'), false, false);
-                }
-
-                if (dlg.submitted) {
-                    return Promise.resolve();
-                }
-
-                return Promise.reject();
-            });
+            await dialogHelper.open(dlg);
+            if (layoutManager.tv) {
+                centerFocus(dlg.querySelector('.formDialogContent'), false, false);
+            }
+            if (dlg.submitted) {
+                return Promise.resolve();
+            }
+            return Promise.reject();
         }
     }
 
 /* eslint-enable indent */
-export default showEditor;
+export default PlaylistEditor;

@@ -695,18 +695,17 @@ export default function () {
         });
     }
 
-    function savePlaylist() {
-        import('../playlisteditor/playlisteditor').then((playlistEditor) => {
-            getSaveablePlaylistItems().then(function (items) {
-                const serverId = items.length ? items[0].ServerId : ApiClient.serverId();
-                new playlistEditor({
-                    items: items.map(function (i) {
-                        return i.Id;
-                    }),
-                    serverId: serverId,
-                    enableAddToPlayQueue: false,
-                    defaultValue: 'new'
-                });
+    async function savePlaylist() {
+        const {default: PlaylistEditor} = await import('../playlisteditor/playlisteditor');
+        getSaveablePlaylistItems().then(function (items) {
+            const serverId = items.length ? items[0].ServerId : ApiClient.serverId();
+            new PlaylistEditor().show({
+                items: items.map(function (i) {
+                    return i.Id;
+                }),
+                serverId: serverId,
+                enableAddToPlayQueue: false,
+                defaultValue: 'new'
             });
         });
     }
