@@ -302,7 +302,7 @@ export default function (options) {
             slides = currentOptions.items;
         }
 
-        import('swiper').then(({default: Swiper}) => {
+        import('swiper/swiper-bundle').then(({default: Swiper}) => {
             swiperInstance = new Swiper(dialog.querySelector('.slideshowSwiperContainer'), {
                 direction: 'horizontal',
                 // Loop is disabled due to the virtual slides option not supporting it.
@@ -433,8 +433,8 @@ export default function (options) {
     function download() {
         const imageInfo = getCurrentImageInfo();
 
-        import('../../scripts/fileDownloader').then((fileDownloader) => {
-            fileDownloader.download([imageInfo]);
+        import('../../scripts/fileDownloader').then(({ default: FileDownloader }) => {
+            FileDownloader([imageInfo]);
         });
     }
 

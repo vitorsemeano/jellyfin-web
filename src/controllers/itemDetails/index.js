@@ -1955,9 +1955,9 @@ export default function (view, params) {
     }
 
     function onDownloadClick() {
-        import('../../scripts/fileDownloader').then(({ default: fileDownloader }) => {
+        import('../../scripts/fileDownloader').then(({ default: FileDownloader }) => {
             const downloadHref = getApiClient().getItemDownloadUrl(currentItem.Id);
-            fileDownloader.download([{
+            FileDownloader([{
                 url: downloadHref,
                 itemId: currentItem.Id,
                 serverId: currentItem.serverId

@@ -353,9 +353,9 @@ import toast from './toast/toast';
 
                     break;
                 case 'download':
-                    import('../scripts/fileDownloader').then(fileDownloader => {
+                    import('../scripts/fileDownloader').then(({ default: FileDownloader }) => {
                         const downloadHref = apiClient.getItemDownloadUrl(itemId);
-                        fileDownloader.download([{
+                        FileDownloader([{
                             url: downloadHref,
                             itemId: itemId,
                             serverId: serverId,

@@ -107,7 +107,7 @@ export class ComicsPlayer {
             const archiveSource = new ArchiveSource(downloadUrl);
 
             const instance = this;
-            import('swiper').then(({default: Swiper}) => {
+            import('swiper/swiper-bundle').then(({default: Swiper}) => {
                 archiveSource.load().then(() => {
                     loading.hide();
                     this.swiperInstance = new Swiper(elem.querySelector('.slideshowSwiperContainer'), {
